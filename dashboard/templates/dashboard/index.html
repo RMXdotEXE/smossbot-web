@@ -8,6 +8,13 @@
 
 {% block content %}
 
+{% if active_session %}
+<div class="alert alert-success" role="alert" style="margin-top: 10px;">
+  <p>smossbot should be in your chat! Type "!ping" and smossbot should say <b>Pong!</b><br>
+    If not, try clicking <b>End Session</b> and then <b>Start Session</b> again. Sorry for the inconvenience!</p>
+</div>
+{% endif %}
+
 <h1>Welcome {{ user }}! <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a></h1>
 
 <div class="subcontent">
@@ -32,51 +39,56 @@
 <div class="subcontent">
     <h2>Bindings:</h2>
     <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".</p>
+    <p>Some are only visible when authenticated with everything under <b>Authentication</b>.</p>
     {% if twitch_code and spotify_code %}
-        <h3>Spotify Song Requests</h3>
-        <form action="{% url 'dashboard:bind' %}" method="post">
-            {% csrf_token %}
-            <span class="input-group mb-3 mx-auto">
-                <select name="songreq_id" class="form-select">
-                    {% for name, id in custom_rewards.items %}
-                        {% if songreq_reward_title == name %}
-                            <option value="{{ id }}" selected>{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id }}">{{ name }}</option>
+        <div class="sidebyside">
+            <h3>Spotify Song Requests</h3>
+            <form action="{% url 'dashboard:bind' %}" method="post">
+                {% csrf_token %}
+                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
+                    <select name="songreq_id" class="form-select">
+                        {% for name, id in custom_rewards.items %}
+                            {% if songreq_reward_title == name %}
+                                <option value="{{ id }}" selected>{{ name }}</option>
+                            {% else %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not songreq_reward_title %}
+                            <option selected>Reward:</option>
                         {% endif %}
-                    {% endfor %}
-                    {% if not songreq_reward_title %}
-                        <option selected>Reward:</option>
-                    {% endif %}
-                </select>
-                <input type="hidden" name="section" value="songreq">
-                <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
-            </span>
-        </form>
-        <p>Selected SR reward: {{ songreq_reward_title }}</p>
+                    </select>
+                    <input type="hidden" name="section" value="songreq">
+                    <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+                </span>
+            </form>
+            <p>Selected SR reward: {{ songreq_reward_title }}</p>
+        </div>
     {% endif %}
     {% if twitch_code %}
-        <h3>ChatGPT</h3>
-        <form action="{% url 'dashboard:bind' %}" method="post">
-            {% csrf_token %}
-            <span class="input-group mb-3 mx-auto">
-                <select name="chatgpt_id" class="form-select">
-                    {% for name, id in custom_rewards.items %}
-                        {% if chatgpt_reward_title == name %}
-                            <option value="{{ id }}" selected>{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id }}">{{ name }}</option>
+        <div class="sidebyside">
+            <h3>ChatGPT</h3>
+            <form action="{% url 'dashboard:bind' %}" method="post">
+                {% csrf_token %}
+                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
+                    <select name="chatgpt_id" class="form-select">
+                        {% for name, id in custom_rewards.items %}
+                            {% if chatgpt_reward_title == name %}
+                                <option value="{{ id }}" selected>{{ name }}</option>
+                            {% else %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not chatgpt_reward_title %}
+                            <option selected>Reward:</option>
                         {% endif %}
-                    {% endfor %}
-                    {% if not chatgpt_reward_title %}
-                        <option selected>Reward:</option>
-                    {% endif %}
-                </select>
-                <input type="hidden" name="section" value="chatgpt">
-                <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
-            </span>
-        </form>
-        <p>Selected ChatGPT reward: {{ chatgpt_reward_title }}</p>
+                    </select>
+                    <input type="hidden" name="section" value="chatgpt">
+                    <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+                </span>
+            </form>
+            <p>Selected ChatGPT reward: {{ chatgpt_reward_title }}</p>
+        </div>
     {% endif %}
 </div>
 
@@ -130,7 +142,6 @@
         <input type="submit" value="Shutdown Backend">
     </form>
 </div>
-<img src="{% static 'icons/door-open.svg' %}" alt="Bootstrap" width="32" height="32">
 {% endif %}
 
 {% endblock %}
