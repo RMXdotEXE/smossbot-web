@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1>Welcome {{ user }}! <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a></h1>
+
+<div class="subcontent">
+    <h2>Authentication:</h2>
+    <p>Sign-in with Twitch and Spotify. Spotify is required for song requests.</p>
+    {% if twitch_code %}
+        <button type="button" class="btn btn-success" disabled>
+            <i class="bi-twitch"></i> Signed in to Twitch! <i class="bi-check-lg"></i>
+        </button>
+    {% else %}
+        <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign-In</a>
+    {% endif %}
+    {% if spotify_code %}
+        <button type="button" class="btn btn-success" disabled>
+            <i class="bi-spotify"></i> Signed in to Spotify! <i class="bi-check-lg"></i>
+        </button>
+    {% else %}
+        <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign-In</a>
+    {% endif %}
+    <br><br>
+</div>
+<div class="subcontent">
+    <h2>Bindings:</h2>
+    <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".</p>
+    {% if twitch_code and spotify_code %}
+        <h3>Spotify Song Requests</h3>
+        <form action="{% url 'dashboard:bind' %}" method="post">
+            {% csrf_token %}
+            <span class="input-group mb-3 mx-auto">
+                <select name="songreq_id" class="form-select">
+                    {% for name, id in custom_rewards.items %}
+                        {% if songreq_reward_title == name %}
+                            <option value="{{ id }}" selected>{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not songreq_reward_title %}
+                        <option selected>Reward:</option>
+                    {% endif %}
+                </select>
+                <input type="hidden" name="section" value="songreq">
+                <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+            </span>
+        </form>
+        <p>Selected SR reward: {{ songreq_reward_title }}</p>
+    {% endif %}
+    {% if twitch_code %}
+        <h3>ChatGPT</h3>
+        <form action="{% url 'dashboard:bind' %}" method="post">
+            {% csrf_token %}
+            <span class="input-group mb-3 mx-auto">
+                <select name="chatgpt_id" class="form-select">
+                    {% for name, id in custom_rewards.items %}
+                        {% if chatgpt_reward_title == name %}
+                            <option value="{{ id }}" selected>{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not chatgpt_reward_title %}
+                        <option selected>Reward:</option>
+                    {% endif %}
+                </select>
+                <input type="hidden" name="section" value="chatgpt">
+                <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+            </span>
+        </form>
+        <p>Selected ChatGPT reward: {{ chatgpt_reward_title }}</p>
+    {% endif %}
+</div>
+
+{% if twitch_code and spotify_code%}
+<div class="subcontent">
+    <h2>Send your data:</h2>
+    <p>You'll only need to do this at setup and if you want to change your bindings.</p>
+    <p>Make sure you select all of your desired binds.</p>
+    <form action="{% url 'dashboard:send_data' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="send_data">
+        {% if not registered %}
+            <input class="btn btn-primary" type="submit" value="Send Data">
+        {% else %}
+            <input class="btn btn-primary" type="submit" value="Re-send Data">
+        {% endif %}
+    </form>
+</div>
+{% endif %}
+
+{% if registered %}
+<div class="subcontent">
+    <form action="{% url 'dashboard:after_auth' %}" method="post">
+    {% csrf_token %}
+    {% if not active_session %}
+        <h2>Start your session:</h2>
+        <p>Click this to turn the bot on in your chat. You must do this for it to listen for requests and work.</p>
+        <input type="hidden" name="command" value="start_endpoint">
+        <input class="btn btn-success" type="submit" value="Start Session">
+    {% else %}
+        <h2>End your session:</h2>
+        <p>Make sure to click this when you end stream! This turns the bot off in your chat so you don't get offline requests.</p>
+        <input type="hidden" name="command" value="end_endpoint">
+        <input class="btn btn-warning" type="submit" value="End Session">
+    {% endif %}
+    </form>
+</div>
+{% endif %}
+
+{% if superuser %}
+<div class="subcontent">
+    <h2>Staff actions:</h2>
+    <form action="{% url 'dashboard:after_auth' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="command" value="startup">
+        <input type="submit" value="Startup Backend">
+    </form>
+    <form action="{% url 'dashboard:after_auth' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="command" value="shutdown">
+        <input type="submit" value="Shutdown Backend">
+    </form>
+</div>
+<img src="{% static 'icons/door-open.svg' %}" alt="Bootstrap" width="32" height="32">
+{% endif %}
+
+{% endblock %}
