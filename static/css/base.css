@@ -48,5 +48,7 @@ div.sidebyside {
 }
 
 .footnotes {
-	
+	margin-top: 50px;
+	border-top: 1px solid #ffffff;
+	font-size: large;
 }
