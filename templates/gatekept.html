@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Gatekept{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert" style="margin-top: 50px;">
+    <b>Sorry {{ twitch_username }}, I really don't want you here...</b><br><br>
+    Just kidding; only a select few people have access to smossbot, sorry!<br>
+    For now, wait for updates, check back at a later date, or message me to see about getting access.
+  </div>  
+<a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a>
+{% endblock %}

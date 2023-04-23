@@ -3,13 +3,17 @@ import json
 import os
 import requests
 
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 
+def username_exists(username):
+    return User.objects.filter(username=username.lower()).exists()
+
 def index(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
+    if not username_exists(request.session.get('twitch_username')):
+        return HttpResponseRedirect(reverse('gatekept'))
 
     twitch_auth_url = "https://id.twitch.tv/oauth2/authorize?" + \
         "client_id=" + os.getenv('TWITCH_CLIENT_ID') + \
@@ -37,6 +41,7 @@ def index(request):
         'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None),
         'registered': request.session.get('registered', False),
         'active_session': request.session.get('active_session', False),
+        'twitch_username': request.session.get('twitch_username', None),
     }
     return render(request, "dashboard/index.html", context=ctx)
 
