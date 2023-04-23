@@ -11,13 +11,20 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+<<<<<<< HEAD
+=======
+from dotenv import load_dotenv
+>>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -25,9 +32,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+<<<<<<< HEAD
 DEBUG = False
 
 ALLOWED_HOSTS = ["157.245.138.94", "127.0.0.1", "localhost", 'www.smossbot.com']
+=======
+DEBUG = True
+
+ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS.append(["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"])
+else:
+    load_dotenv()
+>>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
 
 
 # Application definition
@@ -123,6 +140,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+<<<<<<< HEAD
+=======
+if not DEBUG: 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+else:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "static/")
+    ]
+
+
+>>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -132,8 +160,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "home"
 
+<<<<<<< HEAD
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
+=======
+CSRF_COOKIE_SECURE = (not DEBUG)
+SESSION_COOKIE_SECURE = (not DEBUG)
+SECURE_SSL_REDIRECT = (not DEBUG)
+>>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
