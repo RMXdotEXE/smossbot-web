@@ -1,3 +1,5 @@
+/* BASE FORMATTING */
+
 body {
 	background-color: #000000;
 	color: #ffffff;
@@ -27,7 +29,7 @@ div.blockcontent {
 }
 
 div.subcontent {
-	border-top: 1px solid #aaaaaa;
+	border-top: 1px solid #ffffff;
 	padding-top: 3px;
 	margin-bottom: 10px;
 }
@@ -35,8 +37,14 @@ div.subcontent {
 .inlinesection {
 	white-space: nowrap;
 	display: "inline";
-	border-left: 1px solid #aaaaaa;
-	border-right: 1px solid #aaaaaa;
+	border-left: 1px solid #ffffff;
+	border-right: 1px solid #ffffff;
+}
+
+div.sidebyside {
+	display: inline-block;
+	padding: 0px 5px;
+	margin: 0px 20px;
 }
 
 .footnotes {
