@@ -8,11 +8,11 @@
 </h1>
 
 <h2 class="center">
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <a href="{% url 'dashboard:index' %}">Go to Dashboard</a>
+{% if twitch_username %}
+  Hi {{ twitch_username }}!
+  <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard!</b> <i class="bi-check-lg"></i></a>
 {% else %}
-  <a href="{% url 'login' %}">Or, login if you're a tester...</a>
+  <a role="button" class="btn btn-primary" href="{{ twitch_auth_url }}" style="background-color: #6441a5; border-color: white;"><i class="bi-twitch"></i> <b>Sign-in with Twitch</b></a>
 {% endif %}
 </h2>
 

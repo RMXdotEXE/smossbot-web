@@ -15,7 +15,7 @@
 </div>
 {% endif %}
 
-<h1>Welcome {{ user }}! <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a></h1>
+<h1>Welcome {{ twitch_username }}! <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a></h1>
 
 <div class="subcontent">
     <h2>Authentication:</h2>
@@ -40,7 +40,7 @@
     <h2>Bindings:</h2>
     <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".</p>
     <p>Some are only visible when authenticated with everything under <b>Authentication</b>.</p>
-    {% if twitch_code and spotify_code %}
+    {% if twitch_code %}
         <div class="sidebyside">
             <h3>Spotify Song Requests</h3>
             <form action="{% url 'dashboard:bind' %}" method="post">
@@ -59,10 +59,14 @@
                         {% endif %}
                     </select>
                     <input type="hidden" name="section" value="songreq">
-                    <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+                    {% if spotify_code %}
+                        <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
+                    {% else %}
+                        <button type="button" class="btn btn-danger" disabled>Sign-in with Spotify first!</button>
+                    {% endif %}
                 </span>
             </form>
-            <p>Selected SR reward: {{ songreq_reward_title }}</p>
+            <p>Selected: <b>{{ songreq_reward_title }}</b></p>
         </div>
     {% endif %}
     {% if twitch_code %}
@@ -87,12 +91,12 @@
                     <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
                 </span>
             </form>
-            <p>Selected ChatGPT reward: {{ chatgpt_reward_title }}</p>
+            <p>Selected: <b>{{ chatgpt_reward_title }}</b></p>
         </div>
     {% endif %}
 </div>
 
-{% if twitch_code and spotify_code%}
+{% if songreq_reward_title or chatgpt_reward_title %}
 <div class="subcontent">
     <h2>Send your data:</h2>
     <p>You'll only need to do this at setup and if you want to change your bindings.</p>
