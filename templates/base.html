@@ -1,0 +1,33 @@
+<!-- templates/base.html -->
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'font/bootstrap-icons.css' %}">
+        <link rel="icon" href="{% static 'OkayChamp.png' %}" type="image">
+        
+        <title>smossbot</title>
+    </head>
+    <body>
+        <div class="blockcontent center compressCenter">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+    <footer>
+        <p class="center compressCenter footnotes">
+            Please keep in mind that this site is still under heavy development. Bugs can and will happen.
+            Please report any that you see to me!<br>
+            Discord: moz#7928
+        </p>
+    </footer>
+</html>
