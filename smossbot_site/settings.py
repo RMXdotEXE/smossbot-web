@@ -25,13 +25,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+hostarray = []
 if not DEBUG:
-    ALLOWED_HOSTS.append(["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"])
+    hostarray = ["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"]
 else:
+    hostarray = ["127.0.0.1", "localhost"]
     load_dotenv()
+
+ALLOWED_HOSTS = hostarray
 
 
 # Application definition
