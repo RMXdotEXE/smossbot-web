@@ -57,10 +57,15 @@ def twitch(request):
         r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
         resp = json.loads(r.content.decode())
 
+        if not 200 <= r.status_code <= 226:
+            return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 1A{}".format(code))
+
         request.session['twitch_access_token'] = resp['access_token']
         request.session['twitch_expires_in'] = resp['expires_in']
         request.session['twitch_refresh_token'] = resp['refresh_token']
         request.session['twitch_token_type'] = resp['token_type']
+    else:
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 2A{}".format(code))
 
     header = {
         'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
@@ -69,7 +74,7 @@ def twitch(request):
     resp = requests.get("https://api.twitch.tv/helix/users", headers=header)
     code = resp.status_code
     if not 200 <= code <= 226:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 1A{}".format(code))
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 3A{}".format(code))
 
     r = resp.content.decode()
     r = json.loads(r)
@@ -83,7 +88,7 @@ def twitch(request):
     resp = requests.get("https://api.twitch.tv/helix/channel_points/custom_rewards", params={'broadcaster_id': id}, headers=header)
     code = resp.status_code
     if not 200 <= code <= 226:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 2A{}".format(code))
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 4A{}".format(code))
 
     r = resp.content.decode()
     r = json.loads(r)

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from dotenv import load_dotenv
-load_dotenv()
 
 from pathlib import Path
 
@@ -31,6 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 if not DEBUG:
     ALLOWED_HOSTS.append(["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"])
+else:
+    load_dotenv()
 
 
 # Application definition
@@ -126,6 +127,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+if not DEBUG: 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+else:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "static/")
+    ]
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -134,8 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login/logout redirects
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "home"
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 CSRF_COOKIE_SECURE = (not DEBUG)
 SESSION_COOKIE_SECURE = (not DEBUG)
