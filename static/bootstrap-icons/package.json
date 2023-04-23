@@ -1,0 +1,138 @@
+{
+  "_args": [
+    [
+      "bootstrap-icons",
+      "/home/smossbot/smossbot_web/site"
+    ]
+  ],
+  "_from": "bootstrap-icons@latest",
+  "_hasShrinkwrap": false,
+  "_id": "bootstrap-icons@1.8.3",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/bootstrap-icons",
+  "_nodeVersion": "16.15.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/bootstrap-icons_1.8.3_1653501628718_0.46330641229999947"
+  },
+  "_npmUser": {
+    "email": "markdotto@gmail.com",
+    "name": "mdo"
+  },
+  "_npmVersion": "8.5.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "bootstrap-icons",
+    "raw": "bootstrap-icons",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/bootstrap-icons/-/bootstrap-icons-1.8.3.tgz",
+  "_shasum": "14c15e26deaddd42af9f88c4d81f7c45bf26aa98",
+  "_shrinkwrap": null,
+  "_spec": "bootstrap-icons",
+  "_where": "/home/smossbot/smossbot_web/site",
+  "author": {
+    "name": "mdo"
+  },
+  "bugs": {
+    "url": "https://github.com/twbs/icons/issues"
+  },
+  "dependencies": {},
+  "description": "Official open source SVG icon library for Bootstrap",
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "bootstrap": "5.2.0-beta1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.14.0",
+    "fantasticon": "^1.2.3",
+    "find-unused-sass-variables": "^4.0.4",
+    "hugo-bin": "^0.86.0",
+    "lockfile-lint": "^4.7.4",
+    "npm-run-all": "^4.1.5",
+    "picocolors": "^1.0.0",
+    "postcss": "^8.4.13",
+    "postcss-cli": "^9.1.0",
+    "purgecss": "^4.1.3",
+    "stylelint": "^14.8.2",
+    "stylelint-config-twbs-bootstrap": "^3.0.1",
+    "svg-sprite": "^2.0.0-beta4",
+    "svgo": "^2.8.0",
+    "vnu-jar": "21.10.12"
+  },
+  "directories": {},
+  "dist": {
+    "fileCount": 1678,
+    "integrity": "sha512-s5kmttnbq4BXbx3Bwnj39y+t7Vc3blTtyD77W3aYQ1LlNoS3lNbbGvSYhIbg26Im8KmjScyFpHEevlPOBcIDdA==",
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJijm69ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmoXdw//VYMXAPObEmSrx8BBImsFUmxp/ij04TxqPuwtPy79ugjSBWaI\r\nbmoGLxchdYYKMa2z7PcIg9hMx/mHBAVwNWFSBcIKX1m0865DRZnKaOjqmfpv\r\nf0fzdGVcG0gD2AsT6qn+xvTm+HVvQArqAOFtM0kXJqfak79cHNO+GPzv+8Kf\r\n0fSEWfhCMcAeQSfuB3NzdFbB4B2ubv+/neeqE06CDU8k5CCgJCN2ShdewvBj\r\nMGG3F53YzlxAHRcIAE+6+Hix5NykOvHf+wwZuE69nepw44oP3cwSnYhjZgSu\r\n7M9TyBD1+E6fVCabiiuXMZZ+czA1ove2kPRipRWbKY0Y04o7Lw6tB/jQKNxr\r\n/vYqz7Ah1cF+YbnmJg+qDzaJcy4oi2mzMn4SOZuhiphmGFvxZYTTt9uuH0EJ\r\nw95Zvxm51f7302S/sjhiQYRJFcDVOKHLWhzoYwWlVgn+IEvpNRpSwjrhf9bi\r\nEp13bTcsK0Nn7/KfKpMlqaxHdk+3yxPeciWwmbW+QULjzyZWrz1ML20OQQoW\r\n++2EpkoHnoZF63L6YsKuJXmxeeHq8Zyr30Rg6V8XGby4/ujD4dsNJMAJlcO3\r\nF0uX6Olr95txNpZpIQddoHwJlEbUs3N0xGDLAocIVgaS7ZeEkbBzVJpF/3UJ\r\nIoPMdacCM8foP/XnzFe9AAVozspjXTnU55Y=\r\n=Ep0E\r\n-----END PGP SIGNATURE-----\r\n",
+    "shasum": "14c15e26deaddd42af9f88c4d81f7c45bf26aa98",
+    "signatures": [
+      {
+        "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+        "sig": "MEUCIQC4JS7CPIQ4xkUg9AqpCqO+/ZG4YSjVDE+hikMhBpWYygIgVqLPNrs+i4hV+a8RJB+VtwCso/ECEcGEi5+B0Z0VWkM="
+      }
+    ],
+    "tarball": "https://registry.npmjs.org/bootstrap-icons/-/bootstrap-icons-1.8.3.tgz",
+    "unpackedSize": 2625367
+  },
+  "gitHead": "9bcba3efe7fae552f6425f6f4aaf70590d835482",
+  "homepage": "https://icons.getbootstrap.com/",
+  "hugo-bin": {
+    "buildTags": "extended"
+  },
+  "keywords": [
+    "bootstrap",
+    "icons"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "bootstrap-admin",
+      "email": "getbootstrap@gmail.com"
+    },
+    {
+      "name": "mdo",
+      "email": "markdotto@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    }
+  ],
+  "name": "bootstrap-icons",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twbs/icons.git"
+  },
+  "sass": "font/bootstrap-icons.scss",
+  "scripts": {
+    "docs-build": "hugo --cleanDestinationDir",
+    "docs-purge": "npm run docs-build && purgecss --css docs/static/assets/css/bootstrap.min.css --content \"_site/**/*.html\" \"_site/assets/js/**/*.js\" --keyframes --output docs/static/assets/css/",
+    "docs-serve": "hugo server --port 4000 --disableFastRender",
+    "icons": "npm-run-all icons-main --aggregate-output --parallel icons-sprite icons-font",
+    "icons-font": "fantasticon",
+    "icons-main": "node build/build-svgs.js",
+    "icons-sprite": "svg-sprite --config svg-sprite.json --log=info icons/*.svg",
+    "icons-zip": "cross-env-shell \"rm -rf bootstrap-icons-$npm_package_version && cp -r icons/ bootstrap-icons-$npm_package_version && cp bootstrap-icons.svg bootstrap-icons-$npm_package_version && cp -r font/ bootstrap-icons-$npm_package_version && zip -r9 bootstrap-icons-$npm_package_version.zip bootstrap-icons-$npm_package_version && rm -rf bootstrap-icons-$npm_package_version\"",
+    "netlify": "cross-env-shell HUGO_BASEURL=$DEPLOY_PRIME_URL npm-run-all icons docs-purge docs-build",
+    "pages": "node build/build-pages.js",
+    "release": "npm-run-all icons docs-build icons-zip",
+    "start": "npm run docs-serve",
+    "test": "npm-run-all docs-build --parallel --aggregate-output --continue-on-error test:*",
+    "test:eslint": "eslint --cache --cache-location node_modules/.cache/.eslintcache --report-unused-disable-directives .",
+    "test:fusv": "fusv docs/assets/scss/",
+    "test:lockfile-lint": "lockfile-lint --allowed-hosts npm --allowed-schemes https: --empty-hostname false --type npm --path package-lock.json",
+    "test:stylelint": "stylelint docs/assets/scss/ --cache --cache-location node_modules/.cache/.stylelintcache --rd",
+    "test:vnu": "node build/vnu-jar.js"
+  },
+  "style": "font/bootstrap-icons.css",
+  "version": "1.8.3"
+}

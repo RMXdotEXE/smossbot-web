@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="center title">
+  smossbot publicly being released soon!
+</h1>
+
+<h2 class="center">
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <a href="{% url 'dashboard:index' %}">Go to Dashboard</a>
+{% else %}
+  <a href="{% url 'login' %}">Or, login if you're a tester...</a>
+{% endif %}
+</h2>
+
+{% endblock %}
