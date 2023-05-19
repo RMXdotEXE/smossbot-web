@@ -4,7 +4,7 @@ import os
 import requests
 
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -42,7 +42,10 @@ def index(request):
         'registered': request.session.get('registered', False),
         'active_session': request.session.get('active_session', False),
         'twitch_username': request.session.get('twitch_username', None),
+        'backend_api': os.environ.get('BACKEND_API'),
+        'backend_on': request.session.get('backend_on', False),
     }
+
     return render(request, "dashboard/index.html", context=ctx)
 
 
@@ -170,30 +173,50 @@ def send_data(request):
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: B{}".format(r.status_code))
 
 
-def after_auth(request):
-    command = request.POST.get("command")
-    post_url = "{}{}".format(os.getenv('BACKEND_API'), command)
-    r = requests.post(post_url, json={'user': request.session['twitch_username']})
-    if not 200 <= r.status_code <= 226:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: command{}\nReport this to me!!".format(r.status_code))
-    resp = json.loads(r.content.decode())
-    request.session['active_session'] = resp.get('active_session' or False)
-    request.session['backend_on'] = resp.get('backend_on' or False)
-    return HttpResponseRedirect(reverse('dashboard:index'))
+def callAPI(request):
+    endpoint = request.GET.get("endpoint", None)
+    divclass = request.GET.get("divclass", None)
+    post_url = "{}{}".format(os.getenv('BACKEND_API'), endpoint)
+    rawsponse = requests.post(post_url, json={'user': request.session['twitch_username']})
+    if not 200 <= rawsponse.status_code <= 226:
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: command{}\nReport this to me!!".format(rawsponse.status_code))
+    resp = json.loads(rawsponse.content.decode())
+    request.session['active_session'] = resp.get('active_session', False)
+    request.session['backend_on'] = resp.get('backend_on', False)
+
+    ctx = {
+        'active_session': request.session['active_session'],
+        'backend_on': request.session['backend_on']
+    }
+
+    return render(request, "dashboard/" + divclass + ".html", context=ctx)
 
 
 def bind(request):
-    section = request.POST.get("section")
-    if section == "songreq":
-        id = request.POST.get("songreq_id")
-        request.session['songreq_reward'] = id
-        request.session['songreq_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == id][0]
-    elif section == "chatgpt":
-        id = request.POST.get("chatgpt_id")
-        request.session['chatgpt_reward'] = id
-        request.session['chatgpt_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == id][0]
+
+    songreq_id = request.GET.get("songreq_id", None)
+    if songreq_id is not None and songreq_id != "-1" and songreq_id != "undefined":
+        request.session['songreq_reward'] = songreq_id
+        request.session['songreq_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == songreq_id][0]
+
+    chatgpt_id = request.GET.get("chatgpt_id", None)
+    if chatgpt_id is not None and chatgpt_id != "-1":
+        request.session['chatgpt_reward'] = chatgpt_id
+        request.session['chatgpt_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == chatgpt_id][0]
+
+    ctx = {
+        'spotify_code': request.session.get('spotify_code', None),
+        'custom_rewards': request.session.get('twitch_rewards_data', None),
+        'songreq_reward': request.session.get('songreq_reward', None),
+        'songreq_reward_title': request.session.get('songreq_reward_title', None),
+        'chatgpt_reward': request.session.get('chatgpt_reward', None),
+        'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None)
+    }
     
-    return HttpResponseRedirect(reverse('dashboard:index'))
+    return render(request, "dashboard/req_controller.html", context=ctx)
+
+
+
 
 
 def parse_rewards(rewards_data):

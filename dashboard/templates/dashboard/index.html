@@ -19,20 +19,20 @@
 
 <div class="subcontent">
     <h2>Authentication:</h2>
-    <p>Sign-in with Twitch and Spotify. Spotify is required for song requests.</p>
+    <p>Sign in with Twitch and Spotify. Spotify is required for song requests.</p>
     {% if twitch_code %}
         <button type="button" class="btn btn-success" disabled>
             <i class="bi-twitch"></i> Signed in to Twitch! <i class="bi-check-lg"></i>
         </button>
     {% else %}
-        <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign-In</a>
+        <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign In</a>
     {% endif %}
     {% if spotify_code %}
         <button type="button" class="btn btn-success" disabled>
             <i class="bi-spotify"></i> Signed in to Spotify! <i class="bi-check-lg"></i>
         </button>
     {% else %}
-        <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign-In</a>
+        <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
     {% endif %}
     <br><br>
 </div>
@@ -41,57 +41,8 @@
     <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".</p>
     <p>Some are only visible when authenticated with everything under <b>Authentication</b>.</p>
     {% if twitch_code %}
-        <div class="sidebyside">
-            <h3>Spotify Song Requests</h3>
-            <form action="{% url 'dashboard:bind' %}" method="post">
-                {% csrf_token %}
-                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
-                    <select name="songreq_id" class="form-select">
-                        {% for name, id in custom_rewards.items %}
-                            {% if songreq_reward_title == name %}
-                                <option value="{{ id }}" selected>{{ name }}</option>
-                            {% else %}
-                                <option value="{{ id }}">{{ name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                        {% if not songreq_reward_title %}
-                            <option selected>Reward:</option>
-                        {% endif %}
-                    </select>
-                    <input type="hidden" name="section" value="songreq">
-                    {% if spotify_code %}
-                        <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
-                    {% else %}
-                        <button type="button" class="btn btn-danger" disabled>Sign-in with Spotify first!</button>
-                    {% endif %}
-                </span>
-            </form>
-            <p>Selected: <b>{{ songreq_reward_title }}</b></p>
-        </div>
-    {% endif %}
-    {% if twitch_code %}
-        <div class="sidebyside">
-            <h3>ChatGPT</h3>
-            <form action="{% url 'dashboard:bind' %}" method="post">
-                {% csrf_token %}
-                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
-                    <select name="chatgpt_id" class="form-select">
-                        {% for name, id in custom_rewards.items %}
-                            {% if chatgpt_reward_title == name %}
-                                <option value="{{ id }}" selected>{{ name }}</option>
-                            {% else %}
-                                <option value="{{ id }}">{{ name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                        {% if not chatgpt_reward_title %}
-                            <option selected>Reward:</option>
-                        {% endif %}
-                    </select>
-                    <input type="hidden" name="section" value="chatgpt">
-                    <button class="btn btn-primary" type="submit">Bind <i class="bi-link-45deg"></i></button>
-                </span>
-            </form>
-            <p>Selected: <b>{{ chatgpt_reward_title }}</b></p>
+        <div class="req_controller">
+            {% include "dashboard/req_controller.html" %}
         </div>
     {% endif %}
 </div>
@@ -114,42 +65,92 @@
 {% endif %}
 
 {% if registered %}
-<div class="subcontent">
-    <form action="{% url 'dashboard:after_auth' %}" method="post">
-    {% csrf_token %}
-    {% if not active_session %}
-        <h2>Start your session:</h2>
-        <p>Click this to turn the bot on in your chat. You must do this for it to listen for requests and work.</p>
-        <input type="hidden" name="command" value="start_endpoint">
-        <input class="btn btn-success" type="submit" value="Start Session">
-    {% else %}
-        <h2>End your session:</h2>
-        <p>Make sure to click this when you end stream! This turns the bot off in your chat so you don't get offline requests.</p>
-        <input type="hidden" name="command" value="end_endpoint">
-        <input class="btn btn-warning" type="submit" value="End Session">
-    {% endif %}
-    </form>
+<div class="session_controller">
+    {% include "dashboard/session_controller.html" %}
 </div>
 {% endif %}
 
-{% if superuser %}
-<div class="subcontent">
-    <h2>Staff actions:</h2>
-    <form action="{% url 'dashboard:after_auth' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="command" value="startup">
-        <input type="submit" value="Startup Backend">
-    </form>
-    <form action="{% url 'dashboard:after_auth' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="command" value="shutdown">
-        <input type="submit" value="Shutdown Backend">
-    </form>
-</div>
-<<<<<<< HEAD
-<img src="{% static 'icons/door-open.svg' %}" alt="Bootstrap" width="32" height="32">
-=======
->>>>>>> bedb12cd88b1ab3f8158ae175c0e39b75fa28dfd
-{% endif %}
+<!--div class="backend_controller">
+    {% include "dashboard/backend_controller.html" %}
+</div-->
+
+<script>
+
+    function bindReward()
+    {
+        let songreq_id = $("#songreq_dropdown").val();
+        let chatgpt_id = $("#chatgpt_dropdown").val();
+        $(".req_controller").load("{% url 'dashboard:bind' %}?songreq_id=" + songreq_id + "&chatgpt_id=" + chatgpt_id,
+        function()
+        {
+            let colorBefore = document.getElementById("bind_btn").style.backgroundColor;
+            document.getElementById("bind_btn").style.backgroundColor = "green";
+            document.getElementById("bind_btn").innerHTML = "<b>Binded!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>";
+            setTimeout(function() {
+                document.getElementById("bind_btn").style.backgroundColor = colorBefore;
+                document.getElementById("bind_btn").innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
+            }, 3000);
+        });
+    }
+
+
+    function toggleSession()
+    {
+        let endpoint = $("#sessionToggle").val();
+        let divclass = "session_controller";
+        callEndpoint(endpoint, divclass);
+    }
+
+
+    function callEndpoint(endpoint, divclass, args={})
+    {
+        $("." + divclass).load("{% url 'dashboard:callAPI' %}?endpoint=" + endpoint + "&divclass=" + divclass);
+    }
+
+
+    function sendPost()
+    {
+        let endpoint = $("#backendToggle").val();
+        let divclass = "backend_controller";
+
+        let _data = {
+            content: $("#chatMsg").val()
+        };
+
+        $.ajax({
+            method: "POST",
+            url: "{{ backend_api }}" + "send_ajax_message",
+            data: JSON.stringify(_data),
+            success: testMsgSuccess,
+            error: testMsgFailure
+        });
+    }
+
+
+    function testMsgSuccess(result)
+    {
+        let colorBefore = document.getElementById("send_btn").style.backgroundColor;
+        document.getElementById("send_btn").style.backgroundColor = "green";
+        document.getElementById("send_btn").innerText = "Sent!";
+        setTimeout(function() {
+            document.getElementById("send_btn").style.backgroundColor = colorBefore;
+            document.getElementById("send_btn").innerText = "Send";
+        }, 3000);
+    }
+
+
+    function testMsgFailure(result)
+    {
+        let colorBefore = document.getElementById("send_btn").style.backgroundColor;
+        document.getElementById("send_btn").style.backgroundColor = "red";
+        document.getElementById("send_btn").innerText = "Error";
+        setTimeout(function() {
+            document.getElementById("send_btn").style.backgroundColor = colorBefore;
+            document.getElementById("send_btn").innerText = "Send";
+        }, 3000);
+    }
+    
+</script>
+
 
 {% endblock %}
