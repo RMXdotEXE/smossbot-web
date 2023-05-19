@@ -1,8 +1,13 @@
 /* BASE FORMATTING */
 
 body {
-	background-color: #000000;
 	color: #ffffff;
+	height: 100%;
+	margin: 0;
+	background-attachment: fixed;
+	background-color: #000000;
+	background-image: linear-gradient(#000000, #444444);
+	background-repeat: no-repeat;
 }
 
 .title {
@@ -32,13 +37,6 @@ div.subcontent {
 	border-top: 1px solid #ffffff;
 	padding-top: 3px;
 	margin-bottom: 10px;
-}
-
-.inlinesection {
-	white-space: nowrap;
-	display: "inline";
-	border-left: 1px solid #ffffff;
-	border-right: 1px solid #ffffff;
 }
 
 div.sidebyside {

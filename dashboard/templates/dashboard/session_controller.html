@@ -1,0 +1,15 @@
+<div class="subcontent">
+    <form action="javascript:toggleSession()" method="post"> {% csrf_token %}
+        {% if not active_session %}
+            <h2>Start your session:</h2>
+            <p>Click this to turn the bot on in your chat. You must do this for it to listen for requests and work.</p>
+            <input type="hidden" name="command" id="sessionToggle" value="start_endpoint">
+            <input class="btn btn-success" type="submit" value="Start Session">
+        {% else %}
+            <h2>End your session:</h2>
+            <p>Make sure to click this when you end stream! This turns the bot off in your chat so you don't get offline requests.</p>
+            <input type="hidden" name="command" id="sessionToggle" value="end_endpoint">
+            <input class="btn btn-warning" type="submit" value="End Session">
+        {% endif %}
+    </form>
+</div>

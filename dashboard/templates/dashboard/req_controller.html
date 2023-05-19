@@ -1,0 +1,50 @@
+<div>
+    <form action="javascript:bindReward()" method="post"> {% csrf_token %}
+        <div class="sidebyside">
+            <h3>Spotify Song Requests</h3>
+                {% if not spotify_code %}
+                <button type="button" class="btn btn-danger" disabled>Sign-in with Spotify first!</button>
+                {% else %}
+                    <span class="input-group mb-3 mx-auto" style="max-width: 350px">
+                        <select name="songreq_id" id="songreq_dropdown" class="form-select">
+                            {% for name, id in custom_rewards.items %}
+                                {% if songreq_reward_title == name %}
+                                    <option value="{{ id }}" selected>{{ name }}</option>
+                                {% else %}
+                                    <option value="{{ id }}">{{ name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not songreq_reward_title %}
+                                <option selected value="-1">Reward:</option>
+                            {% endif %}
+                        </select>
+                    </span>
+                {% endif %}
+            <p>Selected: <b>{{ songreq_reward_title }}</b></p>
+        </div>
+        <div class="sidebyside">
+            <h3>ChatGPT</h3>
+                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
+                    <select name="chatgpt_id" id="chatgpt_dropdown" class="form-select">
+                        {% for name, id in custom_rewards.items %}
+                            {% if chatgpt_reward_title == name %}
+                                <option value="{{ id }}" selected>{{ name }}</option>
+                            {% else %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not chatgpt_reward_title %}
+                            <option selected value="-1">Reward:</option>
+                        {% endif %}
+                    </select>
+                </span>
+            <p>Selected: <b>{{ chatgpt_reward_title }}</b></p>
+        </div>
+    <br>
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary" type="submit" id="bind_btn"><b>Bind Rewards</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="bi-link-45deg"></i></button>
+    </div>
+    </form>
+</div>
+
+
