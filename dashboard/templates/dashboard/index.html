@@ -8,149 +8,70 @@
 
 {% block content %}
 
-{% if active_session %}
-<div class="alert alert-success" role="alert" style="margin-top: 10px;">
-  <p>smossbot should be in your chat! Type "!ping" and smossbot should say <b>Pong!</b><br>
-    If not, try clicking <b>End Session</b> and then <b>Start Session</b> again. Sorry for the inconvenience!</p>
-</div>
-{% endif %}
-
 <h1>Welcome {{ twitch_username }}! <a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a></h1>
 
 <div class="subcontent">
-    <h2>Authentication:</h2>
-    <p>Sign in with Twitch and Spotify. Spotify is required for song requests.</p>
-    {% if twitch_code %}
+    <h2>Authentication</h2>
+    {% if twitch_code and spotify_code %}
         <button type="button" class="btn btn-success" disabled>
-            <i class="bi-twitch"></i> Signed in to Twitch! <i class="bi-check-lg"></i>
+            <i class="bi-twitch"></i> <i class="bi-spotify"></i>&nbsp;&nbsp;<b>Fully authenticated!</b>
         </button>
     {% else %}
-        <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign In</a>
-    {% endif %}
-    {% if spotify_code %}
-        <button type="button" class="btn btn-success" disabled>
-            <i class="bi-spotify"></i> Signed in to Spotify! <i class="bi-check-lg"></i>
-        </button>
-    {% else %}
-        <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
+        <p>Sign in with Twitch and Spotify. Spotify is required for song requests.</p>
+        {% if twitch_code %}
+            <button type="button" class="btn btn-success" disabled>
+                <i class="bi-twitch"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
+            </button>
+        {% else %}
+            <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign In</a>
+        {% endif %}
+        {% if spotify_code %}
+            <button type="button" class="btn btn-success" disabled>
+                <i class="bi-spotify"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
+            </button>
+        {% else %}
+            <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
+        {% endif %}
     {% endif %}
     <br><br>
 </div>
 <div class="subcontent">
-    <h2>Bindings:</h2>
-    <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".</p>
-    <p>Some are only visible when authenticated with everything under <b>Authentication</b>.</p>
+    <h2>Bindings</h2>
     {% if twitch_code %}
-        <div class="req_controller">
-            {% include "dashboard/req_controller.html" %}
+        <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".<br>
+        Some are only possible to bind when authenticated with certain methods under <b>Authentication</b>.</p>
+        <div class="req_controller"> {% include "dashboard/req_controller.html" %} </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            <p>You aren't logged in with Twitch; please authenticate!</p>
         </div>
     {% endif %}
 </div>
 
-{% if songreq_reward_title or chatgpt_reward_title %}
-<div class="subcontent">
-    <h2>Send your data:</h2>
-    <p>You'll only need to do this at setup and if you want to change your bindings.</p>
-    <p>Make sure you select all of your desired binds.</p>
-    <form action="{% url 'dashboard:send_data' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="send_data">
-        {% if not registered %}
-            <input class="btn btn-primary" type="submit" value="Send Data">
-        {% else %}
-            <input class="btn btn-primary" type="submit" value="Re-send Data">
-        {% endif %}
-    </form>
-</div>
-{% endif %}
-
-{% if registered %}
-<div class="session_controller">
-    {% include "dashboard/session_controller.html" %}
-</div>
-{% endif %}
-
-<!--div class="backend_controller">
-    {% include "dashboard/backend_controller.html" %}
-</div-->
+<div class="session_controller"> {% include "dashboard/session_controller.html" %} </div>
 
 <script>
 
-    function bindReward()
+    function toggleSession(obj)
     {
-        let songreq_id = $("#songreq_dropdown").val();
-        let chatgpt_id = $("#chatgpt_dropdown").val();
-        $(".req_controller").load("{% url 'dashboard:bind' %}?songreq_id=" + songreq_id + "&chatgpt_id=" + chatgpt_id,
-        function()
-        {
-            let colorBefore = document.getElementById("bind_btn").style.backgroundColor;
-            document.getElementById("bind_btn").style.backgroundColor = "green";
-            document.getElementById("bind_btn").innerHTML = "<b>Binded!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>";
-            setTimeout(function() {
-                document.getElementById("bind_btn").style.backgroundColor = colorBefore;
-                document.getElementById("bind_btn").innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
-            }, 3000);
-        });
-    }
+        let endpoint = "";
+        let id_before = "";
+        
+        if ($(obj).is(":checked"))
+            { endpoint = "start_endpoint"; }
+        else
+            { endpoint = "end_endpoint"; }
+        obj.disabled = true;
 
-
-    function toggleSession()
-    {
-        let endpoint = $("#sessionToggle").val();
         let divclass = "session_controller";
         callEndpoint(endpoint, divclass);
     }
 
-
-    function callEndpoint(endpoint, divclass, args={})
+    function callEndpoint(endpoint, divclass)
     {
         $("." + divclass).load("{% url 'dashboard:callAPI' %}?endpoint=" + endpoint + "&divclass=" + divclass);
     }
 
-
-    function sendPost()
-    {
-        let endpoint = $("#backendToggle").val();
-        let divclass = "backend_controller";
-
-        let _data = {
-            content: $("#chatMsg").val()
-        };
-
-        $.ajax({
-            method: "POST",
-            url: "{{ backend_api }}" + "send_ajax_message",
-            data: JSON.stringify(_data),
-            success: testMsgSuccess,
-            error: testMsgFailure
-        });
-    }
-
-
-    function testMsgSuccess(result)
-    {
-        let colorBefore = document.getElementById("send_btn").style.backgroundColor;
-        document.getElementById("send_btn").style.backgroundColor = "green";
-        document.getElementById("send_btn").innerText = "Sent!";
-        setTimeout(function() {
-            document.getElementById("send_btn").style.backgroundColor = colorBefore;
-            document.getElementById("send_btn").innerText = "Send";
-        }, 3000);
-    }
-
-
-    function testMsgFailure(result)
-    {
-        let colorBefore = document.getElementById("send_btn").style.backgroundColor;
-        document.getElementById("send_btn").style.backgroundColor = "red";
-        document.getElementById("send_btn").innerText = "Error";
-        setTimeout(function() {
-            document.getElementById("send_btn").style.backgroundColor = colorBefore;
-            document.getElementById("send_btn").innerText = "Send";
-        }, 3000);
-    }
-    
 </script>
-
 
 {% endblock %}

@@ -47,4 +47,26 @@
     </form>
 </div>
 
+<script>
+    
+    function bindReward()
+    {
+        let songreq_id = $("#songreq_dropdown").val();
+        let chatgpt_id = $("#chatgpt_dropdown").val();
+        $(".req_controller").load("{% url 'dashboard:bind' %}?songreq_id=" + songreq_id + "&chatgpt_id=" + chatgpt_id,
+        function()
+        {
+            let colorBefore = document.getElementById("bind_btn").style.backgroundColor;
+            document.getElementById("bind_btn").style.backgroundColor = "green";
+            document.getElementById("bind_btn").innerHTML = "<b>Binded!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>";
+            setTimeout(function() {
+                document.getElementById("bind_btn").style.backgroundColor = colorBefore;
+                document.getElementById("bind_btn").innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
+            }, 3000);
+        });
+
+    }
+
+</script>
+
 

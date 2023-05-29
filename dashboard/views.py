@@ -12,9 +12,36 @@ def username_exists(username):
     return User.objects.filter(username=username.lower()).exists()
 
 def index(request):
-    if not username_exists(request.session.get('twitch_username')):
-        return HttpResponseRedirect(reverse('gatekept'))
+    user = request.session.get('twitch_username', None)
+    if user is None:
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: U404")
 
+    # If the user isn't in the whitelist for smossbot, get em OUT
+    if not username_exists(user):
+        return HttpResponseRedirect(reverse('gatekept'))
+    
+    # If this user is not yet registered in the backend, then do so.
+    # Session is not active by default.
+    # If they ARE registered, assert this to the browser.
+    r = requests.get(os.getenv('BACKEND_API') + "users")
+    if not (200 <= r.status_code <= 226):
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: AA{}".format(r.status_code))
+    resp = json.loads(r.content.decode())
+    users = resp.get('users')
+    registered = user in users
+    if not registered:
+        r = requests.post(os.getenv('BACKEND_API'), json=bundleData(request))
+        if 200 <= r.status_code <= 226:
+            resp = json.loads(r.content.decode())
+            request.session['registered'] = resp.get('registered', False)
+            request.session['active_session'] = resp.get('active_session', False)
+        else:
+            return HttpResponseNotFound("Some error occured, idk what lmao. Error code: B{}".format(r.status_code))
+    else:
+        request.session['registered'] = True
+
+    # Prepare the template, and return it once it's done.
+    # Do we really need twitch stuffs?
     twitch_auth_url = "https://id.twitch.tv/oauth2/authorize?" + \
         "client_id=" + os.getenv('TWITCH_CLIENT_ID') + \
         "&redirect_uri=" + os.getenv('TWITCH_REDIRECT_URI') + \
@@ -131,46 +158,11 @@ def spotify(request):
         request.session['spotify_expires_in'] = resp['expires_in']
         request.session['spotify_refresh_token'] = resp['refresh_token']
 
+        r = requests.post(os.getenv('BACKEND_API') + "set_data", json=bundleSpotifyData(request))
+        if not 200 <= r.status_code <= 226:
+            return HttpResponseNotFound("Some error occured, idk what lmao. Error code: bind{}\n".format(r.status_code))
+
     return HttpResponseRedirect(reverse('dashboard:index'))
-
-
-def send_data(request):
-    twitch_data = {
-        'code': request.session['twitch_code'],
-        'access_token': request.session['twitch_access_token'],
-        'expires_in': request.session['twitch_expires_in'],
-        'refresh_token': request.session['twitch_refresh_token'],
-        'token_type': request.session['twitch_token_type'],
-    }
-
-    spotify_data = {
-        'code': request.session.get('spotify_code', None),
-        'access_token': request.session.get('spotify_access_token', None),
-        'token_type': request.session.get('spotify_token_type', None),
-        'expires_in': request.session.get('spotify_expires_in', None),
-        'refresh_token': request.session.get('spotify_refresh_token', None),
-    }
-
-    reward_data = {
-        'songreq_id': request.session.get('songreq_reward', None),
-        'chatgpt_id': request.session.get('chatgpt_reward', None),
-    }
-
-    data = {
-        'username': request.session['twitch_username'],
-        'twitch_data': twitch_data,
-        'spotify_data': spotify_data,
-        'reward_data': reward_data,
-    }
-
-    r = requests.post(os.getenv('BACKEND_API'), json=data)
-    if 200 <= r.status_code <= 226:
-        resp = json.loads(r.content.decode())
-        request.session['registered'] = resp.get('registered', False)
-        request.session['active_session'] = resp.get('active_session', False)
-        return HttpResponseRedirect(reverse('dashboard:index'))
-    else:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: B{}".format(r.status_code))
 
 
 def callAPI(request):
@@ -182,18 +174,15 @@ def callAPI(request):
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: command{}\nReport this to me!!".format(rawsponse.status_code))
     resp = json.loads(rawsponse.content.decode())
     request.session['active_session'] = resp.get('active_session', False)
-    request.session['backend_on'] = resp.get('backend_on', False)
 
     ctx = {
         'active_session': request.session['active_session'],
-        'backend_on': request.session['backend_on']
     }
 
     return render(request, "dashboard/" + divclass + ".html", context=ctx)
 
 
 def bind(request):
-
     songreq_id = request.GET.get("songreq_id", None)
     if songreq_id is not None and songreq_id != "-1" and songreq_id != "undefined":
         request.session['songreq_reward'] = songreq_id
@@ -203,6 +192,10 @@ def bind(request):
     if chatgpt_id is not None and chatgpt_id != "-1":
         request.session['chatgpt_reward'] = chatgpt_id
         request.session['chatgpt_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == chatgpt_id][0]
+
+    r = requests.post(os.getenv('BACKEND_API') + "set_data", json=bundleRewardData(request))
+    if not 200 <= r.status_code <= 226:
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: bind{}\n".format(r.status_code))
 
     ctx = {
         'spotify_code': request.session.get('spotify_code', None),
@@ -217,6 +210,72 @@ def bind(request):
 
 
 
+
+
+def bundleData(_request):
+    twitch_data = {
+        'code': _request.session['twitch_code'],
+        'access_token': _request.session['twitch_access_token'],
+        'expires_in': _request.session['twitch_expires_in'],
+        'refresh_token': _request.session['twitch_refresh_token'],
+        'token_type': _request.session['twitch_token_type'],
+    }
+
+    spotify_data = {
+        'code': _request.session.get('spotify_code', None),
+        'access_token': _request.session.get('spotify_access_token', None),
+        'token_type': _request.session.get('spotify_token_type', None),
+        'expires_in': _request.session.get('spotify_expires_in', None),
+        'refresh_token': _request.session.get('spotify_refresh_token', None),
+    }
+
+    reward_data = {
+        'songreq_id': _request.session.get('songreq_reward', None),
+        'chatgpt_id': _request.session.get('chatgpt_reward', None),
+    }
+
+    data = {
+        'username': _request.session['twitch_username'],
+        'twitch_data': twitch_data,
+        'spotify_data': spotify_data,
+        'reward_data': reward_data,
+    }
+
+    return data
+
+
+
+def bundleSpotifyData(_request):
+    spotify_data = {
+        'code': _request.session.get('spotify_code', None),
+        'access_token': _request.session.get('spotify_access_token', None),
+        'token_type': _request.session.get('spotify_token_type', None),
+        'expires_in': _request.session.get('spotify_expires_in', None),
+        'refresh_token': _request.session.get('spotify_refresh_token', None),
+    }
+
+    data = {
+        'username': _request.session['twitch_username'],
+        'spotify_data': spotify_data,
+        'type': "spotify_data",
+    }
+
+    return data
+
+
+def bundleRewardData(_request):
+    reward_data = {
+        'songreq_id': _request.session.get('songreq_reward', None),
+        'chatgpt_id': _request.session.get('chatgpt_reward', None),
+    }
+
+    data = {
+        'username': _request.session['twitch_username'],
+        'reward_data': reward_data,
+        'type': "reward_data",
+    }
+
+    return data
 
 
 def parse_rewards(rewards_data):
