@@ -45,6 +45,10 @@ div.sidebyside {
 	margin: 0px 20px;
 }
 
+.whitetext {
+	color: white;
+}
+
 .footnotes {
 	margin-top: 50px;
 	border-top: 1px solid #ffffff;

@@ -2,6 +2,7 @@ import os
 
 from django.shortcuts import render
 
+
 def home(request):
     twitch_auth_url = "https://id.twitch.tv/oauth2/authorize?" + \
         "client_id=" + os.getenv('TWITCH_CLIENT_ID') + \
@@ -18,5 +19,14 @@ def home(request):
 
     return render(request, "home.html", context=ctx)
 
+
 def gatekept(request):
     return render(request, "gatekept.html", context={'twitch_username': request.session.get('twitch_username', 'user')})
+
+
+def commands(request):
+    return render(request, "commands.html")
+
+
+def changelog(request):
+    return render(request, "changelog.html")
