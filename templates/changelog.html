@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Gatekept{% endblock %}
+
+{% block content %}
+<h1 class="title">
+    changelog WOOHOOOO
+</h1>
+
+<a href="{% url 'home' %}" class="btn btn-primary btn-lg" role="button">Back to Homepage</a>
+<br><br>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 30, 2023 - v0.2.7</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>The Command Guide and Change Log</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Two new links have been added to the footer: the <b>Command Guide</b> and the <b>Change Log</b>!</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Command Guide: Broadcasters and Moderators can now visit this for information on any commands that smossbot may have.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Change Log: Here is where a list of changes regarding smossbot are displayed so you can keep up with its changes.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Removed the hot local single in your area.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 29, 2023 - v0.2.6</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Minor performance changes</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Removed a bunch of unnecessary buttons, improving the flow of the website.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Turning the bot on and off is now a "switch", and no longer needs to be done when updating bindings.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">The site now sends your data as you authenticate and bind.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Cats now have a 50% increased chance to meow when presented with a lavender T-shirt.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 25, 2023 - v0.2.5</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>ChatGPT fixes</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Fixed an issue causing the bot to not clear out older messages to make way for newer messages.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Started work on ChatGPT-integrated Rocket League bots for a more toxic experience.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 20, 2023 - v0.2.4</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>A smarter ChatGPT</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">ChatGPT is now smarter! It will remember the past several conversations you had with it instead of always forgetting everything.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">It won't remember everything though; because of the way the API works, it can only remember about (on average) the last 15 messages<br>
+                                                                              (from both you and it, a total of 30) until it needs to clear out earlier messages.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Implemented a rare 0.001% chance for smossbot to turn into a goth mommy, for each chat message sent.</li>                                                               
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 19, 2023 - v0.2.3</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Experience improvements</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Implemented new features to make the website experience more responsive (webpages no longer reload unnecessarily).</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Improved the layout to be both a bit more intuitive and presentable.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Reduced the amount of new chatters coming in to chat to ask to trade or play Rocket League with you.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>May 02, 2023 - v0.2.2</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>The !variable command</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Available to broadcasters and their moderators, the !variable command tweaks various parts of smossbot so that you can fine-tune<br>
+                                                                              it specially for your chat.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">To view what variables you can set, head on over to the <b>Command Guide</b> found at the footer of this page.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Implemented under-the-hood support for smossbot's 2024 Presidential Campaign.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>April 23, 2023 - v0.2.1</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Experience improvements</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Removed the login page entirely, and added a "Login with Twitch" button to the homepage. Eligibility to sign-in is determined by a<br>
+                                                                              whitelist.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Made the layout a bit more neat.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">(Meta) Set up a private GitHub repository containing the website's code for easier updates in the future, but mainly for my sanity.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Slightly increased the amount of French teammates samurai_rawad receives.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>March 21, 2023 - v0.2.0</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>smossbot x ChatGPT</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">smossbot now has ChatGPT functionality!</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Changed some underlying logic to accomodate for this, and for all future features.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Set the date for Jessie's comeback stream for about 6 weeks out from now.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>Unknown Dates - v0.1.x</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Previous updates and changes</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Past the update date above, I don't have the exact dates or update logs for the more older updates. I'll get around to scavenging<br>
+                                                                              them in the near future, though!</li>
+            <li class="list-group-item bg-transparent" style="color:white;">i forgor &#128128;</li>
+        </ul>
+    </div>
+</div>
+
+  
+{% endblock %}
