@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Gatekept{% endblock %}
+
+{% block content %}
+<h1 class="title">
+    smossbot's commands for the MODS
+</h1>
+
+<a href="{% url 'home' %}" class="btn btn-primary btn-lg" role="button">Back to Homepage</a>
+<br><br>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b>!ping</b></h5>
+    <div class="card-body">
+        <h5 class="card-title">smossbot responds with <b>Pong!</b> to let you know it's active and listening.</h5>
+        <p class="card-text"><small class="text-body-secondary">Permission level: Viewer</small></p>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b>!variable &lt;variablename&gt; &lt;value&gt;</b></h5>
+    <div class="card-body">
+        <h5 class="card-title">Updates various values that tweak how certain parts of smossbot works in your chat.</h5>
+        <div class="container text-center">
+            <table class="table whitetext">
+                <thead>
+                    <tr>
+                        <th scope="col">variablename</th>
+                        <th scope="col">value</th>
+                        <th scope="col">Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">songreq_emote</th>
+                        <td>Any</td>
+                        <td>The emote that appears before the song request message.<br>
+                            <small><i>Default: Okayge</i></td></small>
+                    </tr>
+                    <tr>
+                        <th scope="row">chatgpt_clearsize</th>
+                        <td>[1,2,3,...10]</td>
+                        <td>An integer (whole number) representing how many past exchanges should be cleared at a time until ChatGPT<br>
+                            can continue on with more conversations.<br>
+                            <small><i>Default: 2</i></td></small></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">chatgpt_full</th>
+                        <td>"true" OR Any</td>
+                        <td>If set to "true", smossbot will not cut off the response from ChatGPT, which will lead to <b>a lot</b> of<br>
+                            messages from smossbot. Precisely, smossbot will send as much Twitch messages as it needs to post the complete<br>
+                            ChatGPT response, typically a maximum of 5. If set to "false" (or anything else), it'll cut it off and replace<br>
+                            the end with "... (max 500)".<br>
+                            <small><i>Default: true</i></td></small></td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;"></li>
+            <p class="card-text"><small class="text-body-secondary">Permission level: Moderator+ OR xzmozxx</small></p>
+        </ul>
+    </div>
+</div>
+  
+{% endblock %}
