@@ -15,6 +15,33 @@ def index(request):
     user = request.session.get('twitch_username', None)
     if user is None:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: U404")
+    
+    # Validate their token to make sure we're still dealing with a valid access token.
+    # Twitch requires this to be done hourly, but I'm just gonna do it every time.
+    # Not terribly efficient. todo: Find potential ways to make this better.
+    valid = False
+    header = {
+        'Authorization': "OAuth {}".format(request.session.get('twitch_access_token', None))
+    }
+    rawsp = requests.get("https://id.twitch.tv/oauth2/validate", headers=header)
+    code = rawsp.status_code
+
+    if 200 <= code <= 226:
+        r = json.loads(rawsp.content.decode())
+        token_scopes = r['scopes']
+        required_scopes = os.getenv('TWITCH_SCOPE').split(" ")
+        valid = (set(token_scopes) == set(required_scopes))
+    else:
+        valid = False
+    if not valid:
+        # Clear out all Twitch-related stuff and boot them back to the home screen
+        request.session['twitch_username'] = None
+        request.session['twitch_access_token'] = None
+        request.session['twitch_expires_in'] = None
+        request.session['twitch_refresh_token'] = None
+        request.session['twitch_token_type'] = None
+        request.session['twitch_scope'] = None
+        return HttpResponseRedirect(reverse('home'))
 
     # If the user isn't in the whitelist for smossbot, get em OUT
     if not username_exists(user):
@@ -64,6 +91,8 @@ def index(request):
         'custom_rewards': request.session.get('twitch_rewards_data', None),
         'songreq_reward': request.session.get('songreq_reward', None),
         'songreq_reward_title': request.session.get('songreq_reward_title', None),
+        'songskip_reward': request.session.get('songskip_reward', None),
+        'songskip_reward_title': request.session.get('songskip_reward_title', None),
         'chatgpt_reward': request.session.get('chatgpt_reward', None),
         'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None),
         'registered': request.session.get('registered', False),
@@ -99,6 +128,7 @@ def twitch(request):
         request.session['twitch_expires_in'] = resp['expires_in']
         request.session['twitch_refresh_token'] = resp['refresh_token']
         request.session['twitch_token_type'] = resp['token_type']
+        request.session['twitch_scope'] = resp['scope']
     else:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 2A{}".format(code))
 
@@ -189,9 +219,14 @@ def bind(request):
         request.session['songreq_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == songreq_id][0]
 
     chatgpt_id = request.GET.get("chatgpt_id", None)
-    if chatgpt_id is not None and chatgpt_id != "-1":
+    if chatgpt_id is not None and chatgpt_id != "-1" and chatgpt_id != "undefined":
         request.session['chatgpt_reward'] = chatgpt_id
         request.session['chatgpt_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == chatgpt_id][0]
+
+    songskip_id = request.GET.get("songskip_id", None)
+    if songskip_id is not None and songskip_id != "-1" and songskip_id != "undefined":
+        request.session['songskip_reward'] = songskip_id
+        request.session['songskip_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == songskip_id][0]
 
     r = requests.post(os.getenv('BACKEND_API') + "set_data", json=bundleRewardData(request))
     if not 200 <= r.status_code <= 226:
@@ -202,6 +237,8 @@ def bind(request):
         'custom_rewards': request.session.get('twitch_rewards_data', None),
         'songreq_reward': request.session.get('songreq_reward', None),
         'songreq_reward_title': request.session.get('songreq_reward_title', None),
+        'songskip_reward': request.session.get('songskip_reward', None),
+        'songskip_reward_title': request.session.get('songskip_reward_title', None),
         'chatgpt_reward': request.session.get('chatgpt_reward', None),
         'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None)
     }
@@ -209,16 +246,27 @@ def bind(request):
     return render(request, "dashboard/req_controller.html", context=ctx)
 
 
+def resend(request):
+    r = requests.post(os.getenv('BACKEND_API'), json=bundleData(request, True))
+    if not (200 <= r.status_code <= 226):
+        HttpResponseNotFound("Some error occured, idk what lmao. Error code: resend{}\n".format(r.status_code))
+    resp = json.loads(r.content.decode())
+    request.session['registered'] = resp.get('registered', False)
+    request.session['active_session'] = resp.get('active_session', False)
+    return HttpResponseRedirect(reverse('dashboard:index'))
 
 
 
-def bundleData(_request):
+
+
+def bundleData(_request, resend:bool = False):
     twitch_data = {
         'code': _request.session['twitch_code'],
         'access_token': _request.session['twitch_access_token'],
         'expires_in': _request.session['twitch_expires_in'],
         'refresh_token': _request.session['twitch_refresh_token'],
         'token_type': _request.session['twitch_token_type'],
+        'scope': _request.session['twitch_scope']
     }
 
     spotify_data = {
@@ -231,6 +279,7 @@ def bundleData(_request):
 
     reward_data = {
         'songreq_id': _request.session.get('songreq_reward', None),
+        'songskip_id': _request.session.get('songskip_reward', None),
         'chatgpt_id': _request.session.get('chatgpt_reward', None),
     }
 
@@ -240,6 +289,9 @@ def bundleData(_request):
         'spotify_data': spotify_data,
         'reward_data': reward_data,
     }
+
+    if resend:
+        data['resend'] = True
 
     return data
 
@@ -266,6 +318,7 @@ def bundleSpotifyData(_request):
 def bundleRewardData(_request):
     reward_data = {
         'songreq_id': _request.session.get('songreq_reward', None),
+        'songskip_id': _request.session.get('songskip_reward', None),
         'chatgpt_id': _request.session.get('chatgpt_reward', None),
     }
 
