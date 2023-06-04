@@ -11,8 +11,31 @@
     changelog WOOHOOOO
 </h1>
 
-<a href="{% url 'home' %}" class="btn btn-primary btn-lg" role="button">Back to Homepage</a>
-<br><br>
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>June 02, 2023 - v0.3.0</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Facelift and Song Skips</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent" style="color:white;">Lots of changes! Firstly, a navigation bar now sits at the top of the webpage to show all of the places you'll ever need
+                                                                              in one place.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">The Command Guide and Change Log have been moved to the new navigaton bar.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">The button to log in with Twitch now sits at the right of the navigation bar, as well as the log out button.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">The background is now a nice animated gradient to add some more "life" into the site, instead of a bland gradient.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">The Dashboard should hopefully look a little bit cleaner. The aforementioned log out button has been removed.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">More changes are to be done in the future regarding looks; hopefully this is the first of many!</li>
+            <li class="list-group-item bg-transparent" style="color:white;">On another note, the website now enforces Twitch's token validation policy. Every hour, Twitch requires developers to validate
+                                                                              the credentials that you gave to me whenever you first signed in. To enforce this, I now validate the token every time you load
+                                                                              up any page that requires Twitch login, aka the Dashboard. Unfortunately, this means that load times will take a small hit, but
+                                                                              this is miles better than being audited by Twitch and getting the whole site taken down. :)</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Under-the-hood change: smossbot now uses a bit of a better detection method for channel point redemptions. Functionally, this
+                                                                              should exhibit little to no difference, but there may be some new performance bugs rising. As always, I'll be monitoring and
+                                                                              hotfixing appropriately.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Lastly, there is now a new bindable reward: <b>Spotify Song Skips</b>! When redeemed, the current song playing gets skipped.
+                                                                              Funnily enough, just this change required the under-the-hood change listed above, which was NOT that easy.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Created <b>$smoss</b>, my very own cryptocurrency. It has no value right now, but invest all you can. The value can only go up!</li>
+        </ul>
+    </div>
+</div>
 
 <div class="card text-bg-dark mb-3">
     <h5 class="card-header"><b><u>May 30, 2023 - v0.2.7</b></u></h5>
@@ -57,7 +80,7 @@
         <h5 class="card-title"><b>A smarter ChatGPT</b></h5>
         <ul class="list-group list-group-flush">
             <li class="list-group-item bg-transparent" style="color:white;">ChatGPT is now smarter! It will remember the past several conversations you had with it instead of always forgetting everything.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">It won't remember everything though; because of the way the API works, it can only remember about (on average) the last 15 messages<br>
+            <li class="list-group-item bg-transparent" style="color:white;">It won't remember everything though; because of the way the API works, it can only remember about (on average) the last 15 messages
                                                                               (from both you and it, a total of 30) until it needs to clear out earlier messages.</li>
             <li class="list-group-item bg-transparent" style="color:white;">Implemented a rare 0.001% chance for smossbot to turn into a goth mommy, for each chat message sent.</li>                                                               
         </ul>
@@ -81,7 +104,7 @@
     <div class="card-body">
         <h5 class="card-title"><b>The !variable command</b></h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;">Available to broadcasters and their moderators, the !variable command tweaks various parts of smossbot so that you can fine-tune<br>
+            <li class="list-group-item bg-transparent" style="color:white;">Available to broadcasters and their moderators, the !variable command tweaks various parts of smossbot so that you can fine-tune
                                                                               it specially for your chat.</li>
             <li class="list-group-item bg-transparent" style="color:white;">To view what variables you can set, head on over to the <b>Command Guide</b> found at the footer of this page.</li>
             <li class="list-group-item bg-transparent" style="color:white;">Implemented under-the-hood support for smossbot's 2024 Presidential Campaign.</li>
@@ -94,7 +117,7 @@
     <div class="card-body">
         <h5 class="card-title"><b>Experience improvements</b></h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;">Removed the login page entirely, and added a "Login with Twitch" button to the homepage. Eligibility to sign-in is determined by a<br>
+            <li class="list-group-item bg-transparent" style="color:white;">Removed the login page entirely, and added a "Login with Twitch" button to the homepage. Eligibility to sign-in is determined by a
                                                                               whitelist.</li>
             <li class="list-group-item bg-transparent" style="color:white;">Made the layout a bit more neat.</li>
             <li class="list-group-item bg-transparent" style="color:white;">(Meta) Set up a private GitHub repository containing the website's code for easier updates in the future, but mainly for my sanity.</li>
@@ -120,7 +143,7 @@
     <div class="card-body">
         <h5 class="card-title"><b>Previous updates and changes</b></h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;">Past the update date above, I don't have the exact dates or update logs for the more older updates. I'll get around to scavenging<br>
+            <li class="list-group-item bg-transparent" style="color:white;">Past the update date above, I don't have the exact dates or update logs for the more older updates. I'll get around to scavenging
                                                                               them in the near future, though!</li>
             <li class="list-group-item bg-transparent" style="color:white;">i forgor &#128128;</li>
         </ul>

@@ -3,17 +3,17 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 class="title">
-  smossbot publicly being released soon!
-</h1>
+<div>
+    <h1 class="title">
+        smossbot being publicly released soon!
+    </h1>
 
-<h2>
-{% if twitch_username %}
-  Hi {{ twitch_username }}!
-  <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard</b> <i class="bi-check-lg"></i></a>
-{% else %}
-  <a role="button" class="btn btn-lg btn-primary" href="{{ twitch_auth_url }}" style="background-color: #6441a5; border-color: white;"><i class="bi-twitch"></i> <b>Sign in with Twitch</b></a>
-{% endif %}
-</h2>
+    <h2>
+    {% if twitch_username %}
+        Hi {{ twitch_username }}!<br><br>
+        <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard</b> <i class="bi-arrow-right"></i></a>
+    {% endif %}
+    </h2>
+</div>
 
 {% endblock %}
