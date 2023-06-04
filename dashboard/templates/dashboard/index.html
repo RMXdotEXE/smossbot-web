@@ -53,12 +53,20 @@
 <div class="session_controller"> {% include "dashboard/session_controller.html" %} </div>
 
 <div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>June 02, 2023 - v0.3.0</b></u></h5>
+    <h5 class="card-header"><b><u>June 04, 2023 - v0.3.0</b></u></h5>
     <div class="card-body">
         <h5 class="card-title"><b>Facelift and Song Skips</b></h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;">Lots of changes! Firstly, a navigation bar now sits at the top of the webpage to show all of the places you'll ever need
-                                                                              in one place.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Lots of changes! <b>Firstly, you MUST update your data. After having signed in again to Twitch, click "Refresh Data" and then
+                                                                              turn smossbot back on in your chat by clicking the slider.</b></li>
+            <li class="list-group-item bg-transparent" style="color:white;">The reason for this is 1: the way that smossbot did channel points before was very "hacky", and wasn't
+                                                                              proper. Implementing this properly means changing the whole system for channel point redemption listening, which means you having
+                                                                              to send over new data from the website.</li>
+            <li class="list-group-item bg-transparent" style="color:white;">2: New permissions need to be given to smossbot for it to function properly, and thus, another authentication from you was necessary
+                                                                              and needs to be passed to the backend by clicking the "Refresh Data" button. If you noticed, you had to give more permissions than
+                                                                              the first time you logged in, and noticed some scary bold words. Don't worry, I have a LOT of more things to worry about than changing
+                                                                              your channel point redemptions. :p</li>
+            <li class="list-group-item bg-transparent" style="color:white;">Secondly, a navigation bar now sits at the top of the webpage to show all of the places you'll ever need in one place.</li>
             <li class="list-group-item bg-transparent" style="color:white;">The Command Guide and Change Log have been moved to the new navigaton bar.</li>
             <li class="list-group-item bg-transparent" style="color:white;">The button to log in with Twitch now sits at the right of the navigation bar, as well as the log out button.</li>
             <li class="list-group-item bg-transparent" style="color:white;">The background is now a nice animated gradient to add some more "life" into the site, instead of a bland gradient.</li>
