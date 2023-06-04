@@ -1,9 +1,9 @@
 <div>
     <form action="javascript:bindReward()" method="post"> {% csrf_token %}
         <div class="sidebyside">
-            <h3>Spotify Song Requests</h3>
+            <h3><b>Spotify Song Requests</b></h3>
                 {% if not spotify_code %}
-                <button type="button" class="btn btn-danger" disabled>Sign-in with Spotify first!</button>
+                    <a class="btn btn-danger" href="{{ spotify_auth_url }}" role="button">Sign-in with Spotify first!</a>
                 {% else %}
                     <span class="input-group mb-3 mx-auto" style="max-width: 350px">
                         <select name="songreq_id" id="songreq_dropdown" class="form-select">
@@ -23,7 +23,25 @@
             <p>Selected: <b>{{ songreq_reward_title }}</b></p>
         </div>
         <div class="sidebyside">
-            <h3>ChatGPT</h3>
+            <h3><b>Spotify Song Skips</b></h3>
+                <span class="input-group mb-3 mx-auto" style="max-width: 350px">
+                    <select name="songskip_id" id="songskip_dropdown" class="form-select">
+                        {% for name, id in custom_rewards.items %}
+                            {% if songskip_reward_title == name %}
+                                <option value="{{ id }}" selected>{{ name }}</option>
+                            {% else %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not songskip_reward_title %}
+                            <option selected value="-1">Reward:</option>
+                        {% endif %}
+                    </select>
+                </span>
+            <p>Selected: <b>{{ songskip_reward_title }}</b></p>
+        </div>
+        <div class="sidebyside">
+            <h3><b>ChatGPT</b></h3>
                 <span class="input-group mb-3 mx-auto" style="max-width: 350px">
                     <select name="chatgpt_id" id="chatgpt_dropdown" class="form-select">
                         {% for name, id in custom_rewards.items %}
@@ -53,7 +71,8 @@
     {
         let songreq_id = $("#songreq_dropdown").val();
         let chatgpt_id = $("#chatgpt_dropdown").val();
-        $(".req_controller").load("{% url 'dashboard:bind' %}?songreq_id=" + songreq_id + "&chatgpt_id=" + chatgpt_id,
+        let songskip_id = $("#songskip_dropdown").val();
+        $(".req_controller").load("{% url 'dashboard:bind' %}?songreq_id=" + songreq_id + "&songskip_id=" + songskip_id + "&chatgpt_id=" + chatgpt_id,
         function()
         {
             let colorBefore = document.getElementById("bind_btn").style.backgroundColor;

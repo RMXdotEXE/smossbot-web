@@ -1,6 +1,6 @@
 <div class="subcontent">
     <div class="sidebyside">
-        <h2>Toggle smossbot</h2>
+        <h2><b><u>Toggle smossbot</u></b></h2>
     </div>
     <div class="sidebyside">
         <div class="form-check form-switch">
@@ -39,14 +39,12 @@
         {% if not active_session %}
             <p>Slide this on to turn the bot on in your chat. You must do this for it to listen for requests and work.</p>
         {% else %}
-            <p>Make sure to slide this back off when you end stream! This turns the bot off in your chat so you don't get offline requests.<br>
-            NOTE: You can get offline requests only for rewards <i>without</i> a cooldown. If your rewards have cooldowns, don't worry.</p>
+            <p>smossbot should be in your chat! Type "!ping" in your chat and smossbot should say <b>Pong!</b>
+            If not, try sliding this off then on again. Sorry for the inconvenience!</p>
+            <div class="alert alert-warning" role="alert">
+                Make sure to slide this back off when you end stream! This turns the bot off in your chat so you don't get offline requests.<br>
+                <b>NOTE:</b> You can get offline requests only for rewards <i>without</i> a cooldown. If your rewards have cooldowns, don't worry.
+            </div>
         {% endif %}
     </div>
-    {% if active_session %}
-        <div class="alert alert-success" role="alert" style="margin-top: 10px;">
-        <p>smossbot should be in your chat! Type "!ping" in your chat and smossbot should say <b>Pong!</b><br>
-            If not, try sliding this off then on again. Sorry for the inconvenience!</p>
-        </div>
-    {% endif %}
 </div>
