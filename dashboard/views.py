@@ -33,6 +33,7 @@ def index(request):
         valid = (set(token_scopes) == set(required_scopes))
     else:
         valid = False
+
     if not valid:
         # Clear out all Twitch-related stuff and boot them back to the home screen
         request.session['twitch_username'] = None
@@ -42,6 +43,22 @@ def index(request):
         request.session['twitch_token_type'] = None
         request.session['twitch_scope'] = None
         return HttpResponseRedirect(reverse('home'))
+    else:
+        # The code IS valid; on refresh, get the user's custom rewards
+        header = {
+            'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
+            'Authorization': "Bearer {}".format(request.session['twitch_access_token'])
+        }
+        resp = requests.get("https://api.twitch.tv/helix/channel_points/custom_rewards", params={'broadcaster_id': request.session['twitch_id']}, headers=header)
+        code = resp.status_code
+        if not 200 <= code <= 226:
+            return HttpResponseNotFound("Some error occured, idk what lmao. Error code: CRR{}".format(code))
+
+        r = resp.content.decode()
+        r = json.loads(r)
+
+        request.session['twitch_rewards_data'] = parse_rewards(r['data'])
+
 
     # If the user isn't in the whitelist for smossbot, get em OUT
     if not username_exists(user):
