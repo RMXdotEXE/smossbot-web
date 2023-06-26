@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+    <body>
+        <div id="player"></div>
+    </body>
+</html>
+
+<script>
+    /* ==============================================
+     * Websocket setup
+     * ==============================================
+     */
+
+    const botSocket = new WebSocket("ws://localhost:5000/ws", "youtube");
+
+    botSocket.onopen = (event) => { console.log("WebSocket opened!"); botSocket.send("{{ username }}:connect"); }
+
+    botSocket.onmessage = (event) =>
+    {
+        if (!event.data.includes("/ytreq"))
+            { return; }
+
+        var youtube_url = event.data.replace("/ytreq", "");
+        var youtube_url_blocks = youtube_url.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+        var youtube_id = undefined !== youtube_url_blocks[2] ? youtube_url_blocks[2].split(/[^0-9a-z_\-]/i)[0] : youtube_url_blocks[0];
+
+        // Play a YT vid here
+        console.log("Received YouTube video request with ID: " + youtube_id);
+        playYTVideo(youtube_id);
+    }
+
+    window.onbeforeunload = function()
+    {
+        botSocket.onclose = function () {}; // disable onclose handler first
+        botSocket.close();
+        console.log("Closed websocket.");
+    }
+
+
+    /* ==============================================
+     * IFrame API setup
+     * ==============================================
+     */
+
+    var player;
+    var video_id_queue = [];
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    document.getElementById('player').style = "visibility: hidden;";
+
+    function onYouTubeIframeAPIReady()
+    {
+        var params = {
+            width: "1280",
+            height: "720",
+            playerVars: { 'playsinline': 1 },
+            events: {
+                'onReady': function(event) { console.log("YT player ready!") },
+                'onStateChange': function (event)
+                {
+                    if (event.data == YT.PlayerState.ENDED)
+                    {
+                        // Player ended and there's still a video in queue, so play that
+                        if (video_id_queue.length > 0)
+                        {
+                            player.loadVideoById(video_id_queue.shift());
+                            console.log("Playing YT video off queue.");
+                        }
+                        else
+                        {
+                            // All done!
+                            document.getElementById('player').style = "visibility: hidden;";
+                            console.log("Finished the queue.")
+                        }
+                        
+                    }
+                },
+                'onError': function(event)
+                {
+                    console.log("Error occured playing YT video. Error code " + event.data);
+                    document.getElementById('player').style = "visibility: hidden;";
+                }
+            }
+        }
+        player = new YT.Player('player', params);
+    }
+
+    function playYTVideo(youtube_id)
+    {
+        video_id_queue.push(youtube_id);
+        console.log("Added " + youtube_id + " to the queue.");
+
+        // If video player isn't playing anything, just load this and play it.
+        if (player.getPlayerState() != YT.PlayerState.PLAYING)
+        {
+            document.getElementById('player').style = "visibility: visible;";
+            player.loadVideoById(video_id_queue.shift());
+            console.log("Playing YT video off empty queue.");
+        }
+    }
+
+</script>

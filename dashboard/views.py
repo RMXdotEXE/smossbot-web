@@ -13,8 +13,14 @@ def username_exists(username):
 
 def index(request):
     user = request.session.get('twitch_username', None)
+
+    # They should never be able to access the dashboard if the twitch_username is none
     if user is None:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: U404")
+    
+    # If the user isn't in the whitelist for smossbot, get em OUT
+    if not username_exists(user):
+        return HttpResponseRedirect(reverse('gatekept'))
     
     # Validate their token to make sure we're still dealing with a valid access token.
     # Twitch requires this to be done hourly, but I'm just gonna do it every time.
@@ -51,29 +57,29 @@ def index(request):
         }
         resp = requests.get("https://api.twitch.tv/helix/channel_points/custom_rewards", params={'broadcaster_id': request.session['twitch_id']}, headers=header)
         code = resp.status_code
-        if not 200 <= code <= 226:
+        if code == 403:
+            # Refreshed API call tells us the user doesn't have channel points unlocked.
+            request.session['twitch_rewards_data'] = -1
+        elif not 200 <= code <= 226:
             return HttpResponseNotFound("Some error occured, idk what lmao. Error code: CRR{}".format(code))
-
-        r = resp.content.decode()
-        r = json.loads(r)
-
-        request.session['twitch_rewards_data'] = parse_rewards(r['data'])
-
-
-    # If the user isn't in the whitelist for smossbot, get em OUT
-    if not username_exists(user):
-        return HttpResponseRedirect(reverse('gatekept'))
+        else:
+            r = resp.content.decode()
+            r = json.loads(r)
+            request.session['twitch_rewards_data'] = parse_rewards(r['data'])
     
     # If this user is not yet registered in the backend, then do so.
     # Session is not active by default.
     # If they ARE registered, assert this to the browser.
     r = requests.get(os.getenv('BACKEND_API') + "users")
     if not (200 <= r.status_code <= 226):
+        print(r.headers)
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: AA{}".format(r.status_code))
     resp = json.loads(r.content.decode())
     users = resp.get('users')
     registered = user in users
-    if not registered:
+    if registered:
+        request.session['registered'] = True
+    else:
         r = requests.post(os.getenv('BACKEND_API'), json=bundleData(request))
         if 200 <= r.status_code <= 226:
             resp = json.loads(r.content.decode())
@@ -81,8 +87,6 @@ def index(request):
             request.session['active_session'] = resp.get('active_session', False)
         else:
             return HttpResponseNotFound("Some error occured, idk what lmao. Error code: B{}".format(r.status_code))
-    else:
-        request.session['registered'] = True
 
     # Prepare the template, and return it once it's done.
     # Do we really need twitch stuffs?
@@ -112,6 +116,8 @@ def index(request):
         'songskip_reward_title': request.session.get('songskip_reward_title', None),
         'chatgpt_reward': request.session.get('chatgpt_reward', None),
         'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None),
+        'ytreq_reward': request.session.get('ytreq_reward', None),
+        'ytreq_reward_title': request.session.get('ytreq_reward_title', None),
         'registered': request.session.get('registered', False),
         'active_session': request.session.get('active_session', False),
         'twitch_username': request.session.get('twitch_username', None),
@@ -123,32 +129,34 @@ def index(request):
 
 
 def twitch(request):
+    # code is gotten from the Twitch Sign-in Button
     twitch_code = request.GET.get('code')
-    if twitch_code is not None:
-        request.session['twitch_code'] = twitch_code
+    if twitch_code is None:
+        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 1A{}".format(code))
+    
+    request.session['twitch_code'] = twitch_code
 
-        params = {
-            'client_id': os.getenv('TWITCH_CLIENT_ID'),
-            'client_secret': os.getenv('TWITCH_CLIENT_SECRET'),
-            'code': twitch_code,
-            'grant_type': 'authorization_code',
-            'redirect_uri': os.getenv('TWITCH_REDIRECT_URI')
-        }
-
-        r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
-        resp = json.loads(r.content.decode())
-
-        if not 200 <= r.status_code <= 226:
-            return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 1A{}".format(code))
-
-        request.session['twitch_access_token'] = resp['access_token']
-        request.session['twitch_expires_in'] = resp['expires_in']
-        request.session['twitch_refresh_token'] = resp['refresh_token']
-        request.session['twitch_token_type'] = resp['token_type']
-        request.session['twitch_scope'] = resp['scope']
-    else:
+    # Grab the twitch authorization code given to us by the user, and use it to grab an OAuth token.
+    # Take the response and store it in the browser.
+    # TODO: better way?
+    params = {
+        'client_id': os.getenv('TWITCH_CLIENT_ID'),
+        'client_secret': os.getenv('TWITCH_CLIENT_SECRET'),
+        'code': twitch_code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': os.getenv('TWITCH_REDIRECT_URI')
+    }
+    r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
+    resp = json.loads(r.content.decode())
+    if not 200 <= r.status_code <= 226:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 2A{}".format(code))
+    request.session['twitch_access_token'] = resp['access_token']
+    request.session['twitch_expires_in'] = resp['expires_in']
+    request.session['twitch_refresh_token'] = resp['refresh_token']
+    request.session['twitch_token_type'] = resp['token_type']
+    request.session['twitch_scope'] = resp['scope']
 
+    # With the authorization code given, now we grab information about the user (their username, ID, and broadcaster type).
     header = {
         'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
         'Authorization': "Bearer {}".format(request.session['twitch_access_token'])
@@ -157,24 +165,25 @@ def twitch(request):
     code = resp.status_code
     if not 200 <= code <= 226:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 3A{}".format(code))
-
     r = resp.content.decode()
     r = json.loads(r)
-
     username = r['data'][0]['login']
     id = r['data'][0]['id']
-
     request.session['twitch_username'] = username
     request.session['twitch_id'] = id
 
+    # If the user isn't a partner or affiliate, they don't have access to channel points. Stop here.
+    if r['data'][0]['broadcaster_type'] == "":
+        request.session['twitch_rewards_data'] = -1
+        return HttpResponseRedirect(reverse('dashboard:index'))
+
+    # Now let's grab the list of channel point rewards the user has set up.
     resp = requests.get("https://api.twitch.tv/helix/channel_points/custom_rewards", params={'broadcaster_id': id}, headers=header)
     code = resp.status_code
     if not 200 <= code <= 226:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 4A{}".format(code))
-
     r = resp.content.decode()
     r = json.loads(r)
-
     request.session['twitch_rewards_data'] = parse_rewards(r['data'])
 
     return HttpResponseRedirect(reverse('dashboard:index'))
@@ -245,6 +254,11 @@ def bind(request):
         request.session['songskip_reward'] = songskip_id
         request.session['songskip_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == songskip_id][0]
 
+    ytreq_id = request.GET.get("ytreq_id", None)
+    if ytreq_id is not None and ytreq_id != "-1" and ytreq_id != "undefined":
+        request.session['ytreq_reward'] = ytreq_id
+        request.session['ytreq_reward_title'] = [k for k, v in request.session['twitch_rewards_data'].items() if v == ytreq_id][0]
+
     r = requests.post(os.getenv('BACKEND_API') + "set_data", json=bundleRewardData(request))
     if not 200 <= r.status_code <= 226:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: bind{}\n".format(r.status_code))
@@ -257,7 +271,9 @@ def bind(request):
         'songskip_reward': request.session.get('songskip_reward', None),
         'songskip_reward_title': request.session.get('songskip_reward_title', None),
         'chatgpt_reward': request.session.get('chatgpt_reward', None),
-        'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None)
+        'chatgpt_reward_title': request.session.get('chatgpt_reward_title', None),
+        'ytreq_reward': request.session.get('ytreq_reward', None),
+        'ytreq_reward_title': request.session.get('ytreq_reward_title', None),
     }
     
     return render(request, "dashboard/req_controller.html", context=ctx)
@@ -298,6 +314,7 @@ def bundleData(_request, resend:bool = False):
         'songreq_id': _request.session.get('songreq_reward', None),
         'songskip_id': _request.session.get('songskip_reward', None),
         'chatgpt_id': _request.session.get('chatgpt_reward', None),
+        'ytreq_id': _request.session.get('ytreq_reward', None)
     }
 
     data = {
@@ -337,6 +354,7 @@ def bundleRewardData(_request):
         'songreq_id': _request.session.get('songreq_reward', None),
         'songskip_id': _request.session.get('songskip_reward', None),
         'chatgpt_id': _request.session.get('chatgpt_reward', None),
+        'ytreq_id': _request.session.get('ytreq_reward', None)
     }
 
     data = {
