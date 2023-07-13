@@ -41,6 +41,7 @@ ALLOWED_HOSTS = hostarray
 # Application definition
 
 INSTALLED_APPS = [
+    'overlay.apps.OverlayConfig',
     'dashboard.apps.DashboardConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -87,10 +88,16 @@ WSGI_APPLICATION = 'smossbot_site.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smossbot_main',
+        'USER': 'moz',
+        'PASSWORD': '***REMOVED***',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 
 # Password validation
@@ -117,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
