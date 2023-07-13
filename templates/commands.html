@@ -15,58 +15,94 @@
     <h5 class="card-header"><b>!ping</b></h5>
     <div class="card-body">
         <h5 class="card-title">smossbot responds with <b>Pong!</b> to let you know it's active and listening.</h5>
-        <p class="card-text"><small class="text-body-secondary">Permission level: Viewer</small></p>
+        <p class="card-text"><small>Permission level: Viewer</small></p>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b>!songskip</b></h5>
+    <div class="card-body">
+        <h5 class="card-title">Manually skip the currently playing song.</h5>
+        <p class="card-text"><small>Permission level: Moderator+</small></p>
     </div>
 </div>
 
 <div class="card text-bg-dark mb-3">
     <h5 class="card-header"><b>!variable &lt;variablename&gt; &lt;value&gt;</b></h5>
     <div class="card-body">
-        <h5 class="card-title">Updates various values that tweak how certain parts of smossbot works in your chat.</h5>
-        <div class="container text-center">
-            <table class="table whitetext">
-                <thead>
-                    <tr>
-                        <th scope="col">variablename</th>
-                        <th scope="col">value</th>
-                        <th scope="col">Purpose</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">songreq_emote</th>
-                        <td>Any</td>
-                        <td>The emote that appears before the song request message.
-                            <br><small><i>Default: Okayge</i></small>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">chatgpt_clearsize</th>
-                        <td>[1,2,3,...10]</td>
-                        <td>
-                            An integer (whole number) representing how many past exchanges should be cleared at a time until ChatGPT can
-                            continue on with more conversations.
-                            <br><small><i>Default: 2</i></small>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">chatgpt_full</th>
-                        <td>"true" OR Any</td>
-                        <td>
-                            If set to "true", smossbot will not cut off the response from ChatGPT, which will lead to <b>a lot</b> of
-                            messages from smossbot. Precisely, smossbot will send as much Twitch messages as it needs to post the complete
-                            ChatGPT response, typically a maximum of 5. If set to "false" (or anything else), it'll cut it off and replace
-                            the end with "... (max 500)".
-                            <br><small><i>Default: false</i></small>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;"></li>
-            <p class="card-text"><small class="text-body-secondary">Permission level: Moderator+ OR xzmozxx</small></p>
-        </ul>
+        <h5 class="card-title">Updates various values that tweak how certain parts of smossbot work, so you can fine-tune behaviours.</h5>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"><u>variablename</u></th>
+                    <th scope="col"><u>value</u></th>
+                    <th scope="col"><u>Purpose</u></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">songreq:emote</th>
+                    <td>Any</td>
+                    <td>The emote that appears before the song request message.
+                        <br><small><i>Default: Okayge</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">chatgpt:clearsize</th>
+                    <td>[1,2,3,...]</td>
+                    <td>
+                        An integer (whole number) representing how many past exchanges should be cleared at a time until ChatGPT can
+                        continue on with more conversations.
+                        <br><small><i>Default: 2</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">chatgpt:showfull</th>
+                    <td>True OR False</td>
+                    <td>
+                        If set to "true", smossbot will not cut off the response from ChatGPT, which will lead to <b>a lot</b> of
+                        messages from smossbot. Precisely, smossbot will send as much Twitch messages as it needs to post the complete
+                        ChatGPT response, typically a maximum of 5. If set to "false" (or anything else), it'll cut it off and replace
+                        the end with "... (max 500)".
+                        <br><small><i>Default: false</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">chatgpt:maxprompttokens</th>
+                    <td>[1,2,3,...]</td>
+                    <td>
+                        An integer (whole number) representing how many tokens ChatGPT can use for the chat completion. A shorter number
+                        means the responses are forced to be more concise, and a larger number means the responses are more thorough.
+                        If you set the number too short for responses to be shorter though, ChatGPT may give you a garbage/junk response. 
+                        For reference, 256 is the minimum recommended amount of tokens ChatGPT needs to supply a successful response.
+                        <br><small><i>Default: 256</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">songskip:emote</th>
+                    <td>Any</td>
+                    <td>The emote that appears before the song skip message.
+                        <br><small><i>Default: PepeLaugh</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">ytreq:maxsecs</th>
+                    <td>[1,2,3,...]</td>
+                    <td>An integer (whole number) representing how many seconds, at the maximum, incoming YouTube requests should play for.
+                        <br><small><i>Default: 60</i></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">ytreq:mutespotify</th>
+                    <td>"true" OR "false"</td>
+                    <td>If set to "true", incoming YouTube requests will pause your Spotify playback for the duration of the videos.
+                        If multiple videos are queued, Spotify will only resume once all queued videos are done.
+                        <br><small><i>Default: true</i></small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <p class="card-text"><small>Permission level: Moderator+ OR xzmozxx</small></p>
     </div>
 </div>
   

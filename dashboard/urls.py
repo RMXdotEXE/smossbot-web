@@ -9,6 +9,8 @@ urlpatterns = [
     path('twitch/', views.twitch, name='twitch'),
     path('spotify/', views.spotify, name='spotify'),
     path('bind/', views.bind, name='bind'),
+    path('unbind/', views.unbind, name='unbind'),
+    path('create/', views.create, name='create'),
     path('callAPI/', views.callAPI, name='callAPI'),
-    path('resend/', views.resend, name='resend')
+    path('delete/', views.delete, name='delete')
 ]

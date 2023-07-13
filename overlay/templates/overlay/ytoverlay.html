@@ -14,20 +14,30 @@
 
     const botSocket = new WebSocket("ws://localhost:5000/ws", "youtube");
 
-    botSocket.onopen = (event) => { console.log("WebSocket opened!"); botSocket.send("{{ username }}:connect"); }
+    botSocket.onopen = (event) =>
+    {
+        console.log("WebSocket opened!");
+        packet = {
+            'username': "{{ username }}", 
+            'init': true
+        }
+        botSocket.send(JSON.stringify(packet));
+    }
 
     botSocket.onmessage = (event) =>
     {
-        if (!event.data.includes("/ytreq"))
+        incoming_data = JSON.parse(event.data);
+
+        if (!("query" in incoming_data))
             { return; }
 
-        var youtube_url = event.data.replace("/ytreq", "");
+        var youtube_url = incoming_data.query;
         var youtube_url_blocks = youtube_url.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/);
         var youtube_id = undefined !== youtube_url_blocks[2] ? youtube_url_blocks[2].split(/[^0-9a-z_\-]/i)[0] : youtube_url_blocks[0];
 
         // Play a YT vid here
         console.log("Received YouTube video request with ID: " + youtube_id);
-        playYTVideo(youtube_id);
+        addVideoToQueue(youtube_id, incoming_data);
     }
 
     window.onbeforeunload = function()
@@ -44,6 +54,8 @@
      */
 
     var player;
+    var currVideoTimeoutID;
+    var currVideoVars = {};
     var video_id_queue = [];
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -61,44 +73,88 @@
                 'onReady': function(event) { console.log("YT player ready!") },
                 'onStateChange': function (event)
                 {
+                    if (event.data == YT.PlayerState.PLAYING)
+                        { currVideoTimeoutID = setTimeout(loadNextVideoOrQuit, currVideoVars.max_seconds * 1000); }
+                    else
+                        { clearTimeout(currVideoTimeoutID); }
+
                     if (event.data == YT.PlayerState.ENDED)
-                    {
-                        // Player ended and there's still a video in queue, so play that
-                        if (video_id_queue.length > 0)
-                        {
-                            player.loadVideoById(video_id_queue.shift());
-                            console.log("Playing YT video off queue.");
-                        }
-                        else
-                        {
-                            // All done!
-                            document.getElementById('player').style = "visibility: hidden;";
-                            console.log("Finished the queue.")
-                        }
-                        
-                    }
+                        { loadNextVideoOrQuit(); }
                 },
                 'onError': function(event)
                 {
                     console.log("Error occured playing YT video. Error code " + event.data);
-                    document.getElementById('player').style = "visibility: hidden;";
+
+                    packet = {
+                        'username': "{{ username }}",
+                        'errored': true,
+                        'queued_data': currVideoVars,
+                        'error_code': event.data
+                    }
+                    botSocket.send(JSON.stringify(packet));
+
+                    loadNextVideoOrQuit();
                 }
             }
         }
         player = new YT.Player('player', params);
     }
 
-    function playYTVideo(youtube_id)
+    function addVideoToQueue(youtube_id, incoming_data)
     {
-        video_id_queue.push(youtube_id);
+        queue_data = {
+            'id': youtube_id,
+            'max_seconds': incoming_data.maxsecs,
+            'mute_spotify': incoming_data.mutespotify,
+            'requester': incoming_data.requested_by, 
+            'reward_id': incoming_data.reward_id,
+            'redemption_id': incoming_data.redemption_id
+        };
+
+        video_id_queue.push(queue_data);
         console.log("Added " + youtube_id + " to the queue.");
 
         // If video player isn't playing anything, just load this and play it.
         if (player.getPlayerState() != YT.PlayerState.PLAYING)
         {
+            currVideoVars = video_id_queue.shift();
             document.getElementById('player').style = "visibility: visible;";
-            player.loadVideoById(video_id_queue.shift());
+            player.loadVideoById(currVideoVars.id);
+            if (incoming_data.mutespotify)
+            {
+                packet = {
+                    'username': "{{ username }}",
+                    'spotify_control': "pausemusic"
+                }
+                botSocket.send(JSON.stringify(packet));
+            }
             console.log("Playing YT video off empty queue.");
+        }
+    }
+
+    function loadNextVideoOrQuit()
+    {
+        // Player ended and there's still a video in queue, so play that
+        if (video_id_queue.length > 0)
+        {
+            currVideoVars = video_id_queue.shift();
+            player.loadVideoById(currVideoVars.id);
+            console.log("Playing YT video off queue.");
+        }
+        else
+        {
+            // All done!
+            document.getElementById('player').style = "visibility: hidden;";
+            if (currVideoVars.mute_spotify)
+            {
+                packet = {
+                    'username': "{{ username }}",
+                    'spotify_control': "playmusic"
+                }
+                botSocket.send(JSON.stringify(packet));
+            }
+            console.log("Finished the queue.");
+            player.stopVideo();
         }
     }
 

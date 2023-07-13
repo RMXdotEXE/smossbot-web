@@ -9,12 +9,27 @@
 {% block content %}
 
 
+{% if messages %}
+<div>
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="subcontent">
     <h2><b><u>Authentication</u></b></h2>
     {% if twitch_code and spotify_code %}
         <button type="button" class="btn btn-success" disabled>
             <i class="bi-twitch"></i> <i class="bi-spotify"></i>&nbsp;&nbsp;<b>Fully authenticated!</b>
         </button>
+        <a class="btn btn-danger" role="button" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi-radioactive"></i>&nbsp;&nbsp;<b>Delete All Information</b>
+        </a>
     {% else %}
         <p>Authenticate with different sites. Spotify is required for song requests.</p>
         {% if twitch_code %}
@@ -31,9 +46,6 @@
         {% else %}
             <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
         {% endif %}
-    {% endif %}
-    {% if registered %}
-        <a class="btn btn-primary" href="{% url 'dashboard:resend' %}" role="button"><i class="bi-arrow-clockwise"></i> Refresh Data</a>
     {% endif %}
     <br>
 </div>
@@ -62,24 +74,72 @@
 {% endif %}
 
 <div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>June 26, 2023 - v0.3.1</b></u></h5>
+    <h5 class="card-header"><b><u>July 13, 2023 - v0.3.2</b></u></h5>
     <div class="card-body">
-        <h5 class="card-title"><b>Refactoring and Fixes</b></h5>
+        <h5 class="card-title"><b>YouTube requests, in-site Channel Point Reward creation/unbinding, more refactoring</b></h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent" style="color:white;">There isn't much in this new version, but things have been changed a lot in the backend.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">The way the data was stored in the backend was highly inefficient made possible by a bunch of design oversights, which has made
-                                                                              development slowly become a nightmare. To remedy this, the storage method was changed so that it's a lot less of a garbage pile,
-                                                                              and is instead more pleasant to work with.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">Additionally, the way the site communicates to the backend has been streamlined and paves the way for future updates. For those
-                                                                              interested to know, the site and the actual Twitch bot are two different programs. The site that you're looking at right now is
-                                                                              just simply an interface for you to interact with the real brains of smossbot, and the brains include listening to channel point
-                                                                              redemptions, storing and accessing data, and such. Web sockets have been implemented to allow more real-time communication.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">Fixed a <b>bunch</b> of edge-cases with the site to hopefully reduce error codes, and instead handles them gracefully.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">Finally, the site has been updated to the latest version of Django.</li>
-            <li class="list-group-item bg-transparent" style="color:white;">Attempted to fix a bug where depression caused a 100% debuff to productivity, but failed. The team is actively investigating this.</li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                YouTube requests are now functional, but experimental; bind the reward in your Dashboard, then open OBS and create a browser
+                source that links to <b>https://www.smossbot.com/overlay/yourusernamehere</b>, with dimensions 1280x720. By default, videos will play
+                for 60 seconds and will mute Spotify, if you have songs playing. To change this behaviour, go to the <b>Commands</b> page at the top
+                and read the <i>!variable</i> command.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                You will now see a blue + button next to each channel point reward dropdown. Creating a channel point reward in this menu will
+                automatically bind it, and <b>allows for automatic accepting/refunding of channel point rewards</b>. Conversely, a red trash button shows
+                up if you'd like to completely unbind whatever functionality from whatever reward. Unbinding a reward created in-site will delete it
+                completely.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                At the top under <b>Authentication</b>, you will see a "Delete All Information" button. This button is dangerous and does exactly what it
+                says; it wipes your data from the database. This includes all binds, variables set, credential tokens, and everything else. If you're
+                experiencing errors, this button may help. In general though, don't ever click it (unless you want to), and instead report bugs to me.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Additionally, more refactoring was done in regards to data storage. Information is now stored in a more proper way, and is hopefully the
+                last time storage should need to be changed.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Removed legacy support for users who didn't update their credentials. This more refined storage system makes the legacy system
+                unmaintainable and nearly impossible.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Updated Bootstrap to version 5.3.0, and made various small tweaks to formatting around the website.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                August 12, 2036, The Heat Death of the Universe.
+            </li>
         </ul>
     </div>
 </div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" style="background-color: rgba(255, 0, 0, 0.05);">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: rgb(120, 0, 0);">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete All Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <b>ARE YOU SURE YOU WANT TO DELETE ALL OF YOUR INFORMATION?</b><br><br>
+                    <b>ALL</b> information will be lost, including your binds, credentials, authentications, set variables, information in the database,
+                    and everything else! It will be as if you never logged on to the website!<br><br>
+                    <b>ARE YOU SURE?</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">no nvm lmao</button>
+                <a class="btn btn-danger" href="{% url 'dashboard:delete' %}" role="button">
+                    <b>Yes I'm sure; NUKE IT.</b>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+  
 
 
 <script>
@@ -96,13 +156,6 @@
 
         let divclass = "session_controller";
         callEndpoint(endpoint, divclass);
-    }
-
-    function refreshData()
-    {
-        $.ajax({
-            url: "{% url 'dashboard:resend' %}"
-        });
     }
 
     function callEndpoint(endpoint, divclass)
