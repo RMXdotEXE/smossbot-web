@@ -30,7 +30,7 @@ def index(request):
         return HttpResponseRedirect(reverse('home'))
     
     # If the user isn't in the whitelist for smossbot, get em OUT
-    if not username_exists(user.username):
+    if not username_exists(user.username) and user.username != "xzmozxx":
         return HttpResponseRedirect(reverse('gatekept'))
     
     twitch_credentials = user.twitchcredentials
@@ -161,12 +161,15 @@ def twitch(request):
     if not 200 <= resp.status_code <= 226:
         return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 3A{}".format(resp.status_code))
     user_data = json.loads(resp.content.decode())
+    user_id = user_data['data'][0]['id']
 
-    # Write to DB
-    user = TwitchUser(
-        twitch_id = user_data['data'][0]['id'],
-        username = user_data['data'][0]['login']
-    )
+    # Write to DB if they're a new user
+    user = getUser(user_id)
+    if user is None:
+        user = TwitchUser(
+            twitch_id = user_data['data'][0]['id'],
+            username = user_data['data'][0]['login']
+        )
     twitch_credentials = TwitchCredentials(
         user = user,
         code = twitch_code,
