@@ -8,11 +8,22 @@
         smossbot being publicly released soon!
     </h1>
 
-    <h2>
-    {% if twitch_username %}
-        Hi {{ twitch_username }}!<br><br>
-        <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard</b> <i class="bi-arrow-right"></i></a>
-    {% endif %}
+    <h2 style="margin: 5% 0%;">
+        {% if twitch_username %}
+            Hey {{ twitch_username }}!<br>
+            <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard</b> <i class="bi-arrow-right"></i></a>
+            <br><br>
+        {% endif %}
+    </h2>
+
+    <h2 style="margin: 5% 0%;">
+        <p>
+            smossbot is a Twitch bot that offers features for your stream, right from your chat for your viewers to use.
+            <br><br>
+            Through this website, you can set up features such as Spotify song requests, ChatGPT conversations, and YouTube video requests - all from this website in a matter of minutes!
+            <br><br>
+            smossbot is currently in closed beta, which means access is limited to users on a whitelist. If you'd like to request access, contact me below!
+        </p>
     </h2>
 </div>
 
