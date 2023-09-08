@@ -56,8 +56,12 @@ class SongSkipVars(models.Model):
     user = models.OneToOneField(TwitchUser, on_delete=models.CASCADE, primary_key=True)
     emote = models.CharField(max_length=100, default="PepeLaugh")   # For those dumb long emote names
 
+# Variables for ChatGPT image requests.
+class GPTImageVars(models.Model):
+    user = models.OneToOneField(TwitchUser, on_delete=models.CASCADE, primary_key=True)
+    imagesize = models.IntegerField(default=2)
+
 # Variables for ChatGPT; some should be uneditable
-# TODO: reflect this in the DB itself somehow
 class ChatGPTVars(models.Model):
     user = models.OneToOneField(TwitchUser, on_delete=models.CASCADE, primary_key=True)
     clearsize = models.IntegerField(default=6)

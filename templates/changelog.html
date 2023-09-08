@@ -13,6 +13,37 @@
 
 
 <div class="card text-bg-dark mb-3">
+    <h5 class="card-header"><b><u>September 08, 2023 - v0.3.3</b></u></h5>
+    <div class="card-body">
+        <h5 class="card-title"><b>Small tweaks, bug fixes, public GitHub</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                The GitHub repository for this website (but not the bot itself, for now) is now up on GitHub! Check the footer to go to it.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Refactored some very redundant code in the front-end that was causing me a huge headache to maintain related to display of
+                channel point dropdowns.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Refactored the bot's code heavily, and optimized file structure. Fun fact: the code for the entire Twitch bot was done in 3 files,
+                each with hundreds of lines of code. Now, the files are split into around 5 folders and a total of 10-ish files!
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Fixed every request other than YouTube requests not automatically refunding failed redemptions (as always, only if the reward
+                and bind were done in-site).
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                Fixed the website deactivating your session if you had an active one going, and logged in to the website after being
+                timed out.
+            </li>
+            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
+                (Finally) fixed the incorrect instructions in the <b>Bindings</b> section of the Dashboard.
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card text-bg-dark mb-3">
     <h5 class="card-header"><b><u>July 13, 2023 - v0.3.2</b></u></h5>
     <div class="card-body">
         <h5 class="card-title"><b>YouTube requests, in-site Channel Point Reward creation/unbinding, more refactoring</b></h5>

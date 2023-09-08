@@ -3,6 +3,8 @@ import json
 import os
 import requests
 
+from itertools import chain
+
 from dashboard.models import *
 from datetime import datetime
 from django.contrib import messages
@@ -11,10 +13,11 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
+from .forms import UploadForm
 from typing import Union
 
 
-REWARD_CODES = ["songreq", "chatgpt", "songskip", "ytreq"]
+REWARD_CODES = ["songreq", "chatgpt", "songskip", "gptimage", "ytreq"]
 
 
 # ======================================================================================================================
@@ -394,6 +397,30 @@ def create(request):
     return render(request, "dashboard/req_controller.html", context=buildContext(user))
 
 
+def upload(request):
+    user = getUser(request.session.get('twitch_id', None))
+    if user is None:
+        messages.add_message(request, messages.ERROR, "An error occured, and you were signed out.")
+        return HttpResponseRedirect(reverse('home'))
+    
+    upload_form = None
+    
+    if request.method == "POST":
+        print(request.POST)
+        upload_form = UploadForm(request.POST)
+        if upload_form.is_valid():
+            messages.success(request, "Uploaded file successfilly!")
+            return render(request, "dashboard/upload.html", context=buildContext(user, {'form': UploadForm()}))
+        else:
+            messages.error(request, "Error occured uploading.")
+            return render(request, "dashboard/upload.html", context=buildContext(user, {'form': UploadForm(request.POST)}))
+    else:
+        upload_form = UploadForm()
+
+
+    return render(request, "dashboard/upload.html", context=buildContext(user, {'form': upload_form}))
+
+
 def callAPI(request):
     endpoint = request.GET.get("endpoint", None)
     divclass = request.GET.get("divclass", None)
@@ -448,7 +475,7 @@ def delete(request):
 # ======================================================================================================================
 
 
-def buildContext(user: TwitchUser) -> dict:
+def buildContext(user: TwitchUser, extra: dict = None) -> dict:
     user.refresh_from_db()
 
     try:
@@ -490,17 +517,28 @@ def buildContext(user: TwitchUser) -> dict:
 
     ctx.update({'twitch_rewards': all_rewards_list})
 
+    reward_info = {}
     binded_rewards = all_rewards.filter(binded_to__isnull=False)
-    for reward in binded_rewards:
-        for bind in reward.binded_to:
-            reward_bind = {
-                bind + '_bind': {
-                    'id': reward.reward_id,
-                    'title': reward.reward_title,
-                    'bot_created': reward.bot_created
-                }
+    binded_reward_codes = list(chain.from_iterable([reward.binded_to for reward in binded_rewards if reward.binded_to]))
+    for code in REWARD_CODES:
+        if code == "gptimage" and user.username != "xzmozxx":
+            continue
+        bind_info = {
+            code: None
+        }
+        if code in binded_reward_codes:
+            # TODO: why does `[code]` work and not `code` ???
+            # https://docs.djangoproject.com/en/4.2/ref/models/querysets/#contains
+            binded_reward = binded_rewards.filter(binded_to__contains=[code]).first()
+            bind_info[code] = {
+                'id': binded_reward.reward_id,
+                'title': binded_reward.reward_title,
+                'bot_created': binded_reward.bot_created
             }
-            ctx.update(reward_bind)
+        reward_info.update(bind_info)
+    ctx.update({'reward_info': reward_info})
+
+    if extra: ctx.update(extra)
 
     return ctx
 
@@ -523,6 +561,11 @@ def buildUserVars(user: TwitchUser) -> None:
             user = user
         )
         chatgpt_vars.save()
+    if not hasattr(user, 'gptimagevars'):
+        gptimage_vars = GPTImageVars(
+            user = user
+        )
+        gptimage_vars.save()
     if not hasattr(user, 'ytreqvars'):
         ytreq_vars = YTReqVars(
             user = user

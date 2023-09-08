@@ -12,154 +12,44 @@
     </div>
     {% endif %}
 
-    <div>
-        <div class="sidebyside" style="min-width: 500px;">
-            <h3><b>Spotify Song Requests</b></h3>
-                {% if not spotify_code %}
-                    <a class="btn btn-danger" href="{{ spotify_auth_url }}" role="button">Sign-in with Spotify first!</a>
-                {% else %}
-                    <span class="input-group mb-3 mx-auto">
-                        <!-- WAKEUP: why tf is this staying selected on smth... -->
-                        <select name="songreq_id" id="songreq_dropdown" class="form-select">
-                            <option value="" {% if not songreq_bind %}selected{% endif %}>Reward:</option>
-                            {% for reward in twitch_rewards %}
-                                <option value="{{ reward.reward_id }}" {% if reward.reward_id == songreq_bind.id %}selected{% endif %}>{{ reward.reward_title }}</option>
-                            {% endfor %}
-                        </select>
-                        {% if not songreq_bind.bot_created %}
-                            <button type="button" id="songreq_btn" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#custom-reward-popup" data-bs-reward="songreq" data-bs-placement="top"
-                                data-bs-custom-class="custom-tooltip" data-bs-title="Create a New Reward">
-                                <i class="bi-plus-circle"></i>
-                            </button>
-                        {% endif %}
-                        {% if songreq_bind %}
-                            <button type="button" id="songreq_delbtn" class="btn btn-danger" data-bs-placement="top"
-                                data-bs-custom-class="custom-tooltip" data-bs-title="Unbind Reward" onclick="unbindReward('songreq')">
-                                <i class="bi-trash3"></i>
-                            </button>
-                        {% endif %}
-                    </span>
-                    {% if songreq_bind %}
-                        <p>Selected: <b>{{ songreq_bind.title }}</b></p>
-                    {% else %}
-                        <p>Currently not binded.</p>
-                    {% endif %}
-                {% endif %}
-        </div>
-        <div class="sidebyside" style="min-width: 500px;">
-            <h3><b>Spotify Song Skips</b></h3>
-                {% if not spotify_code %}
-                    <a class="btn btn-danger" href="{{ spotify_auth_url }}" role="button">Sign-in with Spotify first!</a>
-                {% else %}
-                    <span class="input-group mb-3 mx-auto">
-                        <select name="songskip_id" id="songskip_dropdown" class="form-select">
-                            {% for reward in twitch_rewards %}
-                                {% if reward.reward_id == songskip_bind.id %}
-                                    <option value="{{ reward.reward_id }}" selected>{{ reward.reward_title }}</option>
-                                {% else %}
-                                    <option value="{{ reward.reward_id }}">{{ reward.reward_title }}</option>
-                                {% endif %}
-                            {% endfor %}
-                            {% if not songskip_bind %}
-                                <option selected value="">Reward:</option>
-                            {% endif %}
-                        </select>
-                        {% if not songskip_bind.bot_created %}
-                            <button type="button" id="songskip_btn" class="btn btn-primary" data-bs-toggle="modal" 
-                                data-bs-target="#custom-reward-popup" data-bs-reward="songskip" data-bs-placement="top"
-                                data-bs-custom-class="custom-tooltip" data-bs-title="Create a New Reward">
-                                <i class="bi-plus-circle"></i>
-                            </button>
-                        {% endif %}
-                        {% if songskip_bind %}
-                            <button type="button" id="songskip_delbtn" class="btn btn-danger" data-bs-placement="top"
-                                data-bs-custom-class="custom-tooltip" data-bs-title="Unbind Reward" onclick="unbindReward('songskip')">
-                                <i class="bi-trash3"></i>
-                            </button>
-                        {% endif %}
-                    </span>
-                    {% if songskip_bind %}
-                        <p>Selected: <b>{{ songskip_bind.title }}</b></p>
-                    {% else %}
-                        <p>Currently not binded.</p>
-                    {% endif %}
-                {% endif %}
-        </div>
-    </div>
-    <br>
-    <div>
-        <div class="sidebyside" style="min-width: 500px;">
-            <h3><b>ChatGPT</b></h3>
-                <span class="input-group mb-3 mx-auto">
-                    <select name="chatgpt_id" id="chatgpt_dropdown" class="form-select">
-                        {% for reward in twitch_rewards %}
-                            {% if reward.reward_id == chatgpt_bind.id %}
-                                <option value="{{ reward.reward_id }}" selected>{{ reward.reward_title }}</option>
-                            {% else %}
-                                <option value="{{ reward.reward_id }}">{{ reward.reward_title }}</option>
-                            {% endif %}
-                        {% endfor %}
-                        {% if not chatgpt_bind %}
-                            <option selected value="">Reward:</option>
-                        {% endif %}
-                    </select>
-                    {% if not chatgpt_bind.bot_created %}
-                        <button type="button" id="chatgpt_btn" class="btn btn-primary" data-bs-toggle="modal" 
-                            data-bs-target="#custom-reward-popup" data-bs-reward="chatgpt" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip" data-bs-title="Create a New Reward">
-                            <i class="bi-plus-circle"></i>
-                        </button>
-                    {% endif %}
-                    {% if chatgpt_bind %}
-                        <button type="button" id="chatgpt_delbtn" class="btn btn-danger" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip" data-bs-title="Unbind Reward" onclick="unbindReward('chatgpt')">
-                            <i class="bi-trash3"></i>
-                        </button>
-                    {% endif %}
-                </span>
-            {% if chatgpt_bind %}
-                <p>Selected: <b>{{ chatgpt_bind.title }}</b></p>
-            {% else %}
-                <p>Currently not binded.</p>
+    {% for code_name, code_bind in reward_info.items %}
+    <div class="sidebyside" style="min-width: 500px;">
+        <h3><b>
+            {% if code_name == "songreq" %} Spotify Song Requests
+            {% elif code_name == "chatgpt" %} ChatGPT Chat Requests
+            {% elif code_name == "songskip" %} Spotify Song Skips
+            {% elif code_name == "ytreq" %} YouTube Requests
+            {% elif code_name == "gptimage" %} ChatGPT Image Requests
             {% endif %}
-        </div>
-        <div class="sidebyside" style="min-width: 500px;">
-            <h3><b>YouTube Requests</b></h3>
+        </b></h3>
             <span class="input-group mb-3 mx-auto">
-                <select name="ytreq_id" id="ytreq_dropdown" class="form-select">
+                <select name="{{ code_name }}_id" id="{{ code_name }}_dropdown" class="form-select">
+                    <option value="" {% if not reward_code.bind %}selected{% endif %}>Reward:</option>
                     {% for reward in twitch_rewards %}
-                        {% if reward.reward_id == ytreq_bind.id %}
-                            <option value="{{ reward.reward_id }}" selected>{{ reward.reward_title }}</option>
-                        {% else %}
-                            <option value="{{ reward.reward_id }}">{{ reward.reward_title }}</option>
-                        {% endif %}
+                        <option value="{{ reward.reward_id }}" {% if reward.reward_id == code_bind.id %}selected{% endif %}>{{ reward.reward_title }}</option>
                     {% endfor %}
-                    {% if not ytreq_bind %}
-                        <option selected value="">Reward:</option>
-                    {% endif %}
                 </select>
-                {% if not ytreq_bind.bot_created %}
-                    <button type="button" id="ytreq_btn" class="btn btn-primary" data-bs-toggle="modal" 
-                        data-bs-target="#custom-reward-popup" data-bs-reward="ytreq" data-bs-placement="top"
+                {% if not code_bind.bot_created %}
+                    <button type="button" id="{{ code_name }}_btn" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#custom-reward-popup" data-bs-reward="{{ code_name }}" data-bs-placement="top"
                         data-bs-custom-class="custom-tooltip" data-bs-title="Create a New Reward">
                         <i class="bi-plus-circle"></i>
                     </button>
                 {% endif %}
-                {% if ytreq_bind %}
-                    <button type="button" id="ytreq_delbtn" class="btn btn-danger" data-bs-placement="top"
-                        data-bs-custom-class="custom-tooltip" data-bs-title="Unbind Reward" onclick="unbindReward('ytreq')">
+                {% if code_bind %}
+                    <button type="button" id="{{ code_name }}_delbtn" class="btn btn-danger" data-bs-placement="top"
+                        data-bs-custom-class="custom-tooltip" data-bs-title="Unbind Reward" onclick="unbindReward('{{code_name}}')">
                         <i class="bi-trash3"></i>
                     </button>
                 {% endif %}
             </span>
-            {% if ytreq_bind %}
-                <p>Selected: <b>{{ ytreq_bind.title }}</b></p>
+            {% if code_bind %}
+                <p>Selected: <b>{{ code_bind.title }}</b></p>
             {% else %}
                 <p>Currently not binded.</p>
             {% endif %}
-        </div>
     </div>
+    {% endfor %}
     <br>
     <form action="javascript:bindReward()" method="post"> {% csrf_token %}
         <div class="d-grid gap-2">
@@ -218,17 +108,6 @@
                                         <small>If enabled, a required text field will appear to viewers in the reward.</small>
                                     </div>
                                 </div>
-                                <!--div class="mb-3">
-                                    <div class="sidebyside">
-                                        <label for="auto-skip" class="col-form-label">Skip Rewards Requests Queue</label>
-                                    </div>
-                                    <div class="form-switch sidebyside">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="auto-skip" style="transform: scale(1.25);">
-                                    </div>
-                                    <div>
-                                        <small>If enabled, the redemption gets automatically accepted and doesn't appear in the queue.</small>
-                                    </div>
-                                </div-->
                                 <div class="mb-3">
                                     <div class="sidebyside">
                                         <label for="has-cooldown" class="col-form-label">Cooldown & Limits</label>
@@ -290,77 +169,60 @@
             var reward = button.getAttribute("data-bs-reward");
 
             // TODO: Clean this up!!!! There has to be a better way for this trash
-            // Store defaults as an obj{} and override specific fields in the switch?
             switch (reward)
             {
                 case "songreq":
                     rewardModal.querySelector(".modal-title").textContent = "Create Spotify Song Request Reward";
-                    rewardModal.querySelector("#hidden_reward_id").value = "songreq";
                     rewardModal.querySelector("#reward-name").value = "Request Spotify Song";
                     rewardModal.querySelector("#description").value = "SPOTIFY ONLY: Request a song found on Spotify. Using \"Share > Copy Song Link\" is the best method, but you can also just type the song and artist name, but it might rarely mess up.";
-                    rewardModal.querySelector("#text-required").checked = true;
-                    rewardModal.querySelector("#text-required").disabled = true;
-                    rewardModal.querySelector("#text-required-section").style.display = "none";
                     rewardModal.querySelector("#cost").value = 500;
                     rewardModal.querySelector("#_color").value = "#1DB954";
-                    // rewardModal.querySelector("#auto-skip").checked = true;
-                    rewardModal.querySelector("#has-cooldown").checked = false;
-                    rewardModal.querySelector("#cooldown-time").value = 0;
-                    rewardModal.querySelector("#cooldown-limit").value = 0;
-                    rewardModal.querySelector("#cooldown-userlimit").value = 0;
                     break;
                 case "songskip":
                     rewardModal.querySelector(".modal-title").textContent = "Create Spotify Song Skip Reward";
-                    rewardModal.querySelector("#hidden_reward_id").value = "songskip";
                     rewardModal.querySelector("#reward-name").value = "Skip Spotify Song";
                     rewardModal.querySelector("#description").value = "SPOTIFY ONLY: Skip the current song that's playing.";
                     rewardModal.querySelector("#text-required").checked = false;
+                    rewardModal.querySelector("#text-required").disabled = false;
+                    rewardModal.querySelector("#text-required-section").style.display = "inline";
                     rewardModal.querySelector("#cost").value = 1000;
                     rewardModal.querySelector("#_color").value = "#1DB954";
-                    // rewardModal.querySelector("#auto-skip").checked = true;
-                    rewardModal.querySelector("#has-cooldown").checked = false;
-                    rewardModal.querySelector("#cooldown-time").value = 0;
-                    rewardModal.querySelector("#cooldown-limit").value = 0;
-                    rewardModal.querySelector("#cooldown-userlimit").value = 0;
                     break;
                 case "chatgpt":
                     rewardModal.querySelector(".modal-title").textContent = "Create ChatGPT Reward";
-                    rewardModal.querySelector("#hidden_reward_id").value = "chatgpt";
                     rewardModal.querySelector("#reward-name").value = "ChatGPT";
                     rewardModal.querySelector("#description").value = "Type something to ChatGPT; whatever you type gets directly sent to it!";
-                    rewardModal.querySelector("#text-required").checked = true;
-                    rewardModal.querySelector("#text-required").disabled = true;
-                    rewardModal.querySelector("#text-required-section").style.display = "none";
                     rewardModal.querySelector("#cost").value = 100;
                     rewardModal.querySelector("#_color").value = "#00A67E";
-                    // rewardModal.querySelector("#auto-skip").checked = true;
-                    rewardModal.querySelector("#has-cooldown").checked = false;
-                    rewardModal.querySelector("#cooldown-time").value = 0;
-                    rewardModal.querySelector("#cooldown-limit").value = 0;
-                    rewardModal.querySelector("#cooldown-userlimit").value = 0;
                     break;
                 case "ytreq":
                     rewardModal.querySelector(".modal-title").textContent = "Create YouTube Request Reward";
-                    rewardModal.querySelector("#hidden_reward_id").value = "ytreq";
                     rewardModal.querySelector("#reward-name").value = "YouTube Video Request";
                     rewardModal.querySelector("#description").value = "Request a YouTube video to play on-stream! Some videos may not play due to copyright issues or their creators disabling embedding.";
-                    rewardModal.querySelector("#text-required").checked = true;
-                    rewardModal.querySelector("#text-required").disabled = true;
-                    rewardModal.querySelector("#text-required-section").style.display = "none";
                     rewardModal.querySelector("#cost").value = 2500;
                     rewardModal.querySelector("#_color").value = "#FF0000";
-                    // rewardModal.querySelector("#auto-skip").checked = true;
-                    rewardModal.querySelector("#has-cooldown").checked = false;
-                    rewardModal.querySelector("#cooldown-time").value = 0;
-                    rewardModal.querySelector("#cooldown-limit").value = 0;
-                    rewardModal.querySelector("#cooldown-userlimit").value = 0;
+                    break;
+                case "gptimage":
+                    rewardModal.querySelector(".modal-title").textContent = "Create ChatGPT Image Request Reward";
+                    rewardModal.querySelector("#reward-name").value = "ChatGPT Image Request";
+                    rewardModal.querySelector("#description").value = "Request ChatGPT to generate an image with the prompt you give it.";
+                    rewardModal.querySelector("#cost").value = 250;
+                    rewardModal.querySelector("#_color").value = "#00A67E";
                     break;
             }
+            
+            rewardModal.querySelector("#hidden_reward_id").value = reward;
+            rewardModal.querySelector("#text-required").checked = true;
+            rewardModal.querySelector("#text-required").disabled = true;
+            rewardModal.querySelector("#text-required-section").style.display = "none";
+            rewardModal.querySelector("#has-cooldown").checked = false;
+            rewardModal.querySelector("#cooldown-time").value = 0;
+            rewardModal.querySelector("#cooldown-limit").value = 0;
+            rewardModal.querySelector("#cooldown-userlimit").value = 0;
 
             rewardModal.querySelector("#cooldown-time").disabled = true;
             rewardModal.querySelector("#cooldown-limit").disabled = true;
             rewardModal.querySelector("#cooldown-userlimit").disabled = true;
-
             rewardModal.querySelector("#has-cooldown").addEventListener("click", event =>
             {
                 if (rewardModal.querySelector("#has-cooldown").checked)
@@ -395,12 +257,14 @@
         let chatgpt_id = $("#chatgpt_dropdown").val() || null;
         let songskip_id = $("#songskip_dropdown").val() || null;
         let ytreq_id = $("#ytreq_dropdown").val() || null;
+        let gptimage_id = $("#gptimage_dropdown").val() || null;
         clearTooltips();
         $(".req_controller").load(
             "{% url 'dashboard:bind' %}?songreq=" + songreq_id + 
             "&songskip=" + songskip_id + 
             "&chatgpt=" + chatgpt_id + 
-            "&ytreq=" + ytreq_id,
+            "&ytreq=" + ytreq_id +
+            "&gptimage=" + gptimage_id,
         function()
         {
             let btn = document.getElementById("bind_btn");

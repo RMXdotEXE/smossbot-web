@@ -15,6 +15,8 @@ from dotenv import load_dotenv
 
 from pathlib import Path
 
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,7 +35,6 @@ if not DEBUG:
     hostarray = ["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"]
 else:
     hostarray = ["127.0.0.1", "localhost"]
-    load_dotenv()
 
 ALLOWED_HOSTS = hostarray
 
@@ -137,9 +138,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 if not DEBUG: 
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 else:
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static/")

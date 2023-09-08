@@ -60,8 +60,10 @@
     <div class="subcontent">
         <h2><b><u>Bindings</u></b></h2>
         {% if twitch_code %}
-            <p>Bind whatever channel point rewards you want. Choose the reward from the dropdown, and click "Bind SR".<br>
-            Some are only possible to bind when authenticated with certain methods under <b>Authentication</b>.</p>
+            <p>Bind whatever channel point rewards you want. Under each functionality you want, choose an existing reward.<br>
+            When you're done, click the "Bind Rewards" button at the bottom of this section.<br><br>
+            Some rewards are only possible to bind when authenticated with certain methods under <b>Authentication</b>.<br>
+            Create a Custom Reward (blue + button) in this website for your rewards to be eligible for auto-refunding in case of failure.</p>
             <div class="req_controller"> {% include "dashboard/req_controller.html" %} </div>
         {% else %}
             <div class="alert alert-danger" role="alert">
@@ -74,40 +76,31 @@
 {% endif %}
 
 <div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>July 13, 2023 - v0.3.2</b></u></h5>
+    <h5 class="card-header"><b><u>September 08, 2023 - v0.3.3</b></u></h5>
     <div class="card-body">
-        <h5 class="card-title"><b>YouTube requests, in-site Channel Point Reward creation/unbinding, more refactoring</b></h5>
+        <h5 class="card-title"><b>Small tweaks, bug fixes, public GitHub</b></h5>
         <ul class="list-group list-group-flush">
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                YouTube requests are now functional, but experimental; bind the reward in your Dashboard, then open OBS and create a browser
-                source that links to <b>https://www.smossbot.com/overlay/yourusernamehere</b>, with dimensions 1280x720. By default, videos will play
-                for 60 seconds and will mute Spotify, if you have songs playing. To change this behaviour, go to the <b>Commands</b> page at the top
-                and read the <i>!variable</i> command.
+                The GitHub repository for this website (but not the bot itself, for now) is now up on GitHub! Check the footer to go to it.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                You will now see a blue + button next to each channel point reward dropdown. Creating a channel point reward in this menu will
-                automatically bind it, and <b>allows for automatic accepting/refunding of channel point rewards</b>. Conversely, a red trash button shows
-                up if you'd like to completely unbind whatever functionality from whatever reward. Unbinding a reward created in-site will delete it
-                completely.
+                Refactored some very redundant code in the front-end that was causing me a huge headache to maintain related to display of
+                channel point dropdowns.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                At the top under <b>Authentication</b>, you will see a "Delete All Information" button. This button is dangerous and does exactly what it
-                says; it wipes your data from the database. This includes all binds, variables set, credential tokens, and everything else. If you're
-                experiencing errors, this button may help. In general though, don't ever click it (unless you want to), and instead report bugs to me.
+                Refactored the bot's code heavily, and optimized file structure. Fun fact: the code for the entire Twitch bot was done in 3 files,
+                each with hundreds of lines of code. Now, the files are split into around 5 folders and a total of 10-ish files!
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Additionally, more refactoring was done in regards to data storage. Information is now stored in a more proper way, and is hopefully the
-                last time storage should need to be changed.
+                Fixed every request other than YouTube requests not automatically refunding failed redemptions (as always, only if the reward
+                and bind were done in-site).
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Removed legacy support for users who didn't update their credentials. This more refined storage system makes the legacy system
-                unmaintainable and nearly impossible.
+                Fixed the website deactivating your session if you had an active one going, and logged in to the website after being
+                timed out.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Updated Bootstrap to version 5.3.0, and made various small tweaks to formatting around the website.
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                August 12, 2036, The Heat Death of the Universe.
+                (Finally) fixed the incorrect instructions in the <b>Bindings</b> section of the Dashboard.
             </li>
         </ul>
     </div>
