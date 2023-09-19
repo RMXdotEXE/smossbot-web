@@ -9,21 +9,9 @@
 {% block content %}
 
 
-{% if messages %}
-<div>
-    {% for message in messages %}
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <div class="alert alert-danger" role="alert">
-            {{ message }}
-        </div>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
-
 <div class="subcontent">
-    <h2><b><u>Authentication</u></b></h2>
-    {% if twitch_code and spotify_code %}
+    <h2 class="subtitle">Authentication</h2>
+    {% if fully_authenticated %}
         <button type="button" class="btn btn-success" disabled>
             <i class="bi-twitch"></i> <i class="bi-spotify"></i>&nbsp;&nbsp;<b>Fully authenticated!</b>
         </button>
@@ -32,25 +20,34 @@
         </a>
     {% else %}
         <p>Authenticate with different sites. Spotify is required for song requests.</p>
-        {% if twitch_code %}
+        {% if fully_authenticated_outdated %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                Since you last authenticated, new features have been added to smossbot. Reauthenticating allows smossbot to do more for your stream!
+                Your existing functionality won't be affected if you choose not to, though.
+            </div>
+        {% endif %}
+        {% if twitch_authenticated %}
             <button type="button" class="btn btn-success" disabled>
                 <i class="bi-twitch"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
             </button>
         {% else %}
             <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign In</a>
         {% endif %}
-        {% if spotify_code %}
-            <button type="button" class="btn btn-success" disabled>
-                <i class="bi-spotify"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
-            </button>
+        {% if spotify_authenticated %}
+            {% if spotify_current %}
+                <button type="button" class="btn btn-success" disabled>
+                    <i class="bi-spotify"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
+                </button>
+            {% else %}
+                <a class="btn btn-success" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> <b>Update Spotify Credentials</b></a>
+            {% endif %}
         {% else %}
             <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
         {% endif %}
     {% endif %}
-    <br>
 </div>
 {% if custom_rewards == -1 %}
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <b>Sorry {{ twitch_username }}, but you can't set things up at the moment.</b><br><br>
         Right now, functionality is only supported via channel point redemptions, and this means you need to <br>
         be at least an affiliate to use smossbot, since affiliates get access to channel point rewards. <br>
@@ -58,15 +55,15 @@
     </div>
 {% else %}
     <div class="subcontent">
-        <h2><b><u>Bindings</u></b></h2>
-        {% if twitch_code %}
+        <h2 class="subtitle">Bindings</h2>
+        {% if twitch_authenticated %}
             <p>Bind whatever channel point rewards you want. Under each functionality you want, choose an existing reward.<br>
             When you're done, click the "Bind Rewards" button at the bottom of this section.<br><br>
             Some rewards are only possible to bind when authenticated with certain methods under <b>Authentication</b>.<br>
             Create a Custom Reward (blue + button) in this website for your rewards to be eligible for auto-refunding in case of failure.</p>
             <div class="req_controller"> {% include "dashboard/req_controller.html" %} </div>
         {% else %}
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <p>You aren't logged in with Twitch; please authenticate!</p>
             </div>
         {% endif %}
@@ -76,31 +73,26 @@
 {% endif %}
 
 <div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>September 08, 2023 - v0.3.3</b></u></h5>
+    <h5 class="card-header"><b><u>September 18, 2023 - v0.4.0</b></u></h5>
     <div class="card-body">
-        <h5 class="card-title"><b>Small tweaks, bug fixes, public GitHub</b></h5>
+        <h5 class="card-title"><b>Sound requests, File Manager</b></h5>
         <ul class="list-group list-group-flush">
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                The GitHub repository for this website (but not the bot itself, for now) is now up on GitHub! Check the footer to go to it.
+                Sound requests are now live! Bind them in your Dashboard, and get them to play on stream using the same overlay as YouTube requests.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Refactored some very redundant code in the front-end that was causing me a huge headache to maintain related to display of
-                channel point dropdowns.
+                The URL for YouTube requests (and sound requests) can now be copied from your Dashboard.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Refactored the bot's code heavily, and optimized file structure. Fun fact: the code for the entire Twitch bot was done in 3 files,
-                each with hundreds of lines of code. Now, the files are split into around 5 folders and a total of 10-ish files!
+                To upload sound files for sound requests, a new File Manager tab has been added to the navigation bar.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Fixed every request other than YouTube requests not automatically refunding failed redemptions (as always, only if the reward
-                and bind were done in-site).
+                The File Manager is very limited in that you can't upload too many files with too big of sizes, namely the fact that there can be a lot
+                of potential usage. Once resources increase on my end in terms of hardware and finances, this'll be raised. Case-by-case increases for
+                these limits (found on the File Manager page) can be negotiated by DMing me.
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Fixed the website deactivating your session if you had an active one going, and logged in to the website after being
-                timed out.
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                (Finally) fixed the incorrect instructions in the <b>Bindings</b> section of the Dashboard.
+                Added some under-the-hood support for a potential dashboard for channel moderators in the future.
             </li>
         </ul>
     </div>

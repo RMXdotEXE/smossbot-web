@@ -8,11 +8,13 @@
 
 <script>
     /* ==============================================
-     * Websocket setup
+     * Setup
      * ==============================================
      */
 
     const botSocket = new WebSocket("{{ url }}", "youtube");
+    const audio = new Audio();
+    const mediaDir = "{{ MEDIA_URL }}";
 
     botSocket.onopen = (event) =>
     {
@@ -31,6 +33,8 @@
         if (!("for" in incoming_data))
             { return; }
 
+        console.log(incoming_data);
+
         if (incoming_data.for == "youtube")
         {
             // YT Vid request packet
@@ -40,6 +44,12 @@
 
             console.log("Received YouTube video request with ID: " + youtube_id);
             addVideoToQueue(youtube_id, incoming_data);
+        }
+        if (incoming_data.for == "soundreq")
+        {
+            // Sound request
+            console.log("Received sound request: " + incoming_data.redemption_data.input);
+            getSound(incoming_data);
         }
     }
 
@@ -159,6 +169,12 @@
             console.log("Finished the queue.");
             player.stopVideo();
         }
+    }
+
+    function getSound(incoming_data)
+    {
+        audio.src = mediaDir + incoming_data.redemption_data.input + ".mp3";
+        audio.play();
     }
 
 </script>
