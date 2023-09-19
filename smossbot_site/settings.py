@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'overlay.apps.OverlayConfig',
     'dashboard.apps.DashboardConfig',
     'callback.apps.CallbackConfig',
+    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

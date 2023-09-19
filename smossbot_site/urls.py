@@ -28,6 +28,7 @@ urlpatterns = [
     path('callback/', include('callback.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('overlay/', include('overlay.urls')),
+    path('api/', include('api.urls')),
     path('commands/', views.commands, name='commands'),
     path('changelog/', views.changelog, name='changelog'),
     path('gatekept/', views.gatekept, name='gatekept'),
