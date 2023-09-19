@@ -29,14 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == "True"
 
-
-hostarray = []
-if not DEBUG:
-    hostarray = ["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"]
-else:
-    hostarray = ["127.0.0.1", "localhost"]
-
-ALLOWED_HOSTS = hostarray
+ALLOWED_HOSTS = ["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -44,6 +37,7 @@ ALLOWED_HOSTS = hostarray
 INSTALLED_APPS = [
     'overlay.apps.OverlayConfig',
     'dashboard.apps.DashboardConfig',
+    'callback.apps.CallbackConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dashboard.middleware.UsernameMiddleware',
 ]
 
 ROOT_URLCONF = 'smossbot_site.urls'
@@ -73,9 +68,11 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
+                'django.template.context_processors.media',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dashboard.context_processors.username',
             ],
         },
     },
@@ -138,15 +135,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 
 if not DEBUG: 
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 else:
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static/")
     ]
+
+
+# Media files
+# https://docs.djangoproject.com/en/3.2/topics/files/
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 # Default primary key field type

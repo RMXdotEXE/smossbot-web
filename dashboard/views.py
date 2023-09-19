@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 import requests
@@ -9,7 +8,8 @@ from dashboard.models import *
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
+from django.core.validators import RegexValidator
+from django.http import HttpRequest, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
@@ -17,7 +17,7 @@ from .forms import UploadForm
 from typing import Union
 
 
-REWARD_CODES = ["songreq", "chatgpt", "songskip", "gptimage", "ytreq"]
+REWARD_CODES = ["songreq", "songskip", "chatgpt", "gptimage", "soundreq", "ytreq"]
 
 
 # ======================================================================================================================
@@ -26,7 +26,7 @@ REWARD_CODES = ["songreq", "chatgpt", "songskip", "gptimage", "ytreq"]
 
 
 @never_cache
-def index(request):
+def index(request: HttpRequest):
     # If no user exists, redirect to home
     user = getUser(request.session.get('twitch_id', None))
     if not user:
@@ -133,114 +133,9 @@ def index(request):
     return render(request, "dashboard/index.html", context=buildContext(user))
 
 
-# Entry point for the dashboard from someone signing in. Twitch URI redirects to here
-def twitch(request):
-    # code is gotten from the Twitch Sign-in Button
-    twitch_code = request.GET.get('code')
-
-    if twitch_code is None:
-        messages.add_message(request, messages.ERROR, "An error occured signing into Twitch; no code was returned.")
-        return HttpResponseRedirect(reverse('dashboard:index'))
-
-    # Get OAuth credentials from this user
-    params = {
-        'client_id': os.getenv('TWITCH_CLIENT_ID'),
-        'client_secret': os.getenv('TWITCH_CLIENT_SECRET'),
-        'code': twitch_code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': os.getenv('TWITCH_REDIRECT_URI')
-    }
-    resp = requests.post("https://id.twitch.tv/oauth2/token", params=params)
-    if not 200 <= resp.status_code <= 226:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 2A{}".format(resp.status_code))
-    auth_data = json.loads(resp.content.decode())
-
-    # With the authorization code given, now we grab information about the user (their username, ID, and broadcaster type).
-    header = {
-        'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
-        'Authorization': "Bearer {}".format(auth_data['access_token'])
-    }
-    resp = requests.get("https://api.twitch.tv/helix/users", headers=header)
-    if not 200 <= resp.status_code <= 226:
-        return HttpResponseNotFound("Some error occured, idk what lmao. Error code: 3A{}".format(resp.status_code))
-    user_data = json.loads(resp.content.decode())
-    user_id = user_data['data'][0]['id']
-
-    # Write to DB if they're a new user
-    user = getUser(user_id)
-    if user is None:
-        user = TwitchUser(
-            twitch_id = user_data['data'][0]['id'],
-            username = user_data['data'][0]['login']
-        )
-    twitch_credentials = TwitchCredentials(
-        user = user,
-        code = twitch_code,
-        access_token = auth_data['access_token'],
-        expires_in = auth_data['expires_in'],
-        refresh_token = auth_data['refresh_token'],
-        token_type = auth_data['token_type'],
-        scope = auth_data['scope']
-    )
-    user.save()
-    twitch_credentials.save()
-
-    # Create vars for this user
-
-    request.session['twitch_id'] = user.twitch_id
-    
-    return HttpResponseRedirect(reverse('dashboard:index'))
-
-
-# Spotify URI redirects to here
-def spotify(request):
-    user = getUser(request.session.get('twitch_id', None))
-    if user is None:
-        messages.add_message(request, messages.ERROR, "An error occured signing into Spotify; no user exists.")
-        return render(request, "dashboard/req_controller.html", context=buildContext(user))
-
-    spotify_code = request.GET.get('code')
-    if spotify_code is None:
-        messages.add_message(request, messages.ERROR, "An error occured signing into Spotify; no code was returned.")
-        return HttpResponseRedirect(reverse('dashboard:index'))
-
-    auth_str = "{}:{}".format(os.getenv('SPOTIFY_CLIENT_ID'), os.getenv('SPOTIFY_CLIENT_SECRET'))
-    encoded_str = base64.urlsafe_b64encode(auth_str.encode()).decode()
-
-    header = {
-        'Content-Type': "application/x-www-form-urlencoded",
-        'Authorization': "Basic {}".format(encoded_str)
-    }
-    params = {
-        'grant_type': 'authorization_code',
-        'code': spotify_code,
-        'redirect_uri': os.getenv('SPOTIFY_REDIRECT_URI')
-    }
-
-    resp = requests.post("https://accounts.spotify.com/api/token", params=params, headers=header)
-    if not 200 <= resp.status_code <= 226:
-        messages.add_message(request, messages.ERROR, "An error occured signing into Spotify; grabbing authorization token was unsuccessful.")
-        return HttpResponseRedirect(reverse('dashboard:index'))
-    resp_data = json.loads(resp.content.decode())
-
-    # Write to DB
-    spotify_credentials = SpotifyCredentials(
-        user = user,
-        code = spotify_code,
-        access_token = resp_data['access_token'],
-        expires_in = resp_data['expires_in'],
-        refresh_token = resp_data['refresh_token'],
-        token_type = resp_data['token_type'],
-        scope = resp_data['scope'].split(' ')
-    )
-    spotify_credentials.save()
-
-    return HttpResponseRedirect(reverse('dashboard:index'))
-
-
 # Someone clicks the "Bind Rewards" button
 @never_cache
-def bind(request):
+def bind(request: HttpRequest):
     user = getUser(request.session.get('twitch_id', None))
     if user is None:
         messages.add_message(request, messages.ERROR, "An error occured binding your channel point rewards.")
@@ -274,7 +169,7 @@ def bind(request):
 
 # Whenever a user clicks on trashcan icon to unbind a reward
 @never_cache
-def unbind(request):
+def unbind(request: HttpRequest):
     user = getUser(request.session.get('twitch_id', None))
     if user is None:
         messages.add_message(request, messages.ERROR, "An error occured binding your channel point rewards.")
@@ -310,7 +205,7 @@ def unbind(request):
 
 # Whenever a channel point reward is created automatically by smossbot
 @never_cache
-def create(request):
+def create(request: HttpRequest):
     user = getUser(request.session.get('twitch_id', None))
     if user is None:
         messages.add_message(request, messages.ERROR, "An error occured creating your channel point reward.")
@@ -397,31 +292,89 @@ def create(request):
     return render(request, "dashboard/req_controller.html", context=buildContext(user))
 
 
-def upload(request):
+@never_cache
+def upload(request: HttpRequest):
     user = getUser(request.session.get('twitch_id', None))
     if user is None:
         messages.add_message(request, messages.ERROR, "An error occured, and you were signed out.")
         return HttpResponseRedirect(reverse('home'))
     
-    upload_form = None
+    if request.method == "POST":
+        upload_form = UploadForm(request.POST, request.FILES)
+        if upload_form.is_valid():
+            doc = UploadedFile(
+                file = request.FILES['file'],
+                user = user,
+                tag = request.POST['tag']
+            )
+            doc.save()
+            messages.success(request, "Uploaded file successfully!")
+            return HttpResponseRedirect(reverse('dashboard:upload'))
+        else:
+            errors = upload_form.errors.get_json_data()
+            listed_errors = ''.join([fielddata[0]['message'] for fielddata in errors.values()])
+            messages.error(request, "Error occured uploading: {}.".format(listed_errors))
+    
+    uploaded_files = UploadedFile.objects.filter(user=user).order_by('upload_date')
+    max_uploads = False
+    if len(uploaded_files) >= 10:
+        max_uploads = True
+    
+    return render(request, "dashboard/upload.html", context=buildContext(user, {'form': UploadForm(), 'maxuploads': max_uploads, 'uploaded_files': uploaded_files}))
+
+
+def changeTag(request: HttpRequest):
+    user = getUser(request.session.get('twitch_id', None))
+    if user is None:
+        messages.add_message(request, messages.ERROR, "An error occured, and you were signed out.")
+        return HttpResponseRedirect(reverse('home'))
+    
+    try:
+        if request.method == "POST":
+            new_tag = request.POST.get('newTagName', None)
+            alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+            alphanumeric(new_tag)
+            recipient = request.POST.get('hiddenFileID')
+            file = UploadedFile.objects.filter(user=user, id=recipient).first()
+            file.tag = new_tag
+            file.save()
+            messages.success(request, "Updated file tag successfully!")
+    except ValidationError:
+        messages.error(request, "Only alphanumeric characters are allowed.")
+
+    return HttpResponseRedirect(reverse('dashboard:upload'))
+
+
+def deleteFile(request: HttpRequest):
+    user = getUser(request.session.get('twitch_id', None))
+    if user is None:
+        messages.add_message(request, messages.ERROR, "An error occured, and you were signed out.")
+        return HttpResponseRedirect(reverse('home'))
     
     if request.method == "POST":
-        print(request.POST)
-        upload_form = UploadForm(request.POST)
-        if upload_form.is_valid():
-            messages.success(request, "Uploaded file successfilly!")
-            return render(request, "dashboard/upload.html", context=buildContext(user, {'form': UploadForm()}))
-        else:
-            messages.error(request, "Error occured uploading.")
-            return render(request, "dashboard/upload.html", context=buildContext(user, {'form': UploadForm(request.POST)}))
-    else:
-        upload_form = UploadForm()
+        recipient = request.POST.get('hiddenFileID')
+        file = UploadedFile.objects.filter(user=user, id=recipient).first()
+        file.delete()
+        messages.success(request, "Deleted file successfully!")
+
+    return HttpResponseRedirect(reverse('dashboard:upload'))
 
 
-    return render(request, "dashboard/upload.html", context=buildContext(user, {'form': upload_form}))
+def deleteFiles(request: HttpRequest):
+    user = getUser(request.session.get('twitch_id', None))
+    if user is None:
+        messages.add_message(request, messages.ERROR, "An error occured, and you were signed out.")
+        return HttpResponseRedirect(reverse('home'))
+    
+    uploaded_files = UploadedFile.objects.filter(user=user)
+    for file in uploaded_files:
+        file.delete()
+
+    messages.success(request, "All files successfully deleted.")
+    return HttpResponseRedirect(reverse('dashboard:upload'))
 
 
-def callAPI(request):
+def callAPI(request: HttpRequest):
     endpoint = request.GET.get("endpoint", None)
     divclass = request.GET.get("divclass", None)
     post_url = "{}{}".format(os.getenv('BACKEND_API'), endpoint)
@@ -443,7 +396,7 @@ def callAPI(request):
 
 # DANGER ZONE
 # Deletes user from the DB incase they want it.
-def delete(request):
+def delete(request: HttpRequest):
     user = getUser(request.session.get('twitch_id', None))
     if not user:
         return HttpResponseRedirect(reverse('home'))
@@ -479,20 +432,29 @@ def buildContext(user: TwitchUser, extra: dict = None) -> dict:
     user.refresh_from_db()
 
     try:
-        twitch_code = user.twitchcredentials.code
+        twitch_authenticated = user.twitchcredentials is not None
     except TwitchUser.DoesNotExist:
-        twitch_code = None
+        twitch_authenticated = None
 
     try:
-        spotify_code = user.spotifycredentials.code
+        spotify_authenticated = user.spotifycredentials.code
+        spotify_current = set(os.getenv('SPOTIFY_SCOPE').split(' ')).issubset(set(user.spotifycredentials.scope))
     except SpotifyCredentials.DoesNotExist:
-        spotify_code = None
+        spotify_authenticated = None
+        spotify_current = False
+
+    fully_authenticated = twitch_authenticated and spotify_authenticated and spotify_current
+    fully_authenticated_outdated = twitch_authenticated and spotify_authenticated and (not spotify_current)
+
     ctx = {
         'twitch_username': user.username,
         'superuser': user.username == "xzmozxx",
         'active_session': user.active_session,
-        'twitch_code': twitch_code,
-        'spotify_code': spotify_code
+        'twitch_authenticated': twitch_authenticated,
+        'spotify_authenticated': spotify_authenticated,
+        'spotify_current': spotify_current,
+        'fully_authenticated': fully_authenticated,
+        'fully_authenticated_outdated': fully_authenticated_outdated
     }
 
     twitch_auth_url = "https://id.twitch.tv/oauth2/authorize?" + \
@@ -594,7 +556,7 @@ def twitchReauth(user: TwitchUser, twitch_credentials:TwitchCredentials = None) 
         'refresh_token': twitch_credentials.refresh_token
     }
     resp = requests.post("https://id.twitch.tv/oauth2/token", headers=header, params=params)
-    if resp.status_code != 200:
+    if not resp.ok:
         return result
 
     data = json.loads(resp.content.decode())

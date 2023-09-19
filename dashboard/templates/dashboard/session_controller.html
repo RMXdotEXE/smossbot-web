@@ -1,11 +1,13 @@
 {% if messages %}
+<br>
 <div>
     {% for message in messages %}
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-dismissible fade show
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} alert-danger
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% endif %}
+        " role="alert">
             {{ message }}
         </div>
-        {% endif %}
     {% endfor %}
 </div>
 {% endif %}
@@ -13,7 +15,7 @@
 
 <div class="subcontent">
     <div class="sidebyside">
-        <h2><b><u>Toggle smossbot</u></b></h2>
+        <h2 class="subtitle">Toggle smossbot</h2>
     </div>
     <div class="sidebyside">
         <div class="form-check form-switch">
@@ -54,7 +56,7 @@
         {% else %}
             <p>smossbot should be in your chat! Type "!ping" in your chat and smossbot should say <b>Pong!</b>
             If not, try sliding this off then on again. Sorry for the inconvenience!</p>
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 Make sure to slide this back off when you end stream! This turns the bot off in your chat so you don't get offline requests.<br>
                 <b>NOTE:</b> You can get offline requests only for rewards <i>without</i> a cooldown. If your rewards have cooldowns, don't worry.
             </div>

@@ -1,13 +1,15 @@
 <div>
 
     {% if messages %}
-    <div class="subcontent">
+    <br>
+    <div>
         {% for message in messages %}
-            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-dismissible fade show
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} alert-danger
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% endif %}
+            " role="alert">
                 {{ message }}
             </div>
-            {% endif %}
         {% endfor %}
     </div>
     {% endif %}
@@ -20,6 +22,7 @@
             {% elif code_name == "songskip" %} Spotify Song Skips
             {% elif code_name == "ytreq" %} YouTube Requests
             {% elif code_name == "gptimage" %} ChatGPT Image Requests
+            {% elif code_name == "soundreq" %} Sound Requests
             {% endif %}
         </b></h3>
             <span class="input-group mb-3 mx-auto">
@@ -209,6 +212,13 @@
                     rewardModal.querySelector("#cost").value = 250;
                     rewardModal.querySelector("#_color").value = "#00A67E";
                     break;
+                case "soundreq":
+                    rewardModal.querySelector(".modal-title").textContent = "Create Sound Request Reward";
+                    rewardModal.querySelector("#reward-name").value = "Sound Request";
+                    rewardModal.querySelector("#description").value = "Type the name of a sound, and it'll play on stream.";
+                    rewardModal.querySelector("#cost").value = 250;
+                    rewardModal.querySelector("#_color").value = "#878700";
+                    break;
             }
             
             rewardModal.querySelector("#hidden_reward_id").value = reward;
@@ -258,6 +268,7 @@
         let songskip_id = $("#songskip_dropdown").val() || null;
         let ytreq_id = $("#ytreq_dropdown").val() || null;
         let gptimage_id = $("#gptimage_dropdown").val() || null;
+        let soundreq_id = $("#soundreq_dropdown").val() || null;
         clearTooltips();
         $(".req_controller").load(
             "{% url 'dashboard:bind' %}?songreq=" + songreq_id + 
@@ -265,17 +276,30 @@
             "&chatgpt=" + chatgpt_id + 
             "&ytreq=" + ytreq_id +
             "&gptimage=" + gptimage_id,
-        function()
+            "&soundreq=" + soundreq_id,
+        function(response, status)
         {
             let btn = document.getElementById("bind_btn");
             let colorBefore = btn.style.backgroundColor;
 
-            btn.style.backgroundColor = "green";
-            btn.innerHTML = "<b>Binded!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>";
-            setTimeout(function() {
-                btn.style.backgroundColor = colorBefore;
-                btn.innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
-            }, 3000);
+            if (status != "error")
+            {
+                btn.style.backgroundColor = "green";
+                btn.innerHTML = "<b>Binded!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>";
+                setTimeout(function() {
+                    btn.style.backgroundColor = colorBefore;
+                    btn.innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
+                }, 3000);
+            }
+            else
+            {
+                btn.style.backgroundColor = "red";
+                btn.innerHTML = "<b>Error occured!</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-x\"></i>";
+                setTimeout(function() {
+                    btn.style.backgroundColor = colorBefore;
+                    btn.innerHTML = "<b>Bind Rewards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"bi-link-45deg\"></i></b>";
+                }, 3000);
+            }
         });
     }
 

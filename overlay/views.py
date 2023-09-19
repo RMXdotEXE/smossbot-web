@@ -14,5 +14,10 @@ def process_req(request, user_hash):
 
     if request.method == "POST":
         return JsonResponse(request.method, user_hash)
-    else:
-        return render(request, "overlay/ytoverlay.html", context={'username': user_hash, 'url': url})
+    
+    ctx = {
+        'username': user_hash,
+        'url': url,
+    }
+        
+    return render(request, "overlay/overlay.html", context=ctx)
