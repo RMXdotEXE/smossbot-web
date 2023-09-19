@@ -44,7 +44,7 @@
         <form enctype="multipart/form-data" action="{% url 'dashboard:upload' %}" method="post"> {% csrf_token %} {{ form.non_field_errors }}
             <div class="form-group mb-5">
                 <h5>File</h5>
-                <div class="form-text mb-1" id="basic-addon4" style="color: white;">Make sure to adhere to the maximum file size.</div>
+                <div class="form-text mb-1" id="basic-addon4" style="color: white;">Make sure to adhere to the maximum file size. Supported types: WAV, MP3, OGG.</div>
                 {{ form.file }}
             </div>
             <div class="form-group mb-5">

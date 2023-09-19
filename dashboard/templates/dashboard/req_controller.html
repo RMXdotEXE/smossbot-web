@@ -60,6 +60,9 @@
         </div>
     </form>
     <br>
+    <div class="d-grid gap-2">
+        <a class="btn btn-primary" href="{% url 'dashboard:upload' %}"><b>File Manager</b></a>
+    </div>
     <form action="javascript:createReward()" method="post"> {% csrf_token %}
         <div class="modal fade" id="custom-reward-popup" tabindex="-1" aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.25);">
             <div class="modal-dialog modal-xl">

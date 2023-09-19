@@ -1,13 +1,22 @@
+{% load static %}
+
+
 <!DOCTYPE html>
 
 <html>
+    <head>
+        <meta charset="utf-8">
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    </head>
     <body>
         <div id="player"></div>
     </body>
 </html>
 
 <script>
-    /* ==============================================
+    /* 
+     * ==============================================
      * Setup
      * ==============================================
      */
@@ -61,7 +70,8 @@
     }
 
 
-    /* ==============================================
+    /* 
+     * ==============================================
      * IFrame API setup
      * ==============================================
      */
@@ -171,9 +181,55 @@
         }
     }
 
+
+    /* 
+     * ==============================================
+     * Sound redemptions
+     * ==============================================
+     */
+
     function getSound(incoming_data)
     {
-        audio.src = mediaDir + incoming_data.redemption_data.input + ".mp3";
+        let filepath = "";
+        let username = "{{ username }}";
+
+        $.ajax({
+            url: "{% url 'api:taggedfile' %}",
+            data: {
+                'user_hash': "{{ username }}", 
+                'tag': incoming_data.redemption_data.input
+            },
+            success: function(response)
+            {
+                if (!response.exists)
+                {
+                    packet = {
+                        'username': "{{ username }}",
+                        'errored': true,
+                        'redemption_data': incoming_data.redemption_data,
+                        'error_data': {
+                            'code': 404,
+                            'status': response.errormsg
+                        }
+                    };
+                    
+                    botSocket.send(JSON.stringify(packet));
+
+                    console.log("tag doesnt exist?");
+                    
+                    return;
+                }
+
+                filepath = response.filename;
+                playSound(filepath);
+            }
+        });
+    }
+
+    function playSound(filepath)
+    {
+        console.log("Playing sound: " + filepath);
+        audio.src = mediaDir + filepath;
         audio.play();
     }
 
