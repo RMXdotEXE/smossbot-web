@@ -31,4 +31,7 @@ urlpatterns = [
     path('commands/', views.commands, name='commands'),
     path('changelog/', views.changelog, name='changelog'),
     path('gatekept/', views.gatekept, name='gatekept'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
