@@ -126,8 +126,7 @@ def index(request: HttpRequest):
             known_rewards.get(reward_id=known_reward_id).delete()
 
     request.session['twitch_rewards'] = incoming_rewards_by_id
-    
-    # Build their vars
+
     buildUserVars(user)
 
     return render(request, "dashboard/index.html", context=buildContext(user))
@@ -428,7 +427,7 @@ def delete(request: HttpRequest):
 # ======================================================================================================================
 
 
-def buildContext(user: TwitchUser, extra: dict = None) -> dict:
+def buildContext(user: TwitchUser, extraCtx: dict = None) -> dict:
     user.refresh_from_db()
 
     try:
@@ -454,7 +453,8 @@ def buildContext(user: TwitchUser, extra: dict = None) -> dict:
         'spotify_authenticated': spotify_authenticated,
         'spotify_current': spotify_current,
         'fully_authenticated': fully_authenticated,
-        'fully_authenticated_outdated': fully_authenticated_outdated
+        'fully_authenticated_outdated': fully_authenticated_outdated,
+        'overlay_link': "{}{}{}".format(os.getenv("HOST_URL"), "/overlay/", user.username)
     }
 
     twitch_auth_url = "https://id.twitch.tv/oauth2/authorize?" + \
@@ -500,7 +500,7 @@ def buildContext(user: TwitchUser, extra: dict = None) -> dict:
         reward_info.update(bind_info)
     ctx.update({'reward_info': reward_info})
 
-    if extra: ctx.update(extra)
+    if extraCtx: ctx.update(extraCtx)
 
     return ctx
 

@@ -61,6 +61,16 @@
             When you're done, click the "Bind Rewards" button at the bottom of this section.<br><br>
             Some rewards are only possible to bind when authenticated with certain methods under <b>Authentication</b>.<br>
             Create a Custom Reward (blue + button) in this website for your rewards to be eligible for auto-refunding in case of failure.</p>
+            <!-- TODO: would be nice -- <div class="input-group mb-3">
+                <input type="text" class="form-control blurry-text" placeholder="Overlay URL" aria-label="Overlay URL" aria-describedby="basic-addon2" value="{{ overlay_link }}" disabled>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button">Copy Overlay Link</button>
+                </div>
+            </div-->
+            <button type="button" class="btn btn-primary" onclick="copyOverlayLink(this)">Copy Overlay Link</button>
+            <div class="form-group mb-5">
+                <div class="form-text mb-1" id="basic-addon4" style="color: white;">This link is for YouTube and Sound requests. Paste this into OBS as a browser source, and make the dimensions 1280x720.</div>
+            </div>
             <div class="req_controller"> {% include "dashboard/req_controller.html" %} </div>
         {% else %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -68,33 +78,19 @@
             </div>
         {% endif %}
     </div>
-
     <div class="session_controller"> {% include "dashboard/session_controller.html" %} </div>
 {% endif %}
 
 <div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>September 19, 2023 - v0.4.0</b></u></h5>
+    <h5 class="card-header"><b><u>September 20, 2023 - v0.4.1</b></u></h5>
     <div class="card-body">
-        <h5 class="card-title"><b>Sound requests, File Manager</b></h5>
+        <h5 class="card-title"><b>Bug fixes</b></h5>
         <ul class="list-group list-group-flush">
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Sound requests are now live! Bind them in your Dashboard, and get them to play on stream using the same overlay as YouTube requests.
+                Fixed uploaded files not actually enforcing the supported file types (big whoops).
             </li>
             <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                The URL for YouTube requests (and sound requests) can now be copied from your Dashboard.
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                To upload sound files for sound requests, a new File Manager button has been added to the Bindings section on the Dashboard.
-                To play the sounds, a user will need to redeem the binded reward for sound requests, and type in the name of the tag that
-                you put in during file upload. File tags can be changed.
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                The File Manager is very limited in that you can't upload too many files with too big of sizes, namely the fact that there can be a lot
-                of potential usage. Once resources increase on my end in terms of hardware and finances, this'll be raised. Case-by-case increases for
-                these limits (found on the File Manager page) can be negotiated by DMing me.
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Added some under-the-hood support for a potential dashboard for channel moderators in the future.
+                Fixed the link to copy your overlay URL not appearing in your Dashboard; it now properly appears.
             </li>
         </ul>
     </div>
@@ -148,6 +144,22 @@
     function callEndpoint(endpoint, divclass)
     {
         $("." + divclass).load("{% url 'dashboard:callAPI' %}?endpoint=" + endpoint + "&divclass=" + divclass);
+    }
+
+    function copyOverlayLink(btn)
+    {
+        navigator.clipboard.writeText("{{ overlay_link }}");
+
+        let colorBefore = btn.style.backgroundColor;
+        let innerHTMLBefore = btn.innerHTML;
+
+        btn.style.backgroundColor = "green";
+        btn.innerHTML = "Copied! Paste into OBS. <i class=\"bi-check-lg\"></i>";
+        setTimeout(function()
+        {
+            btn.style.backgroundColor = colorBefore;
+            btn.innerHTML = innerHTMLBefore;
+        }, 5000);
     }
 </script>
 

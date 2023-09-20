@@ -2,7 +2,7 @@ import os
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, FileExtensionValidator
 from django.db import models
 from django.dispatch import receiver
 
@@ -67,7 +67,7 @@ class ChannelPointReward(models.Model):
 # Any files that are uploaded by users.
 class UploadedFile(models.Model):
     # Use default Django id field, created automatically
-    file = models.FileField(validators=[file_size_checker], upload_to=user_media_path)
+    file = models.FileField(validators=[file_size_checker, FileExtensionValidator(allowed_extensions=["mp3", "wav", "ogg"])], upload_to=user_media_path)
     user = models.ForeignKey(TwitchUser, on_delete=models.CASCADE)
     tag = models.CharField(max_length=32, blank=True, null=True, validators=[alphanumeric])
     upload_date = models.DateTimeField(auto_now_add=True)
