@@ -1,65 +1,29 @@
-{% if messages %}
-<br>
-<div>
-    {% for message in messages %}
-        <div class="alert alert-dismissible fade show
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} alert-danger
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% endif %}
-        " role="alert">
-            {{ message }}
+<div class="info-container">
+    {% if not active_session %}
+        <label class="switch-container">
+            <input type="checkbox" role="switch" id="session-switch">
+            <span class="switch"></span>
+        </label>
+        <div class="info-header">
+            smossbot is currently <b>OFF.</b>
         </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-
-<div class="subcontent">
-    <div class="sidebyside">
-        <h2 class="subtitle">Toggle smossbot</h2>
-    </div>
-    <div class="sidebyside">
-        <div class="form-check form-switch">
-            {% if not active_session %}
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" style="transform: scale(1.5);" onchange="toggleSession(this)">
-                <script>
-                    a_obj = document.getElementById("flexSwitchCheckDefault");
-                    a_id_before = a_obj.id;
-                    a_obj.disabled = true;
-                    a_obj.id = "flexSwitchCheckDisabled";
-                    setTimeout(function()
-                    {
-                        a_obj.disabled = false;
-                        a_obj.id = a_id_before;
-                    }, 3000);
-                </script>
-                <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-            {% else %}
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" style="transform: scale(1.5);" onchange="toggleSession(this)" checked>
-                <script>
-                    b_obj = document.getElementById("flexSwitchCheckChecked");
-                    b_id_before = b_obj.id;
-                    b_obj.disabled = true;
-                    b_obj.id = "flexSwitchCheckCheckedDisabled";
-                    setTimeout(function()
-                    {
-                        b_obj.disabled = false;
-                        b_obj.id = b_id_before;
-                    }, 3000);
-                </script>
-                <label class="form-check-label" for="flexSwitchCheckChecked"></label>            
-            {% endif %}
-        </div>     
-    </div>
-    <div>
-        {% if not active_session %}
-            <p>Slide this on to turn the bot on in your chat. You must do this for it to listen for requests and work.</p>
-        {% else %}
-            <p>smossbot should be in your chat! Type "!ping" in your chat and smossbot should say <b>Pong!</b>
-            If not, try sliding this off then on again. Sorry for the inconvenience!</p>
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                Make sure to slide this back off when you end stream! This turns the bot off in your chat so you don't get offline requests.<br>
-                <b>NOTE:</b> You can get offline requests only for rewards <i>without</i> a cooldown. If your rewards have cooldowns, don't worry.
-            </div>
-        {% endif %}
-    </div>
+        <div class="info-body">
+            Slide this on to turn the bot on in your chat. You must do this for it to listen for requests and work.
+        </div>
+    {% else %}
+        <label class="switch-container">
+            <input type="checkbox" role="switch" id="session-switch" checked>
+            <span class="switch"></span>
+        </label>
+        <div class="info-header">
+            smossbot is currently <b>ON.</b>
+        </div>
+        <div class="info-body">
+            smossbot should be in your chat! Type "!ping" in your chat and smossbot should say "Pong!"
+            If not, try sliding this off then on again. Sorry for the inconvenience!
+            <br><br>
+            Make sure to slide this back off when you end stream! This turns the bot off in your chat so you don't get offline requests.<br>
+            <b>NOTE:</b> You can get offline requests only for rewards without a cooldown. If your rewards have cooldowns, don't worry.
+        </div>
+    {% endif %}
 </div>

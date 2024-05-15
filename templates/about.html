@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}About & Donate{% endblock %}
+
+{% block content %}
+    <div class="page-title">
+        About & Donate
+    </div>
+
+    <h2>
+        <p>
+            smossbot is a Twitch bot self-developed by me, Omar (moz).
+            <br><br>
+            It started as a passion project that was actually intended to run on your local machine as a downloadable program, but
+            was later adopted under the vision of providing the functionality from a website, with no downloads required, and virtually
+            no resources needing to be used from your PC.
+            <br><br>
+            The website's frontend and backend, and the Twitch bot that appears in your chat from this website, is all self-developed,
+            apart from the frameworks/libraries used of course. The website is built on <a href="https://www.djangoproject.com/">Django</a>, 
+            and the Twitch bot itself is built using the <a href="https://twitchio.dev/en/stable/">TwitchIO</a> Python library.
+            <br><br>
+            This project quickly became one of (and my main) project that I worked on, and I have had a lot of fun learning everything
+            and picking up a lot of technologies that were foreign to me. I built smossbot because my friends and I wanted functionalities
+            that weren't readily accessible or were really inconvenient to get working; smossbot quickly expanded to provide a bunch of
+            other niche little functionalities.
+            <br><br>
+            I've never made a big project like this, but it's helped me learn more about web development and grow, personally. Because of this
+            being a passion project, I always wanted this to be a completely free resource with no crazy paywalls, so that's what it'll remain as.
+            If, however, you are feeling very generous and would like to donate, you can do so below.
+            <br><br>
+            Please only donate if you are financially stable and completely willing to. However, do note that funds raised through this will
+            primarily go to me and my family's costs of living, as we aren't in a great spot. Only when I can comfortably receive the funds in good
+            conscience will they go towards me. If you are still willing to donate, the button is below. Thank you so much for considering donating
+            anything small or big. &lt;3
+        </p>
+    </h2>
+
+    <div class="flex center">
+        <a href="https://www.paypal.com/donate/?business=BJ5MS3TB8LXCS&no_recurring=1&item_name=Thank+you+so+much+for+considering+the+support%3B+if+you%27d+like%2C+you+may+leave+contact+information+so+I+can+thank+you+personally%21&currency_code=USD"
+            role="button" class="btn" style="width: 250px; height: 250px;">
+            <div class="btn-text-center">
+                <i class="bi-paypal" style="font-size: 64px;"></i>
+                <br><br>
+                <small>
+                    Donate via PayPal
+                </small>
+            </div>
+        </a>
+    </div>
+  
+{% endblock %}

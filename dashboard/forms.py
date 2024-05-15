@@ -1,4 +1,4 @@
-from .models import UploadedFile
+#from .models import UploadedFile
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.forms import ModelForm, FileInput, TextInput
@@ -10,7 +10,7 @@ def file_size_checker(value):
         raise ValidationError('File size should be max 2MB.')
     return
 
-
+"""
 class UploadForm(ModelForm):
     # file = forms.FileField(validators=[file_size_checker])
     # tag = forms.CharField(validators=[alphanumeric])
@@ -27,3 +27,4 @@ class UploadForm(ModelForm):
                 'aria-describedby': "basic-addon3 basic-addon4",
             })
         }
+"""

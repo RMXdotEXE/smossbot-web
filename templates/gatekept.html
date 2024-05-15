@@ -7,11 +7,19 @@
 {% block title %}Gatekept{% endblock %}
 
 {% block content %}
-<div class="alert alert-danger" role="alert" style="margin-top: 50px;">
-    <b>Sorry {{ twitch_username }}, I really don't want you here...</b><br><br>
-    Just kidding; only a select few people have access to smossbot, sorry!
-    For now, wait for updates, check back at a later date, or message me to see about getting access.<br>
-    Had access before? You probably changed your username or something about it, so DM me to get it fixed.
+<div class="flex col center     info-container">
+    <div class="info-header">
+        Sorry {{ twitch_username }}, I really don't want you here...
+    </div>
+    <div class="info-body">
+        Just kidding; only a select few people have access to smossbot, sorry!
+        For now, wait for updates, check back at a later date, or message me to see about getting access.<br><br>
+        Had access before? You probably changed your username or something about it, so DM me to get it fixed.<br><br>
+        <a class="btn btn-compact" href="{% url 'logout' %}" role="button">
+            <div class="btn-text-center">
+                Log Out&nbsp;&nbsp;<i class="bi bi-box-arrow-in-right"></i>
+            </div>
+        </a>
+    </div>
 </div>
-<a class="btn btn-danger" href="{% url 'logout' %}" role="button">Log Out <i class="bi bi-box-arrow-in-right"></i></a>
 {% endblock %}

@@ -1,0 +1,296 @@
+:root {
+    --border-width: 2px;
+	--switch-length: 70px;
+    --switch-height: 34px;
+    --switch-slider-padding: 4px;
+    --dropdown-text-margin: 10px;
+    --input-default-flex: 1;
+    --input-text-padding: 10px;
+}
+
+
+/*
+ * SWITCHES
+ */
+.switch-container {
+    display: inline-block;
+    position: relative;
+    width: var(--switch-length);
+    height: var(--switch-height);
+
+    & input {
+        display: none;
+    };
+}
+
+.switch {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: black;
+    background-color: #6f0000;
+    border-radius: var(--switch-height);
+    transition: 0.2s;
+
+    &:before {
+        position: absolute;
+        content: "";
+        height: calc(var(--switch-height) - var(--switch-slider-padding) * 2);
+        width: calc(var(--switch-height) - var(--switch-slider-padding) * 2);
+        left: var(--switch-slider-padding);
+        bottom: var(--switch-slider-padding);
+        background-color: white;
+        border-radius: 50%;
+        transition: .2s;
+    };
+}
+
+input:checked + .switch {
+    background-color: #006f00;
+
+    &.neutral {
+        background-color: #00006f;
+    }
+
+    &:before {
+        transform: translateX(calc(var(--switch-length) - var(--switch-height)));
+    };
+}
+
+input:disabled + .switch {
+    cursor: not-allowed;
+    background-color: #999999;
+}
+
+
+/*
+ * DROPDOWNS
+ */
+.dropdown-container {
+    position: relative;
+    flex: 1;
+    background: black;
+    border: var(--border-width) solid white;
+    border-radius: 5px;
+    transition: 0.2s;
+    padding: 10px;
+    box-sizing: border-box;
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: 0px 0px 10px 1px white;
+    };
+
+    &:after {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        margin-top: -3px;
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: white transparent;
+    };
+}
+
+.dropdown-li-container {
+    background-color: black;
+    transition: 0.2s;
+
+    &:hover {
+        background-color: var(--light-accent);
+    };
+
+    &:first-of-type > li {
+        border-top: none;
+    }
+
+    &:last-of-type > li {
+        border-bottom: none;
+    };
+}
+
+.dropdown {
+    position: absolute;
+    top: auto;
+    left: 0;
+    right: 0;
+    border: none;
+    border-radius: 5px;
+    padding: 0;
+    list-style-type: none;
+    transition: 0.2s;
+    max-height: 0;
+    overflow: hidden;
+    z-index: var(--dropdown-layer);
+}
+
+.dropdown li {
+    display: block;
+    text-decoration: none;
+    margin: 0px 5px;
+    padding: 10px;
+    transition: 0.2s;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+
+    > i {
+        margin-right: 5px;
+        color: inherit;
+        vertical-align: middle;
+    };
+}
+
+.dropdown-container.active {
+    background: var(--dark-accent);
+    border-color: var(--light-accent);
+
+    &:after {
+        border-color: var(--light-accent) transparent;
+    };
+
+    & .dropdown {
+        border: 2px solid white;
+        max-height: 1000px;
+    };
+}
+
+.dropdown-container.active .placeholder,
+.dropdown-container.active .label {
+    color: var(--light-accent);
+}
+
+.dropdown-container .label {
+    font-size: 12px;
+}
+
+
+/*
+ * FORM INPUTS
+ */
+.input-container {
+    display: flex;
+    position: relative;
+
+    /* TODO: Could also make dynamic like this? */
+    --flex: calc(var(--input-default-flex));
+    &.stretch {
+        /* flex: var(--flex); */
+        flex: 1;
+    };
+
+    /* TODO: Better way of doing this? Make an s3 in HTML correspond to 3,
+    an s2 correspond to a 2, sX correspond to X, etc... */
+    &.s3 {
+        flex: 3;
+    };
+}
+
+.input-container input[type=text] {
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1;
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    padding: calc(var(--input-text-padding) * 2 + 3px) var(--input-text-padding) var(--input-text-padding);
+    border: var(--border-width) solid white;
+    border-radius: 5px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input-container textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: black;
+    color: white;
+    font-family: Tahoma, sans-serif;
+    font-size: 1rem;
+    padding: calc(var(--input-text-padding) + 11px) var(--input-text-padding) 0px;
+    border: var(--border-width) solid white;
+    border-radius: 5px;
+    outline: none;
+    transition: 0.2s, height 0s, width 0s;
+    resize: none;
+}
+
+.input-container .placeholder {
+    display: inline-flex;
+    flex-grow: 0;
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    line-height: 1;
+    opacity: 0.5;
+    padding-left: calc(var(--input-text-padding) + var(--border-width));
+    background: none;
+    pointer-events: none;
+    transition: 0.2s;
+    transform: translateY(calc(50% - (1rem / 2)));
+    transform-origin: top left;
+}
+
+/* When text-input is:
+ * - focused,
+ * - has valid filled input, or
+ * - has invalid input and unfocused */
+/* Modifies placeholder */ 
+.input-container input:focus + .placeholder,
+.input-container input:valid:not(:placeholder-shown) + .placeholder,
+.input-container input:invalid:not(:focus):not(:placeholder-shown) + .placeholder,
+.input-container textarea:focus + .placeholder,
+.input-container textarea:valid:not(:placeholder-shown) + .placeholder,
+.input-container textarea:invalid:not(:focus):not(:placeholder-shown) + .placeholder {
+    opacity: 1;
+    transform: translateY(0);
+    font-size: 12px;
+    padding: calc(var(--input-text-padding) + var(--border-width));
+}
+
+/* When text-input is focused */
+/* Modifies input */
+.input-container input:focus,
+.input-container textarea:focus {
+    color: var(--light-accent);
+    background-color: var(--dark-accent);
+    border-color: var(--light-accent);
+    border-radius: 5px;
+}
+
+/* When text-input is focused */
+/* Modifies placeholder */
+.input-container input:focus + .placeholder,
+.input-container textarea:focus + .placeholder {
+    color: var(--light-accent);
+}
+
+/* When text-input has invalid input and is un-focused */
+/* Modifies input */
+.input-container input:invalid:not(:focus),
+.input-container textarea:invalid:not(:focus) {
+    border-color: red;
+}
+
+/* When text-input has invalid input and is un-focused */
+/* Modifies placeholder */
+.input-container input:invalid:not(:focus) + .placeholder,
+.input-container textarea:invalid:not(:focus) + .placeholder {
+    color: red;
+    opacity: 1;
+}
+
+
+/*
+ * MISC CLASSES
+ */
+.input-group {
+    display: flex;
+    gap: 0px;
+}

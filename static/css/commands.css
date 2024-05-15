@@ -1,0 +1,39 @@
+.command-cnt {
+    display: grid;
+    overflow: hidden;
+    
+    margin-bottom: 50px;
+    border-color: white;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    grid-template-rows: [header-top] 35px [header-end body-start] minmax(50px, auto) [body-end footer-start] 25px [footer-end];
+    gap: 0px;
+}
+
+.command-cnt > .command-name {
+    grid-row: header-top / header-end;
+    
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.command-cnt > .command-body {
+    grid-row: body-start / body-end;
+
+    text-align: center;
+    border-top: solid;
+    border-bottom: solid;
+    border-width: 1px;
+    background-color: rgba(0, 0, 0, 0.50);
+}
+
+.command-cnt > .command-footer {
+    grid-row: footer-start / footer-end;
+
+    font-size: 12px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.75);
+}

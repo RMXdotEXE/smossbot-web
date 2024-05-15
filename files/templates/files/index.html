@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Upload{% endblock %}
+
+{% block content %}
+
+<div class="info-container">
+    <div class="info-header">
+        View, upload, and delete your files for smossbot here!
+    </div>
+    <div class="info-body">
+        Files uploaded here can be used for anything that the bot should need a file for, like sound redemptions.<br>
+        You may view, upload, and delete files from this page. To prevent abuse, limits are in place, as shown below.<br><br>
+        For most functionality involving uploaded files, you'll have to assign a <b>tag</b> to your file.<br>
+        This <b>tag</b> is how this particular file will be looked for by smossbot's other sources. <b>Tags</b> can be changed.
+    </div>
+</div>
+<div class="page-title">
+    Upload Files
+</div>
+<div class="flex row">
+    {% if not maxuploads %}
+    <form id="file-upload-form" enctype="multipart/form-data" action="{% url 'files:index' %}" method="post"> {% csrf_token %} {{ form.non_field_errors }}
+        <div class="flex row center">
+            <div class="flex col">
+                <div>Make sure to adhere to the maximum file size. Supported types: WAV, MP3, OGG.</div>
+                {{ form.file }}
+            </div>
+            <div class="flex col">
+                <div>
+                    The tag is how this file will be referenced. You can only use alphanumeric characters (A-Z, 0-9).<br>
+                    <small><i>Optional; file name will be used if unfilled.</i></small>
+                </div>
+                <div class="input-container">
+                    {{ form.tag }}
+                    <div class="placeholder">
+                        File tag
+                    </div>
+                </div>
+            </div>
+            <button class="btn"><div class="btn-text-center">Upload</div></button>
+        </div>
+    </form>
+    {% else %}
+        <p>You've uploaded the maximum amount of files.</p>
+    {% endif %}
+    <table class="table _7-3">
+        <thead>
+            <tr>
+                <th scope="col">Limit type</th>
+                <th scope="col">Limit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">File size</th>
+                <td>2MB</td>
+            </tr>
+            <tr>
+                <th scope="row">Upload count</th>
+                <td>10</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<br><hr><br>
+<div class="page-title">
+    View/Manage Files
+</div>
+<div id="file-viewer">
+    Loading files...
+</div>
+
+
+<script>
+
+    let x = 0;
+
+    function loadFileViewer()
+    {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'files:files' %}",
+            headers: {
+                Accept: "text/html"
+            },
+            success: function(data, status, jqXHR)
+            {
+                $("#file-viewer").html(data);
+            }
+        });
+    }
+
+    loadFileViewer();
+
+
+    /* ===================================================================
+     * BUTTON FEEDBACK FUNCTIONS
+     * ================================================================ */
+    function successful(btn)
+    {
+        let original_text = btn.find("div").text();
+
+        btn.css("--color", "green");
+        btn.prop("disabled", true);
+        btn.find("div").text("Changes successful!");
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function error(btn, errorStr="Changes unsuccessful; check inputs!")
+    {
+        let original_text = btn.find("div").text();
+
+        btn.css("--color", "red");
+        btn.prop("disabled", true);
+        btn.find("div").text(errorStr);
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function restore(btn, original_text)
+    {
+        btn.css("--color", "");
+        btn.prop("disabled", false);
+        btn.find("div").text(original_text);
+    }
+
+
+    /* ===================================================================
+     * VALIDATORS
+     * ================================================================ */
+    Validators.forceStrLength($("#file-tag-create"), 0, 32);
+
+</script>
+{% endblock %}

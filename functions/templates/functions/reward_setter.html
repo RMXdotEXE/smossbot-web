@@ -1,0 +1,421 @@
+<div id="reward-function-form-section">
+    <form method="POST" id="reward-function-form"> {% csrf_token %}
+        <div class="flex row">
+            <div class="flex col" style="min-width: 500px;">
+                <div id="func-for-reward-dd" class="dropdown-container">
+                    <div class="label">
+                        Function:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        {% for func_code, func_code_title in func_code_lookup.items %}
+                            {% if func_code not in binds.rewards %}
+                                <div class="dropdown-li-container"><li id="reward-bind-create-func-{{ func_code }}">
+                                    {{ func_code_title }}
+                                </li></div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="flex row">
+                    <div id="reward-for-func-dd" class="dropdown-container">
+                        <div class="label">
+                            Channel point reward to bind:
+                        </div>
+                        <div class="placeholder">
+                            Select
+                        </div>
+                        <ul class="dropdown">
+                            {% for reward in twitch_rewards %}
+                                {% if not reward.binded_to %}
+                                    <div class="dropdown-li-container"><li id="reward-bind-create-reward:{{ reward.reward_id }}">
+                                        {{ reward.reward_title }}
+                                    </li></div>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <button class="btn btn-compact" id="create-reward-modal-btn" type="button" disabled>
+                        <div class="center-text">
+                            or Auto-Create&nbsp;<i class="bi-window-stack"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="vertical-divider"></div>
+            <div class="flex col">
+                <div class="subheader center-text">
+                    Click to Confirm & Bind
+                </div>
+                <button class="btn" style="--color: green;" id="reward-candidate-btn" type="submit" disabled>
+                    <span class="btn-left">
+                        <span class="flex-img-cnt">
+                            <img src="https://static-cdn.jtvnw.net/custom-reward-images/default-1.png">
+                            <span style="text-align: left;">
+                                &nbsp;
+                                <span id="reward-name-bind-candidate"></span>
+                                <br>
+                                &nbsp;
+                                <small id="reward-func-bind-candidate"><i class='bi-gear'></i>&nbsp;</small>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Channel Point Reward Function Modal -->
+<div class="flex center">
+    <div class="modal-cnt" id="create-reward-modal">
+        <form method="POST" id="add-reward-form"> {% csrf_token %}
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Create Custom Reward
+                    </div>
+                    <div class="flex col">
+                        <div class="modal-subheader">
+                            This menu will automatically create an entirely new custom channel point reward in your channel, for whatever function you chose.<br>
+                            The fields have been pre-filled for you, but I recommend editing it all to your liking. You can also edit it in Twitch to set a picture, etc.<br>
+                            <br>
+                            Creating a reward in this menu allows smossbot to <b>automatically refund</b> failed redemptions so you don't have to.<br>
+                            Due to the way that Twitch works, bots can only refund channel point redemptions if they are the ones that created the channel point reward.
+                        </div>
+                        <div class="alerts" hidden></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="flex col center">
+                            <div class="flex row">
+                                <div class="input-container stretch s3">
+                                    <input type="text" id="rewardName" placeholder=" " required>
+                                    <div class="placeholder">
+                                        Name
+                                    </div>
+                                </div>
+                                <div class="input-container stretch">
+                                    <input type="text" id="rewardCost" placeholder=" " required>
+                                    <div class="placeholder">
+                                        Cost
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex row">
+                                <div class="input-container stretch s3">
+                                    <textarea id="rewardDescription" placeholder=" " required></textarea>
+                                    <div class="placeholder">
+                                        Description
+                                    </div>
+                                </div>
+                                <div class="flex col center">
+                                    <label for="rewardColor">Color</label>
+                                    <input type="color" id="rewardColor">
+                                </div>
+                            </div>
+                            <div class="flex row">
+                                <div class="flex col nogap" id="text-required-section">
+                                    <div class="flex row center">
+                                        <label for="rewardText" class="center-text">Require Viewer to Enter Text</label>
+                                        <label class="switch-container" style="transform: scale(0.70);">
+                                            <input type="checkbox" role="switch" id="rewardText">
+                                            <span class="switch"></span>
+                                        </label>
+                                    </div>
+                                    <small>If enabled, a required text field will appear to viewers in the reward.</small>
+                                </div>
+                                <div class="vertical-divider"></div>
+                                <div class="flex col nogap">
+                                    <div class="flex row center">
+                                        <label for="reward-cooldown" class="center-text">Cooldown & Limits</label>
+                                        <label class="switch-container" style="transform: scale(0.70);">
+                                            <input type="checkbox" role="switch" id="reward-cooldown">
+                                            <span class="switch"></span>
+                                        </label>
+                                    </div>
+                                    <small>If enabled, allows you to set various cooldown rules.</small>
+                                </div>
+                            </div>
+                            <div class="flex row" id="reward-cooldown-section" style="display: none;">
+                                <div class="input-container stretch">
+                                    <input type="text" id="reward-cooldown-time" placeholder=" ">
+                                    <div class="placeholder">
+                                        Cooldown time (seconds)
+                                    </div>
+                                </div>
+                                <div class="input-container stretch">
+                                    <input type="text" id="reward-cooldown-limit" placeholder=" ">
+                                    <div class="placeholder">
+                                        Limit per stream
+                                    </div>
+                                </div>
+                                <div class="input-container stretch">
+                                    <input type="text" id="reward-cooldown-limit-user" placeholder=" ">
+                                    <div class="placeholder">
+                                        Limit per user per stream
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex row modal-footer">
+                        <div class="left">
+                            <button class="btn btn-compact" id="create-reward-modal-btn-close" style="--color: var(--dark-accent-2nd);" type="button">
+                                Close
+                            </button>
+                        </div>
+                        <div class="right">
+                            <button class="btn btn-compact" id="" style="--color: var(--dark-accent);" type="submit">
+                                Create
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script> ////// TODO: clean up this atrocity
+
+(function() {
+
+    // Dropdown vars
+    var funcForRewardDD = new Dropdown($("#func-for-reward-dd"), chooseFunctionHandler);
+    var rewardForFuncDD = new Dropdown($("#reward-for-func-dd"), chooseRewardHandler);
+
+    // Modal vars
+    var createRewardModal = new Modal($("#create-reward-modal"), $("#create-reward-modal-btn"), $("#create-reward-modal-btn-close"));
+    
+    // Form vars
+    var authenticationChecks = [];
+
+    // Pre-fill channel point vars
+    // TODO: do i really need this here...
+    var funcData = {
+        songreq: {
+            rewardName: "Request Spotify Song",
+            rewardCost: 500,
+            rewardDescription: "SPOTIFY ONLY: Request a song found on Spotify. Using \"Share > Copy Song Link\" is the best method, " +
+                "but you can also just type the song and artist name, but it might rarely mess up.",
+            rewardColor: "#1DB954",
+            rewardText: true,
+        },
+        songskip: {
+            rewardName: "Skip Spotify Song",
+            rewardCost: 1000,
+            rewardDescription: "SPOTIFY ONLY: Skip the current song that's playing.",
+            rewardColor: "#1DB954",
+            rewardText: false
+        },
+        chatgpt: {
+            rewardName: "ChatGPT",
+            rewardCost: 100,
+            rewardDescription: "Talk to ChatGPT; whatever you type gets sent directly to it!",
+            rewardColor: "#00A67E",
+            rewardText: true
+        },
+        gptimage: {
+            rewardName: "AI Image Request",
+            rewardCost: 250,
+            rewardDescription: "Ask AI to generate an image based on the prompt that you give it.",
+            rewardColor: "#00A67E",
+            rewardText: true
+        },
+        ytreq: {
+            rewardName: "YouTube Video Request",
+            rewardCost: 2500,
+            rewardDescription: "Request a YouTube video to play on-stream! Some videos may not play due to copyright issues or their " +
+                "creators disabling embedding.",
+            rewardColor: "#FF0000",
+            rewardText: true
+        },
+        soundreq: {
+            rewardName: "Sound Request",
+            rewardCost: 250,
+            rewardDescription: "Type the name of a sound, and it'll play on stream.",
+            rewardColor: "#878700",
+            rewardText: true
+        },
+    }
+
+    $("#create-reward-modal-btn").on("click", prefillRewardModal);
+    $("#reward-cooldown").on("change", function()
+    {
+        $("#reward-cooldown-section").toggle(this.checked);
+        $("input[id^='reward-cooldown-']").prop("required", this.checked);
+    });
+
+    $("#reward-function-form").on("submit", function(e)
+    {
+        e.preventDefault();
+
+        $.ajax
+        ({
+            type: "PUT",
+            url: "{% url 'functions:binds' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                method: funcMethodDD.getParsedID(),
+                function: funcForRewardDD.getParsedID(),
+                id: rewardForFuncDD.getParsedID(":")
+            },
+            success: loadFunctionUtils,
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log(jqXHR.responseJSON.msg);
+            }
+        });
+    });
+
+    $("#add-reward-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            function: funcForRewardDD.getParsedID(),
+            rewardName: $("#rewardName").val(),
+            rewardCost: $("#rewardCost").val(),
+            rewardDescription: $("#rewardDescription").val(),
+            rewardColor: $("#rewardColor").val(),
+            rewardText: $("#rewardText").prop("checked"),         // bool
+            rewardCooldown: $("#reward-cooldown").prop("checked"), // bool
+            rewardCDTime: $("#reward-cooldown-time").val(),
+            rewardCDLimit: $("#reward-cooldown-limit").val(),
+            rewardCDLimituser: $("#reward-cooldown-limit-user").val(),
+        };
+
+        $.ajax
+        ({
+            type: "PUT",
+            url: "{% url 'functions:reward' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function()
+            {
+                createRewardModal.manualFadeOut();
+                loadFunctionUtils();
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log(jqXHR.responseJSON.msg);
+                $("#add-reward-form .alerts").html(jqXHR.responseJSON.msg);
+                $("#add-reward-form .alerts").show();
+            }
+        });
+    });
+
+    // this = funcForRewardDD || funcForCommandDD
+    function chooseFunctionHandler()
+    {
+        let gearIcon = "<i class='bi-gear'></i>&nbsp;";
+        let functionName = "";
+        switch (this.getParsedID())
+        {
+            case "songreq":
+                functionName = "Spotify Song Requests";
+                authenticationChecks = ["spotify"];
+                break;
+            case "chatgpt":
+                functionName = "ChatGPT Chat Requests";
+                authenticationChecks = [];
+                break;
+            case "songskip":
+                functionName = "Spotify Song Skips";
+                authenticationChecks = ["spotify"];
+                break;
+            case "ytreq":
+                functionName = "YouTube Requests";
+                authenticationChecks = [];
+                break;
+            case "gptimage":
+                functionName = "ChatGPT Image Requests";
+                authenticationChecks = [];
+                break;
+            case "soundreq":
+                functionName = "Sound Requests";
+                authenticationChecks = [];
+                break;
+        }
+
+        $("#reward-func-bind-candidate").html(gearIcon + functionName);
+        $("#create-reward-modal-btn").prop("disabled", false);
+
+        modifyCandidateButton();
+        modifyAuthButtons();
+        return;
+    }
+
+    // this = rewardForFuncDD
+    function chooseRewardHandler()
+    {
+        if (this.getParsedID())
+        {
+            $("#reward-name-bind-candidate").html(this.placeholder.text());
+            modifyCandidateButton();
+        }
+        return;
+    }
+
+    function modifyCandidateButton()
+    {
+        let allow = true;
+
+        if (authenticationChecks.indexOf("spotify") > -1)
+        {
+            allow = spotifyAuthed;
+        }
+
+        $("#reward-candidate-btn").prop("disabled", 
+            !(
+                !!funcForRewardDD.getParsedID() && 
+                !!rewardForFuncDD.getParsedID(":") && 
+                allow
+            )
+        );
+    }
+
+    function modifyAuthButtons()
+    {
+        if (authenticationChecks.indexOf("spotify") > -1)
+        {
+            spotifyAuthed ? $("#spotifyAuthButton").hide() : $("#spotifyAuthButton").show();
+        }
+        else
+        {
+            $("#spotifyAuthButton").hide();
+        }
+    }
+
+    function prefillRewardModal(event)
+    {
+        let codeID = funcForRewardDD.getParsedID();
+        if (codeID === null)
+        {
+            $("#create-reward-modal-btn").prop("disabled", true);
+            return
+        }
+
+        createRewardModal.prefillModal(funcData[codeID]);
+    }
+
+    /* ===================================================================
+     * VALIDATIONS
+     * ================================================================ */
+    // TODO: Show these validations below input box instead of vanilla browser popup on submit.
+    // TODO: Also make it lock submit buttons?
+    Validators.forceStrLength($("#rewardName"), 1, 45);
+    Validators.forceIntInRange($("#rewardCost"), 1);
+    Validators.forceStrLength($("#rewardDescription"), 1, 200);
+})();
+
+</script>

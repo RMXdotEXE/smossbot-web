@@ -1,0 +1,409 @@
+<div class="flex extragap">
+    <div class="flex col row-2" id="reward-func-display">
+        <div class="subheader">Channel Point Functions</div>
+        <br><br>
+        {% if not binds.rewards %}
+            No Channel Point Reward functions exist.
+        {% else %}
+            {% for func_code, func_bind_info in binds.rewards.items %}
+                <button class="btn" style="--color: {{ func_bind_info.color }};" type="button"
+                    data-codeid="{{ func_code }}"
+                    data-codetitle="{{ func_bind_info.func_code_title }}"
+                    data-rewardid="{{ func_bind_info.id }}"
+                    data-rewardtitle="{{ func_bind_info.title }}">
+                    <span class="btn-left">
+                        <span class="flex-img-cnt">
+                            <img src="{{ func_bind_info.image }}">
+                            <span style="text-align: left;">
+                                &nbsp;
+                                {{ func_bind_info.title }}
+                                <br>
+                                &nbsp;
+                                <small>
+                                    <i class="bi-gear"></i>&nbsp;{{ func_bind_info.func_code_title }}
+                                </small>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+                <br>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="flex col row-2" id="command-func-display">
+        <div class="subheader">Command Functions</div>
+        <br><br>
+        {% if not binds.commands %}
+            No Command functions exist.
+        {% else %}
+            {% for func_code, func_bind_info in binds.commands.items %}
+                <button class="btn" type="button"
+                    data-codeid="{{ func_code }}"
+                    data-codetitle="{{ func_bind_info.func_code_title }}"
+                    data-commandid="{{ func_bind_info.id }}"
+                    data-commandname="{{ func_bind_info.name }}"
+                    data-commandhascooldown="{{ func_bind_info.has_cooldown }}"
+                    data-commandglobalcooldown="{{ func_bind_info.global_cooldown }}"
+                    data-commandusercooldown="{{ func_bind_info.user_cooldown }}">
+                    <span class="btn-left">
+                        <span class="flex-img-cnt">
+                            <i class="bi-braces" style="font-size: 32px;"></i>
+                            <span style="text-align: left;">
+                                &nbsp;
+                                !{{ func_bind_info.name }}
+                                <br>
+                                &nbsp;
+                                <small>
+                                    <i class="bi-gear"></i>&nbsp;{{ func_bind_info.func_code_title }}
+                                </small>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+                <br>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Channel Point Function Modal -->
+<div class="flex center">
+    <div class="modal-cnt" id="edit-reward-bind-modal" style="width: 750px;">
+        <form id="edit-reward-bind-form"> {% csrf_token %}
+            <input type="hidden" id="reward-modal-code">
+            <input type="hidden" id="reward-modal-reward-id">
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Edit Custom Reward Function
+                    </div>
+                    <div class="modal-body">
+                        <div class="flex col center" style="gap: 50px;">
+                            <div class="flex col">
+                                <div class="subheader center-text">
+                                    Change Function
+                                </div>
+                                <div id="edit-func-for-reward-dd" class="dropdown-container">
+                                    <div class="label">
+                                        Function:
+                                    </div>
+                                    <div class="placeholder">
+                                        Select
+                                    </div>
+                                    <ul class="dropdown">
+                                        {% for func_code, func_code_title in func_code_lookup.items %}
+                                            {% if func_code not in binds.rewards %}
+                                                <div class="dropdown-li-container"><li id="reward-bind-edit-func-{{ func_code }}">
+                                                    {{ func_code_title }}
+                                                </li></div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="flex col">
+                                <div class="subheader center-text">
+                                    Change Channel Point Reward
+                                </div>
+                                <div id="edit-reward-for-func-dd" class="dropdown-container">
+                                    <div class="label">
+                                        Channel point reward to bind:
+                                    </div>
+                                    <div class="placeholder">
+                                        Select
+                                    </div>
+                                    <ul class="dropdown">
+                                        {% for reward in twitch_rewards %}
+                                            {% if not reward.binded_to %}
+                                                <div class="dropdown-li-container"><li id="reward-bind-edit-id:{{ reward.reward_id }}">
+                                                    {{ reward.reward_title }}
+                                                </li></div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex row modal-footer">
+                        <div class="left">
+                            <button class="btn btn-compact" id="edit-reward-bind-modal-btn-close" style="--color: var(--dark-accent-2nd);" type="button">
+                                Close
+                            </button>
+                        </div>
+                        <div class="right flex row">
+                            <button class="btn btn-compact" id="reward-unbind" style="--color: red;" type="submit">
+                                Unbind
+                            </button>
+                            <button class="btn btn-compact" id="reward-update" style="--color: var(--dark-accent);" type="submit">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Edit Command Function Modal -->
+<div class="flex center">
+    <div class="modal-cnt" id="edit-command-bind-modal" style="width: 750px;">
+        <form id="edit-command-bind-form"> {% csrf_token %}
+            <input type="hidden" id="command-modal-code">
+            <input type="hidden" id="command-modal-command-id">
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Edit Command Function
+                    </div>
+                    <div class="modal-body">
+                        <div class="flex col center">
+                            <div class="flex col">
+                                <div class="subheader center-text">
+                                    Change Function
+                                </div>
+                                <div id="edit-func-for-command-dd" class="dropdown-container">
+                                    <div class="label">
+                                        Function:
+                                    </div>
+                                    <div class="placeholder">
+                                        Select
+                                    </div>
+                                    <ul class="dropdown">
+                                        {% for func_code, func_code_title in func_code_lookup.items %}
+                                            {% if func_code not in binds.commands %}
+                                                <div class="dropdown-li-container"><li id="command-bind-edit-func-{{ func_code }}">
+                                                    {{ func_code_title }}
+                                                </li></div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="horizontal-divider"></div>
+                                <div class="subheader center-text">
+                                    Change Command Details
+                                </div>
+                                <div class="flex row">
+                                    <div class="input-container">
+                                        <input type="text" id="command-edit-bind-name" placeholder=" " required>
+                                        <div class="placeholder">
+                                            Name (excluding "!")
+                                        </div>
+                                    </div>
+                                    <div class="flex col nogap">
+                                        <div class="flex row center">
+                                            <label for="command-edit-bind-cooldown-switch" class="center-text">Cooldown & Limits</label>
+                                            <label class="switch-container" style="transform: scale(0.70);">
+                                                <input type="checkbox" role="switch" id="command-edit-bind-cooldown-switch">
+                                                <span class="switch"></span>
+                                            </label>
+                                        </div>
+                                        <small>If enabled, allows you to set various cooldown rules.</small>
+                                    </div>
+                                </div>
+                                <div class="flex col" id="command-edit-bind-cooldown-section" style="display: none;">
+                                    <div class="flex row">
+                                        <div class="input-container stretch">
+                                            <input type="text" id="command-edit-bind-global-cooldown" placeholder=" ">
+                                            <div class="placeholder">
+                                                Global cooldown (seconds)
+                                            </div>
+                                        </div>
+                                        <div class="input-container stretch">
+                                            <input type="text" id="command-edit-bind-user-cooldown" placeholder=" ">
+                                            <div class="placeholder">
+                                                User cooldown (seconds)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex row modal-footer">
+                        <div class="left">
+                            <button class="btn btn-compact" id="edit-command-bind-modal-btn-close" style="--color: var(--dark-accent-2nd);" type="button">
+                                Close
+                            </button>
+                        </div>
+                        <div class="right flex row">
+                            <button class="btn btn-compact" id="command-unbind" style="--color: red;" type="submit">
+                                Unbind
+                            </button>
+                            <button class="btn btn-compact" id="command-update" style="--color: var(--dark-accent);" type="submit">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+(function() {
+    // Dropdown vars
+    var editFuncForRewardDD = new Dropdown($("#edit-func-for-reward-dd"));
+    var editFuncForCommandDD = new Dropdown($("#edit-func-for-command-dd"));
+    var editRewardForFuncDD = new Dropdown($("#edit-reward-for-func-dd"));
+
+    // Modal vars
+    var editRewardBindModal = new Modal($("#edit-reward-bind-modal"), $("#reward-func-display button[data-codeid]"), $("#edit-reward-bind-modal-btn-close"));
+    var editCommandBindModal = new Modal($("#edit-command-bind-modal"), $("#command-func-display button[data-codeid]"), $("#edit-command-bind-modal-btn-close"));
+
+    $("#reward-func-display button[data-codeid]").on("click", function(e)
+    {
+        let codeID = this.getAttribute("data-codeid");
+        let codeTitle = this.getAttribute("data-codetitle");
+        let rewardID = this.getAttribute("data-rewardid");
+        let rewardTitle = this.getAttribute("data-rewardtitle");
+
+        $("#reward-modal-code").val(codeID);
+        $("#reward-modal-reward-id").val(rewardID);
+
+        editFuncForRewardDD.restore();
+        editFuncForRewardDD.addOption(codeID, codeTitle);
+        editFuncForRewardDD.setOption(codeID, codeTitle);
+
+        editRewardForFuncDD.restore();
+        editRewardForFuncDD.addOption(rewardID, rewardTitle);
+        editRewardForFuncDD.setOption(rewardID, rewardTitle);
+    });
+
+    $("#edit-reward-bind-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+        editRewardBindModal.manualFadeOut();
+        if (e.originalEvent.submitter.id == "reward-unbind")
+        {
+            $.ajax
+            ({
+                type: "DELETE",
+                url: "{% url 'functions:binds' %}",
+                headers: {
+                    Accept: "application/json"
+                },
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    method: "reward",
+                    function: $("#reward-modal-code").val(),
+                },
+                success: loadFunctionUtils,
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.log(jqXHR.responseJSON.msg);
+                }
+            });
+        }
+        if (e.originalEvent.submitter.id == "reward-update")
+        {
+            $.ajax
+            ({
+                type: "PATCH",
+                url: "{% url 'functions:binds' %}",
+                headers: {
+                    Accept: "application/json"
+                },
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    method: "reward",
+                    oldFunction: $("#reward-modal-code").val(),
+                    oldID: $("#reward-modal-reward-id").val(),
+                    newFunction: editFuncForRewardDD.getParsedID(),
+                    newID: editRewardForFuncDD.getParsedID(":"),
+                },
+                success: loadFunctionUtils
+            });
+        }
+    });
+
+    $("#command-func-display button[data-codeid]").on("click", function(e)
+    {
+        let codeID = this.getAttribute("data-codeid");
+        let codeTitle = this.getAttribute("data-codetitle");
+        let commandID = this.getAttribute("data-commandid");
+        let commandName = this.getAttribute("data-commandname");
+        let commandHasCooldown = this.getAttribute("data-commandhascooldown") == "True";
+        let commandGlobalCooldown = this.getAttribute("data-commandglobalcooldown");
+        let commandUserCooldown = this.getAttribute("data-commandusercooldown");
+
+        editFuncForCommandDD.restore();
+        editFuncForCommandDD.addOption(codeID, codeTitle);
+        editFuncForCommandDD.setOption(codeID, codeTitle);
+
+        $("#command-modal-code").val(codeID);
+        $("#command-modal-command-id").val(commandID);
+        $("#command-edit-bind-name").val(commandName);
+        $("#command-edit-bind-cooldown-switch").prop("checked", commandHasCooldown);
+        $("#command-edit-bind-global-cooldown").val(commandGlobalCooldown);
+        $("#command-edit-bind-user-cooldown").val(commandUserCooldown);
+
+        updateCommandCooldownSection();
+    });
+
+    $("#edit-command-bind-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+        editCommandBindModal.manualFadeOut();
+        if (e.originalEvent.submitter.id == "command-unbind")
+        {
+            $.ajax
+            ({
+                type: "DELETE",
+                url: "{% url 'functions:binds' %}",
+                headers: {
+                    Accept: "application/json"
+                },
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    function: $("#command-modal-code").val(),
+                    method: "command"
+                },
+                success: loadFunctionUtils,
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.log(jqXHR.responseJSON.msg);
+                }
+            });
+        }
+        if (e.originalEvent.submitter.id == "command-update")
+        {
+            $.ajax
+            ({
+                type: "PATCH",
+                url: "{% url 'functions:binds' %}",
+                headers: {
+                    Accept: "application/json"
+                },
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    method: "command",
+                    oldFunction: $("#reward-modal-code").val(),
+                    oldID: $("#reward-modal-reward-id").val(),
+                    newFunction: editFuncForRewardDD.getParsedID(),
+                    newID: editRewardForFuncDD.getParsedID(":"),
+                },
+                success: loadFunctionUtils
+            });
+        }
+    });
+
+    $("#command-edit-bind-cooldown-switch").on("change", updateCommandCooldownSection);
+
+    function updateCommandCooldownSection()
+    {
+        let _switch = $("#command-edit-bind-cooldown-switch");
+
+        $("#command-edit-bind-cooldown-section").toggle(_switch.checked);
+        $("#command-edit-bind-global-cooldown").prop("required", _switch.checked);
+        $("#command-edit-bind-user-cooldown").prop("required", _switch.checked);
+    }
+
+})();
+
+</script>

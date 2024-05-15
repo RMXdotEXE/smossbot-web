@@ -8,142 +8,144 @@
 
 {% block content %}
 
-
-<div class="subcontent">
-    <h2 class="subtitle">Authentication</h2>
-    {% if fully_authenticated %}
-        <button type="button" class="btn btn-success" disabled>
-            <i class="bi-twitch"></i> <i class="bi-spotify"></i>&nbsp;&nbsp;<b>Fully authenticated!</b>
-        </button>
-        <a class="btn btn-danger" role="button" data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="bi-radioactive"></i>&nbsp;&nbsp;<b>Delete All Information</b>
-        </a>
-    {% else %}
-        <p>Authenticate with different sites. Spotify is required for song requests.</p>
-        {% if fully_authenticated_outdated %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                Since you last authenticated, new features have been added to smossbot. Reauthenticating allows smossbot to do more for your stream!
-                Your existing functionality won't be affected if you choose not to, though.
-            </div>
-        {% endif %}
-        {% if twitch_authenticated %}
-            <button type="button" class="btn btn-success" disabled>
-                <i class="bi-twitch"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
-            </button>
-        {% else %}
-            <a class="btn btn-primary" href="{{ twitch_auth_url }}" role="button"><i class="bi-twitch"></i> Twitch Sign In</a>
-        {% endif %}
-        {% if spotify_authenticated %}
-            {% if spotify_current %}
-                <button type="button" class="btn btn-success" disabled>
-                    <i class="bi-spotify"></i>&nbsp;&nbsp;<i class="bi-check-lg"></i>
-                </button>
-            {% else %}
-                <a class="btn btn-success" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> <b>Update Spotify Credentials</b></a>
-            {% endif %}
-        {% else %}
-            <a class="btn btn-primary" href="{{ spotify_auth_url }}" role="button"><i class="bi-spotify"></i> Spotify Sign In</a>
-        {% endif %}
-    {% endif %}
+<div class="page-title">
+    Dashboard
 </div>
+
 {% if custom_rewards == -1 %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="">
         <b>Sorry {{ twitch_username }}, but you can't set things up at the moment.</b><br><br>
-        Right now, functionality is only supported via channel point redemptions, and this means you need to <br>
+        Right now, functions are only supported via channel point redemptions, and this means you need to <br>
         be at least an affiliate to use smossbot, since affiliates get access to channel point rewards. <br>
         I know, this sucks. But in the future, commands for redemptions may be supported! For now though, keep grinding. &lt;3
     </div>
 {% else %}
-    <div class="subcontent">
-        <h2 class="subtitle">Bindings</h2>
-        {% if twitch_authenticated %}
-            <p>Bind whatever channel point rewards you want. Under each functionality you want, choose an existing reward.<br>
-            When you're done, click the "Bind Rewards" button at the bottom of this section.<br><br>
-            Some rewards are only possible to bind when authenticated with certain methods under <b>Authentication</b>.<br>
-            Create a Custom Reward (blue + button) in this website for your rewards to be eligible for auto-refunding in case of failure.</p>
-            <!-- TODO: would be nice -- <div class="input-group mb-3">
-                <input type="text" class="form-control blurry-text" placeholder="Overlay URL" aria-label="Overlay URL" aria-describedby="basic-addon2" value="{{ overlay_link }}" disabled>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">Copy Overlay Link</button>
-                </div>
-            </div-->
-            <button type="button" class="btn btn-primary" onclick="copyOverlayLink(this)">Copy Overlay Link</button>
-            <div class="form-group mb-5">
-                <div class="form-text mb-1" id="basic-addon4" style="color: white;">This link is for YouTube and Sound requests. Paste this into OBS as a browser source, and make the dimensions 1280x720.</div>
-            </div>
-            <div class="req_controller"> {% include "dashboard/req_controller.html" %} </div>
-        {% else %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <p>You aren't logged in with Twitch; please authenticate!</p>
-            </div>
-        {% endif %}
+    <div id="session-controller">
+        Loading session controller...
     </div>
-    <div class="session_controller"> {% include "dashboard/session_controller.html" %} </div>
+    <div class="flex center">
+        <a role="button" class="btn" href="{% url 'functions:index' %}" style="width: 250px; height: 250px;">
+            <div class="btn-text-center">
+                <i class="bi-link-45deg" style="font-size: 64px;"></i><br>
+                <b>Create/Set Functions</b>
+                <br><br>
+                <small>
+                    Give your channel points functions by choosing which channel point rewards do what!
+                </small>
+            </div>
+        </a>
+        <a role="button" class="btn" href="{% url 'functions:configure' %}" style="width: 250px; height: 250px;">
+            <div class="btn-text-center">
+                <i class="bi-tools" style="font-size: 64px;"></i><br>
+                <b>Configure Functions</b>
+                <br><br>
+                <small>
+                    Fine-tune functions by changing their behaviour to how you'd like.
+                </small>
+            </div>
+        </a>
+        <a role="button" class="btn" href="{% url 'files:index' %}" style="width: 250px; height: 250px;">
+            <div class="btn-text-center">
+                <i class="bi-folder2-open" style="font-size: 64px;"></i><br>
+                <b>File Manager</b>
+                <br><br>
+                <small>
+                    Upload files for your functions that smossbot should use!
+                </small>
+            </div>
+        </a>
+        <button class="btn" id="delete-modal-btn" style="--color: red; width: 250px; height: 250px;">
+            <div class="btn-text-center">
+                <i class="bi-trash3-fill" style="font-size: 64px;"></i><br>
+                <b>Delete All Data</b>
+                <br><br>
+                <small>
+                    Delete all information smossbot has stored from you if you no longer wish to be affiliated.
+                </small>
+            </div>
+        </button>
+    </div>
 {% endif %}
 
-<div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b><u>September 20, 2023 - v0.4.1</b></u></h5>
-    <div class="card-body">
-        <h5 class="card-title"><b>Bug fixes</b></h5>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Fixed uploaded files not actually enforcing the supported file types (big whoops).
-            </li>
-            <li class="list-group-item list-group-item-dark bg-transparent" style="color:white;">
-                Fixed the link to copy your overlay URL not appearing in your Dashboard; it now properly appears.
-            </li>
-        </ul>
-    </div>
-</div>
 
-
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" style="background-color: rgba(255, 0, 0, 0.05);">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background-color: rgb(120, 0, 0);">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete All Information</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>
+<!-- Delete modal -->
+<div class="flex center">
+    <div class="modal-cnt" id="delete-modal" style="width: 750px;">
+        <div class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Delete All Information
+                </div>
+                <div class="modal-body">
                     <b>ARE YOU SURE YOU WANT TO DELETE ALL OF YOUR INFORMATION?</b><br><br>
-                    <b>ALL</b> information will be lost, including your binds, credentials, authentications, set variables, information in the database,
+                    <b>ALL</b> information will be lost, including your functions, credentials, authentications, set variables, information in the database,
                     and everything else! It will be as if you never logged on to the website!<br><br>
                     <b>ARE YOU SURE?</b>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">no nvm lmao</button>
-                <a class="btn btn-danger" href="{% url 'dashboard:delete' %}" role="button">
-                    <b>Yes I'm sure; NUKE IT.</b>
-                </a>
+                </div>
+                <div class="flex row modal-footer">
+                    <div class="left">
+                        <button class="btn btn-compact" id="delete-modal-btn-close" style="--color: var(--dark-accent-2nd);" type="button">
+                            Close
+                        </button>
+                    </div>
+                    <div class="right flex row">
+                        <a class="btn btn-compact" href="{% url 'dashboard:delete' %}" id="delete-modal-btn-confirm" style="--color: red;" role="button">
+                            <b>Yes I'm sure; NUKE IT.</b>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-  
 
 
 <script>
-    function toggleSession(obj)
-    {
-        let endpoint = "";
-        let id_before = "";
-        
-        if ($(obj).is(":checked"))
-            { endpoint = "start_endpoint"; }
-        else
-            { endpoint = "end_endpoint"; }
-        obj.disabled = true;
 
-        let divclass = "session_controller";
-        callEndpoint(endpoint, divclass);
+    var deleteModal = new Modal($("#delete-modal"), $("#delete-modal-btn"), $("#delete-modal-btn-close"));
+
+    function loadSessionController()
+    {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'api:session' %}",
+            headers: {
+                Accept: "text/html"
+            },
+            success: function(data, status, jqXHR)
+            {
+                $("#session-controller").html(data);
+            },
+            complete: function()
+            {
+                let _switch = $("#session-switch");
+                _switch.prop("disabled", true);
+                setTimeout(function() { _switch.prop("disabled", false); }, 1500);
+                _switch.off().on("change", toggleSession);
+            }
+        });
     }
 
-    function callEndpoint(endpoint, divclass)
+    function toggleSession()
     {
-        $("." + divclass).load("{% url 'dashboard:callAPI' %}?endpoint=" + endpoint + "&divclass=" + divclass);
+        let _switch = $("#session-switch");
+        let _switch_checked = _switch.prop("checked");
+        _switch.disabled = true;
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "{% url 'api:session' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                session: _switch.prop("checked"),
+            },
+            success: loadSessionController,
+            error: function() { _switch.disabled = false; _switch.prop("checked", !_switch_checked); },
+        });
     }
 
     function copyOverlayLink(btn)
@@ -161,6 +163,9 @@
             btn.innerHTML = innerHTMLBefore;
         }, 5000);
     }
+
+    loadSessionController();
+
 </script>
 
 

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Changelog{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    changelog WOOHOOOO
+</div>
+
+<div class="changelog">
+    <div class="changelog-sidebar">
+        <h2>Version History</h2>
+        {% for version in versions %}
+            <div class="changelog-tab" onclick="jumpToVersion('{{version.version}}')">v{{ version.version }} - {{ version.title }}</div>
+            <br>
+        {% endfor %}
+    </div>
+    <div class="changelog-content">
+        {% for patchnote in changelog %}
+            <div class="changelog-entry white-shadow" id="{{ patchnote.version }}">
+                <div class="changelog-entry-title">{{ patchnote.title }}</div>
+                <div class="changelog-entry-subtitle">{{ patchnote.date }} - v{{ patchnote.version }}</div>
+                <div class="changelog-notes">
+                    {% for note in patchnote.notes %}
+                        <div class="changelog-note">
+                            {{ note }}
+                        </div>
+                    {% endfor %}
+                    {% if patchnote.joke_note %}
+                        <div class="changelog-note">
+                            {{ patchnote.joke_note }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<script>
+    function jumpToVersion(version)
+    {
+        window.location.href = "#" + version;
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,43 @@
+:root {
+    --std-gap: 10px;
+}
+
+.flex {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--std-gap);
+}
+
+.flex.center {
+    align-content: center;
+	justify-content: center;
+}
+
+.flex.row {
+    flex-direction: row;
+}
+
+.flex.col {
+    flex-direction: column;
+}
+
+.flex-img-cnt {
+    display: flex;
+    align-items: center;
+}
+
+.flex.extragap {
+    gap: 10%;
+}
+
+.flex.nogap {
+    gap: 0px;
+}
+
+.flex.row-gap {
+    min-height: var(--std-gap);
+}
+
+.flex.col-gap {
+    min-width: var(--std-gap);
+}

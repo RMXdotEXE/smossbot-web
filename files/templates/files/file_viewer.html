@@ -1,0 +1,88 @@
+<table class="table table-dark">
+    <thead>
+        <th scope="col">File name</th>
+        <th scope="col">Uploaded date</th>
+        <th scope="col">File tag</th>
+        <th scope="col">Actions</th>
+    </thead>
+    <tbody>
+        {% for file in uploaded_files %}
+            <tr>
+                <td>{{ file.file.name }}</td>
+                <td>{{ file.upload_date }}</td>
+                <td>
+                    <div class="flex col center">
+                        <div class="input-container">
+                            <input type="text" id="file-tag-{{ file.id }}" value="{{ file.tag }}" placeholder="" required>
+                            <div class="placeholder">
+                                File tag
+                            </div>
+                        </div>
+                        <button class="btn" id="file-edit-{{ file.id }}" data-file-id="{{ file.id }}" ><div class="btn-text-center">Update File Tag</div></button>
+                    </div>
+                </td>
+                <td>
+                    <div class="flex row center">
+                        <a role="button" class="btn btn-flex" style="flex: 1;" href="{{ file.file.url }}">
+                            <div class="btn-text-center">Open File&nbsp;<i class="bi-box-arrow-in-up-right"></i></div>
+                        </a>
+                        <button class="btn btn-flex" id="file-delete-{{ file.id }}" data-file-id="{{ file.id }}" style="--color: red;"><div class="btn-text-center">Delete File</div></button>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+
+    /* ===================================================================
+     * BUTTONS SETUP
+     * ================================================================ */
+    // File tag edits
+    $("button[id^='file-edit-']").on("click", function(e)
+    {
+        let buttonQueryStr = "#file-edit-" + $(this).attr("data-file-id");
+        let tagQueryStr = "#file-tag-" + $(this).attr("data-file-id");
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            fileID: $(this).attr("data-file-id"),
+            tag: $(tagQueryStr).val(),
+        };
+
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'files:files' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function() { successful($(buttonQueryStr)); },
+            error: function() { error($(buttonQueryStr)); },
+        });
+    });
+
+    // File deletion
+    $("button[id^='file-delete-']").on("click", function(e)
+    {
+        let buttonQueryStr = "#file-delete-" + $(this).attr("data-file-id");
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            fileID: $(this).attr("data-file-id"),
+        };
+
+        $.ajax
+        ({
+            type: "DELETE",
+            url: "{% url 'files:files' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: loadFileViewer,
+            error: function() { error($(buttonQueryStr), "Delete unsuccessful; please report!"); },
+        });
+    });
+
+</script>
