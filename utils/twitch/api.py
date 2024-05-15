@@ -151,13 +151,12 @@ def getCustomRewards(twitch_id: int, twitch_auth_token: str) -> dict:
         }
     
     error_msg = ""
-    match resp.status_code:
-        case 400: error_msg = "No Twitch ID was specified in the request; please refresh or report the problem if it persists. Thank you!"
-        case 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
-        case 403: error_msg = "Channel point rewards aren't unlocked for you yet because you're not a Partner or Affiliate; apologies!"
-        case 404: error_msg = "No custom rewards were found with the IDs we asked for; you shouldn't ever get this error, so let me know if you see this!"
-        case 500: error_msg = "Twitch had an internal server error; try again in a moment."
-        case _: "An error occured getting the custom rewards."
+    if   resp.status_code == 400: error_msg = "No Twitch ID was specified in the request; please refresh or report the problem if it persists. Thank you!"
+    elif resp.status_code == 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
+    elif resp.status_code == 403: error_msg = "Channel point rewards aren't unlocked for you yet because you're not a Partner or Affiliate; apologies!"
+    elif resp.status_code == 404: error_msg = "No custom rewards were found with the IDs we asked for; you shouldn't ever get this error, so let me know if you see this!"
+    elif resp.status_code == 500: error_msg = "Twitch had an internal server error; try again in a moment."
+    else: error_msg = "An error occured getting the custom rewards."
 
     return {
         'ok': False,
@@ -189,13 +188,12 @@ def addCustomReward(twitch_id: int, twitch_auth_token: str, reward_data: dict) -
         }
     
     error_msg = ""
-    match resp.status_code:
-        case 400: error_msg = ("No Twitch ID was specified in the request, the name for the channel point reward matches an existing one, "
+    if   resp.status_code == 400: error_msg = ("No Twitch ID was specified in the request, the name for the channel point reward matches an existing one, "
             "or one of the parameters was invalid. Try again, refresh, or report the problem if it persists. Thank you!")
-        case 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
-        case 403: error_msg = "Channel point rewards aren't unlocked for you yet because you're not a Partner or Affiliate; apologies!"
-        case 500: error_msg = "Twitch had an internal server error; try again in a moment."
-        case _: "An error occured getting the custom rewards."
+    elif resp.status_code == 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
+    elif resp.status_code == 403: error_msg = "Channel point rewards aren't unlocked for you yet because you're not a Partner or Affiliate; apologies!"
+    elif resp.status_code == 500: error_msg = "Twitch had an internal server error; try again in a moment."
+    else: error_msg = "An error occured getting the custom rewards."
 
     return {
         'ok': False,
@@ -226,15 +224,13 @@ def deleteCustomReward(twitch_id: int, twitch_auth_token: str, reward_id: str) -
         }
     
     error_msg = ""
-    match resp.status_code:
-        case 400: error_msg = "No Twitch ID or reward_id was specified in the request. Try again, refresh, or report the problem if it persists. Thank you!"
-        case 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
-        case 403: error_msg = ("smossbot tried to delete the reward but it wasn't the one that created it. If you're certain you created the reward here, "
+    if   resp.status_code == 400: error_msg = "No Twitch ID or reward_id was specified in the request. Try again, refresh, or report the problem if it persists. Thank you!"
+    elif resp.status_code == 401: error_msg = "The authorization provided was invalid; please relog and try again, and report if it persists. Thank you!"
+    elif resp.status_code == 403: error_msg = ("smossbot tried to delete the reward but it wasn't the one that created it. If you're certain you created the reward here, "
             "please report this! This is super unusual behaviour. (This error could also mean you aren't a Twitch partner/affiliate, but this isn't it.)")
-        case 404: error_msg = "The reward attempting deletion doesn't exist anymore. Double-check it still exists, and let me know if this issue persists."
-        case 500: error_msg = "Twitch had an internal server error; try again in a moment."
-        case _: "An error occured deleting the custom reward."
-
+    elif resp.status_code == 404: error_msg = "The reward attempting deletion doesn't exist anymore. Double-check it still exists, and let me know if this issue persists."
+    elif resp.status_code == 500: error_msg = "Twitch had an internal server error; try again in a moment."
+    else: error_msg = "An error occured deleting the custom reward."
 
     return {
         'ok': False,
