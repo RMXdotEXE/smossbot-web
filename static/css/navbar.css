@@ -1,0 +1,73 @@
+:root {
+	--nav-padding: 20px;
+}
+
+.nav-container {
+	background-color: rgba(0, 0, 0, 0.50);
+	position: sticky;
+	top: 0;
+
+	color: white;
+	font-size: 24px;
+}
+
+nav {
+	display: flex;
+	align-items: center;
+}
+
+.nav-left {
+	margin-right: auto;
+	padding-left: var(--nav-padding);
+}
+
+.nav-right {
+	margin-left: auto;
+	padding-right: var(--nav-padding);
+}
+
+.nav-list {
+	gap: 50px;
+	padding-left: 0; /* unordered list in HTML automatically sets this to 40. Can remove if UL implementation is removed from navbar */
+	list-style-type: none;
+
+	display: inline-flex;
+	margin: 15px auto;
+}
+
+.nav-list a.nav-link {
+	gap: 10px;
+	color: white;
+	align-items: center;
+	text-decoration: none;
+	transition: 0.2s;
+	display: inline-flex;
+
+	&:hover {
+		color: #999999;
+	}
+}
+
+.nav-btn {
+	color: white;
+	align-items: center;
+	transition: 0.2s;
+	display: inline-flex;
+
+	font-weight: bold;
+}
+
+.nav-brand {
+	display: inline-flex;
+}
+
+.nav-tab {
+	color: white;
+	display: inline-flex;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.nav-text {
+	margin: auto;
+}

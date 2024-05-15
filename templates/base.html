@@ -9,8 +9,9 @@
     <head>
         <meta charset="utf-8">
         <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/validators.js' %}"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
         <link rel="stylesheet" href="{% static 'font/bootstrap-icons.css' %}">
         <link rel="icon" href="{% static 'OkayChamp.png' %}" type="image">
@@ -18,73 +19,107 @@
         <title>smossbot</title>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg px-2" data-bs-theme="dark" style="background-color: rgba(0, 0, 0, 0.50);">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="{% static 'smossbotting.gif' %}" alt="Logo" width="50" height="50" class="d-inline-block">
-                    <b>smossbot</b>
-                </a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        {% if twitch_username %}
-                            <li class="nav-item px-3">
-                                <a class="nav-link text-light" href="{% url 'dashboard:index' %}">Dashboard</a>
+        <header> <!-- header tag's got our navbar -->
+            <div class="nav-container">
+                <nav>
+                    <div class="nav-left">
+                        <ul class="nav-list">
+                            <li class="nav-brand">
+                                <a href="{% url 'home' %}" class="nav-link">
+                                    <img src="{% static 'smossbotting.gif' %}" alt="Logo" width="50" height="50" class="nav-brand-img">
+                                    <b>smossbot</b>
+                                </a>
                             </li>
-                            {% if twitch_username == "xzmozxx" %}
-                                <li class="nav-item px-3">
-                                    <a class="nav-link text-light" href="{% url 'dashboard:upload' %}">File Manager</a>
+                            {% if twitch_username %}
+                                <li class="nav-tab">
+                                    <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
                                 </li>
                             {% endif %}
-                        {% endif %}
-                        <li class="nav-item px-3">
-                            <a class="nav-link text-light" href="{% url 'commands' %}">Commands</a>
-                        </li>
-                        <li class="nav-item px-3">
-                            <a class="nav-link text-light" href="{% url 'changelog' %}">Changelog</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        {% if twitch_username %}
-                        <span class="navbar-text h5 mb-0 text-light">
-                            <i class="bi-twitch"></i>&nbsp;<b>{{ twitch_username }}</b>
-                        </span>
-                        <li class="nav-item px-3">
-                            <a role="button" class="btn btn-danger" href="{% url 'logout' %}">Log Out <i class="bi bi-box-arrow-in-right"></i></a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item px-3">
-                            <a role="button" class="btn btn-lg btn-primary" href="{{ twitch_auth_url }}" style="background-color: #6441a5; border-color: white;"><i class="bi-twitch"></i> <b>Sign in with Twitch</b></a>
-                        </li>
-                        {% endif %}
-                    </ul>
+                            <li class="nav-tab">
+                                <a class="nav-link" href="{% url 'commands' %}">Commands</a>
+                            </li>
+                            <li class="nav-tab">
+                                <a class="nav-link" href="{% url 'changelog:index' %}">Changelog</a>
+                            </li>
+                            <li class="nav-tab">
+                                <a class="nav-link" href="{% url 'about' %}">About & Donate</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="nav-right">
+                        <ul class="nav-list">
+                            {% if twitch_username %}
+                                <li class="nav-text">
+                                    <i class="bi-twitch"></i>&nbsp;<b>{{ twitch_username }}</b>
+                                </li>
+                                <li class="nav-tab">
+                                    <a role="button" class="btn nav-btn" href="{% url 'logout' %}" style="--color: red;" tabindex="0">Log Out&nbsp;<i class="bi bi-box-arrow-in-right"></i></a>
+                                </li>
+                            {% else %}
+                                <li class="nav-tab">
+                                    <a role="button" class="btn nav-btn" href="{{ twitch_auth_url }}" style="--color: #6441a5;"><i class="bi-twitch"></i>&nbsp;Sign in with Twitch</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <div class="dim-background" id="dimBackground" style="display: none;"></div>
+            <div class="main-container">
+                {% if messages %}
+                    <div class="base-messages">
+                        <br>
+                        {% for message in messages %}
+                            <div class="alert alert-dismissible fade show
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} alert-danger
+                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% endif %}
+                            " role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="base-content">
+                    {% block content %}
+                    {% endblock %}
                 </div>
             </div>
-        </nav>  
-        <div class="center trimMarginsLR">
-            {% if messages %}
-            <br>
-            <div>
-                {% for message in messages %}
-                    <div class="alert alert-dismissible fade show
-                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} alert-danger
-                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% endif %}
-                    " role="alert">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+        </main>
+        <footer>
+            <div class="footer-section">
+                Please keep in mind that this site is still under development. <br>
+                If any bugs happen or inquiries arise, please report them to me!
             </div>
-            {% endif %}
-            {% block content %}
-            {% endblock %}
-        </div>
+            <div class="footer-section">
+                <i class="bi-discord"></i>&nbsp;Discord: .moz.<br>
+                <i class="bi-envelope"></i>&nbsp;Inquiries: omarg19999@gmail.com<br>
+            </div>
+            <div class="footer-section">
+                <a href="https://github.com/RMXdotEXE/smossbot-web"><i class="bi-github"></i>&nbsp;Website GitHub</a><br>
+                <i class="bi-github"></i>&nbsp;Twitch Bot GitHub - TBD
+            </div>
+        </footer>
     </body>
-    <footer>
-        <p class="center trimMarginsLR footnotes">
-            Please keep in mind that this site is still under heavy development. If any bugs happen or inquiries arise, please report them to me!<br>
-            <i class="bi-discord"></i>  Discord: .moz.<br>
-            <i class="bi-envelope"></i> Inquiries: dev@smossbot.com<br>
-            <a href="https://github.com/RMXdotEXE/smossbot-web"><i class="bi-github"></i> Website GitHub</a><br>
-            <i class="bi-github"></i> Twitch Bot GitHub - TBD
-        </p>
-    </footer>
-</html> 
+</html>
+
+<script>
+
+$.ajaxSetup({
+    headers: {"X-CSRFToken": "{{ csrf_token }}"}
+});
+
+
+// https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
+function escapeHTML(unsafe)
+{
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+ }
+
+</script>

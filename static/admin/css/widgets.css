@@ -400,7 +400,7 @@ span.clearable-file-input label {
     font-weight: 700;
     font-size: 12px;
     color: #333;
-    background: var(--accent);
+    background: var(--dark-accent);
 }
 
 .calendar th {

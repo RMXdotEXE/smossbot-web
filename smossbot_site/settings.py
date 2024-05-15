@@ -35,10 +35,17 @@ ALLOWED_HOSTS = ["157.245.138.94", 'www.smossbot.com', "127.0.0.1", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
-    'overlay.apps.OverlayConfig',
-    'dashboard.apps.DashboardConfig',
-    'callback.apps.CallbackConfig',
+    'rest_framework',
+    'accounts.apps.AccountsConfig',
     'api.apps.ApiConfig',
+    'bot.apps.BotConfig',
+    'callback.apps.CallbackConfig',
+    'changelog.apps.ChangelogConfig',
+    'dashboard.apps.DashboardConfig',
+    'files.apps.FilesConfig',
+    'functions.apps.FunctionsConfig',
+    'overlay.apps.OverlayConfig',
+    'django_jsonform',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,6 +106,18 @@ DATABASES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 
+# Authentication user model
+# https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#extending-user
+AUTH_USER_MODEL = "accounts.TwitchUser"
+
+
+# Authentication backend model
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.TwitchAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -156,10 +175,6 @@ MEDIA_ROOT = os.getenv("MEDIA_ROOT")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Login/logout redirects
-LOGIN_REDIRECT_URL = "/dashboard/"
-LOGOUT_REDIRECT_URL = "home"
 
 CSRF_COOKIE_SECURE = (not DEBUG)
 SESSION_COOKIE_SECURE = (not DEBUG)

@@ -4,19 +4,29 @@
 
 {% block content %}
 <div>
-    <h1 class="title">
+    <div class="page-title">
         smossbot being publicly released soon!
-    </h1>
+    </div>
 
-    <h2 style="margin: 5% 0%;">
+    <h2>
         {% if twitch_username %}
-            Hey {{ twitch_username }}!<br>
-            <a role="button" class="btn btn-lg btn-primary" href="{% url 'dashboard:index' %}" style="background-color: green; border-color: white;"><b>Head to your dashboard</b> <i class="bi-arrow-right"></i></a>
+        <div class="flex center">
+            <a role="button" class="btn center-text" href="{% url 'dashboard:index' %}" style="width: 250px; height: 250px;">
+                <div class="flex col">
+                    <div class="center-text">Hey {{ twitch_username }}!</div>
+                    <br>
+                    <div>
+                        <b>Head to your dashboard</b>&nbsp;<i class="bi-arrow-right"></i>
+                    </div>
+                </div>
+                
+            </a>
+        </div>
             <br><br>
         {% endif %}
     </h2>
 
-    <h2 style="margin: 5% 0%;">
+    <h2>
         <p>
             smossbot is a Twitch bot that offers features for your stream, right from your chat for your viewers to use.
             <br><br>

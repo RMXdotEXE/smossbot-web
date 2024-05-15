@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Function Configuration{% endblock %}
+{% block content %}
+
+
+<div class="info-container">
+    <div class="info-header">
+        Fine-tune your configurations and slightly change their behaviour to your needs!
+    </div>
+    <div class="info-body">
+        Small tweaks can be made to each of your functions to better suit what you want.<br><br>
+        If a behaviour can't be changed here, chances are that somebody else thought of the same thing.<br>
+        Feel free to reach out with any suggestions for more customization with your functions!
+    </div>
+</div>
+<div class="page-title">
+    Spotify Song Requests
+</div>
+<form id="vars-songreq-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Emote</div>
+            <div class="center-text ver" style="flex: 3;">
+                Upon a successful song request, a message is sent. This is the plain-text emote that appears at the start.
+            </div>
+            <div class="input-container stretch">
+                <input type="text" id="vars-songreq-emote" placeholder=" " value="{{ songreq.emote }}" required>
+                <div class="placeholder">
+                    Emote
+                </div>
+            </div>
+        </div>
+        <button class="btn"><div class="btn-text-center">Save changes: Spotify Song Requests</div></button>
+    </div>
+</form>
+<br><hr><br>
+<div class="page-title">
+    Spotify Song Skips
+</div>
+<form id="vars-songskip-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Emote</div>
+            <div class="center-text ver" style="flex: 3;">
+                Upon a successful song skip, a message is sent. This is the plain-text emote that appears at the start.
+            </div>
+            <div class="input-container stretch">
+                <input type="text" id="vars-songskip-emote" placeholder=" " value="{{ songskip.emote }}" required>
+                <div class="placeholder">
+                    Emote
+                </div>
+            </div>
+        </div>
+        <button class="btn"><div class="btn-text-center">Save changes: Spotify Song Skips</div></button>
+    </div>
+</form>
+<br><hr><br>
+<div class="page-title">
+    ChatGPT Chat Requests
+</div>
+<form id="vars-chatgpt-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Clear size</div>
+            <div class="center-text ver" style="flex: 3;">
+                The number of past exchanges to be cleared at a time until ChatGPT can make more conversation. Due to its limitations,
+                ChatGPT can only operate on so much chat information. All messages are stored until the oldest ones need to be cleared out,
+                and this number dictates how many exchanges at a time the bot should clear out until ChatGPT can process it.
+            </div>
+            <div class="input-container stretch">
+                <input type="text" id="vars-chatgpt-clearsize" placeholder=" " value="{{ chatgpt.clearsize }}" required>
+                <div class="placeholder">
+                    Clear size
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Show full</div>
+            <div class="center-text ver" style="flex: 3;">
+                Determines if smossbot cuts off responses from ChatGPT. If on, smossbot will send as much Twitch messages as it needs to
+                post the complete ChatGPT response, typically a maximum of 5. If off, it'll cut it off and replace the end with "... (max 500)".
+            </div>
+            <div style="flex: 1;">
+                <label class="switch-container" style="transform: scale(0.70);">
+                    <input type="checkbox" role="switch" id="vars-chatgpt-showfull" {% if chatgpt.showfull %} checked {% endif %}>
+                    <span class="switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Max prompt tokens</div>
+            <div class="center-text ver" style="flex: 3;">
+                Represents how many tokens ChatGPT can use for the chat completion. A shorter number means the responses are forced to be more
+                concise, and a larger number means the responses are more thorough. If you set the number lower to make the responses shorter
+                though, ChatGPT may give you a garbage/junk response. For reference, OpenAI sets the minimum recommended amount of tokens to 256
+                to supply a successful response. 
+            </div>
+            <div class="input-container stretch">
+                <input type="text" id="vars-chatgpt-maxprompttokens" placeholder=" " value="{{ chatgpt.maxprompttokens }}" required>
+                <div class="placeholder">
+                    Max prompt tokens
+                </div>
+            </div>
+        </div>
+        <button class="btn"><div class="btn-text-center">Save changes: ChatGPT Chat Requests</div></button>
+    </div>
+</form>
+<br><hr><br>
+<div class="page-title">
+    YouTube Requests
+</div>
+<form id="vars-ytreq-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Max seconds</div>
+            <div class="center-text ver" style="flex: 3;">Represents the maximum of seconds that incoming YouTube requests should play for.</div>
+            <div class="input-container stretch">
+                <input type="text" id="vars-ytreq-maxsecs" placeholder=" " value="{{ ytreq.maxsecs }}" required>
+                <div class="placeholder">
+                    Max seconds
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Mute Spotify</div>
+            <div class="center-text ver" style="flex: 3;">
+                Determines if incoming YouTube requests pause your current Spotify playback. The playback remains paused for the duration
+                of the YouTube video(s) currently in queue, and resumes only when the YouTube request queue is complete.
+            </div>
+            <div style="flex: 1;">
+                <label class="switch-container" style="transform: scale(0.70);">
+                    <input type="checkbox" role="switch" id="vars-ytreq-mutespotify" {% if ytreq.mutespotify %} checked {% endif %}>
+                    <span class="switch"></span>
+                </label>
+            </div>
+        </div>
+        <button class="btn"><div class="btn-text-center">Save changes: YouTube Requests</div></button>
+    </div>
+</form>
+<br><hr><br>
+
+<script>
+
+    /* ===================================================================
+     * FORM SUBMISSIONS SETUP
+     * ================================================================ */
+    // TODO: Is there a better way to do this? Looks like a ton of spaghetti
+
+    // songreq
+    $("#vars-songreq-form").on("submit", function(e)
+    {
+        e.preventDefault();
+        
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            function: "songreq",
+            emote: $("#vars-songreq-emote").val(),
+        };
+
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'functions:vars' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function() { successful($("#vars-songreq-form").find("button")); },
+            error: function() { error($("#vars-songreq-form").find("button")); },
+        });
+    });
+
+    // songskip
+    $("#vars-songskip-form").on("submit", function(e)
+    {
+        e.preventDefault();
+        
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            function: "songskip",
+            emote: $("#vars-songskip-emote").val(),
+        };
+
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'functions:vars' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function() { successful($("#vars-songskip-form").find("button")); },
+            error: function() { error($("#vars-songskip-form").find("button")); },
+        });
+    });
+
+    // chatgpt
+    $("#vars-chatgpt-form").on("submit", function(e)
+    {
+        e.preventDefault();
+        
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            function: "chatgpt",
+            clearsize: $("#vars-chatgpt-clearsize").val(),
+            showfull: $("#vars-chatgpt-showfull").prop("checked"),
+            maxprompttokens: $("#vars-chatgpt-maxprompttokens").val(),
+        };
+
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'functions:vars' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function() { successful($("#vars-chatgpt-form").find("button")); },
+            error: function() { error($("#vars-chatgpt-form").find("button")); },
+        });
+    });
+
+    // ytreq
+    $("#vars-ytreq-form").on("submit", function(e)
+    {
+        e.preventDefault();
+        
+        let data = {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            function: "ytreq",
+            maxsecs: $("#vars-ytreq-maxsecs").val(),
+            mutespotify: $("#vars-ytreq-mutespotify").prop("checked"),
+        };
+
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'functions:vars' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: data,
+            success: function() { successful($("#vars-ytreq-form").find("button")); },
+            error: function() { error($("#vars-ytreq-form").find("button")); },
+        });
+    });
+
+
+    /* ===================================================================
+     * BUTTON FEEDBACK FUNCTIONS
+     * ================================================================ */
+    function successful(btn)
+    {
+        let original_text = btn.find("div").text();
+
+        btn.css("--color", "green");
+        btn.prop("disabled", true);
+        btn.find("div").text("Changes successful!");
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function error(btn)
+    {
+        let original_text = btn.find("div").text();
+
+        btn.css("--color", "red");
+        btn.prop("disabled", true);
+        btn.find("div").text("Changes unsuccessful; check inputs!");
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function restore(btn, original_text)
+    {
+        btn.css("--color", "");
+        btn.prop("disabled", false);
+        btn.find("div").text(original_text);
+    }
+
+
+    /* ===================================================================
+     * VALIDATIONS
+     * ================================================================ */
+    // TODO: Show these validations below input box instead of vanilla browser popup on submit.
+    // TODO: Also make it lock submit buttons?
+    Validators.forceStrLength($("#vars-songreq-emote"), 0, 256);
+    Validators.forceStrLength($("#vars-songskip-emote"), 0, 256);
+    Validators.forceIntInRange($("#vars-chatgpt-clearsize"), 1, 20);
+    Validators.forceIntInRange($("#vars-chatgpt-maxprompttokens"), 1);
+    Validators.forceIntInRange($("#vars-ytreq-maxsecs"), 1);
+
+</script>
+
+
+{% endblock %}

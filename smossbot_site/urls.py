@@ -24,14 +24,17 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/', include("django.contrib.auth.urls")),
     path('callback/', include('callback.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('file-manager/', include('files.urls')),
+    path('functions/', include('functions.urls')),
     path('overlay/', include('overlay.urls')),
     path('api/', include('api.urls')),
+    path('changelog/', include('changelog.urls')),
     path('commands/', views.commands, name='commands'),
-    path('changelog/', views.changelog, name='changelog'),
+    path('about/', views.about, name='about'),
     path('gatekept/', views.gatekept, name='gatekept'),
+    path('logout/', views.logout, name='logout')
 ]
 
 if settings.DEBUG:

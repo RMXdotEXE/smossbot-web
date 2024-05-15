@@ -8,7 +8,7 @@
 :root {
   --primary: #79aec8;
   --secondary: #417690;
-  --accent: #f5dd5d;
+  --dark-accent: #f5dd5d;
   --primary-fg: #fff;
 
   --body-fg: #333;
@@ -17,7 +17,7 @@
   --body-loud-color: #000;
 
   --header-color: #ffc;
-  --header-branding-color: var(--accent);
+  --header-branding-color: var(--dark-accent);
   --header-bg: var(--secondary);
   --header-link-color: var(--primary-fg);
 
@@ -922,11 +922,11 @@ table#change-history tbody th {
     margin: 0 20px 0 0;
     font-weight: 300;
     font-size: 24px;
-    color: var(--accent);
+    color: var(--dark-accent);
 }
 
 #branding h1, #branding h1 a:link, #branding h1 a:visited {
-    color: var(--accent);
+    color: var(--dark-accent);
 }
 
 #branding h2 {

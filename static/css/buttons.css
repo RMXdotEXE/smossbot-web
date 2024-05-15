@@ -1,0 +1,159 @@
+:root {
+	--color: var(--dark-accent);
+	--btn-padding: 15px;
+	--btn-nm-font-size: 18px;
+	--btn-nm-padding: 10px;
+	--btn-lg-font-size: 24px;
+	--btn-lg-padding: 15px;
+}
+
+.btn {
+	width: 100%;
+	background-color: var(--color);
+	color: white;
+	font-size: var(--btn-nm-font-size);
+	padding: 10px var(--btn-nm-padding);
+	cursor: pointer;
+  	overflow: hidden;
+  
+	border-color: color-mix(in srgb, var(--color) 50%, white);
+	border-radius: 7px;
+	border-width: 2px;
+	border-style: solid;
+	transition: 0.2s;
+
+	display: flex;
+
+	/* Don't apply hover effects to disabled buttons. */
+	&:not(:disabled):not(.selected)
+	{
+		&:hover {
+			background-color: color-mix(in srgb, var(--color) 75%, black);
+			box-shadow: 0px 0px 5px 1px white;
+		}
+	
+		&:active {
+			background-color: color-mix(in srgb, var(--color) 50%, black);
+			box-shadow: none;
+		}
+	
+		&:active:has(:focus-within) {
+			background-color: color-mix(in srgb, var(--color) 75%, black);
+		}
+	
+		&:focus:not(:hover) {
+			background-color: var(--color);
+		}
+	};
+}
+
+.btn:disabled {
+	cursor: not-allowed;
+	background-color: color-mix(in srgb, var(--color) 33%, rgba(78, 78, 78, 0.5));
+	border-color: color-mix(in srgb, var(--color) 33%, black);
+	/* background-color: rgba(78, 78, 78, 0.5); */
+	/* color: rgba(255, 255, 255, 0.5); */
+	/* border-color: black; */
+
+	& img {
+		/*
+		TODO: WHY the HELL does this affect the z-index?
+		Make sure grayscale(x) doesn't change its z-index. If there's a dropdown
+		that intersects with a grayscaled img, the img appears ON TOP of the dropdown.
+		filter: grayscale(1);
+		*/
+	};
+}
+
+.btn.selected {
+	background-color: green;
+	border-color: color-mix(in srgb, green 50%, white);
+	box-shadow: 0px 0px 10px 1px green;
+
+	&:hover {
+		background-color: color-mix(in srgb, green 75%, black);
+		box-shadow: 0px 0px 10px 1px white;
+	}
+
+	&:active {
+		background-color: color-mix(in srgb, green 50%, black);
+		box-shadow: none;
+	}
+
+	&:active:has(:focus-within) {
+		background-color: color-mix(in srgb, green 75%, black);
+	}
+
+	&:focus:not(:hover) {
+		background-color: green;
+	}
+}
+
+.btn-clear {
+	--color: transparent;
+}
+
+.btn-lg {
+	font-size: var(--btn-lg-font-size);
+	padding: calc(var(--btn-lg-padding) * 0.66) var(--btn-lg-padding);
+}
+
+.btn-compact {
+	width: auto;
+}
+
+.btn-flex {
+	display: flex;
+	flex: 1;
+}
+
+.btn-addpoint {
+	border-style: dashed;
+	border-width: 2px;
+}
+
+.btn > .btn-text-center {
+	text-align: center;
+	margin: auto;
+}
+
+.btn > .btn-left {
+	margin-right: auto;
+	display: inline-flex;
+}
+
+.btn > .btn-right {
+	margin-left: auto;
+	font-size: 32px;
+	transition: 0.2s;
+}
+
+/* TODO: This would be so nice to have, but i'm dogshit at css (/
+.btn:hover:has(.btn-tools) > .btn-right {
+	transform: translateX(calc(-100% + var(--btn-padding)));
+}
+*/
+
+.btn-right > .btn-tools {
+	float: left;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+}
+
+.btn-tools > .btn-tool {
+	transition: 0.2s;
+}
+
+.btn-tool:hover {
+	color: color-mix(in srgb, white 50%, black);
+}
+
+.btn-tool:active {
+	color: color-mix(in srgb, white 25%, black);
+}
+
+a.btn {
+	text-decoration: none;
+}

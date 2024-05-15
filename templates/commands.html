@@ -4,39 +4,39 @@
 {% load bootstrap_icons %}
 
 
-{% block title %}Gatekept{% endblock %}
+{% block title %}Commands{% endblock %}
 
 {% block content %}
-<h1 class="title">
+<div class="page-title">
     smossbot's commands for the MODS
-</h1>
-
-<div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b>!ping</b></h5>
-    <div class="card-body">
-        <h5 class="card-title">smossbot responds with <b>Pong!</b> to let you know it's active and listening.</h5>
-        <p class="card-text"><small>Permission level: Viewer</small></p>
-    </div>
 </div>
 
-<div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b>!songskip</b></h5>
-    <div class="card-body">
-        <h5 class="card-title">Manually skip the currently playing song.</h5>
-        <p class="card-text"><small>Permission level: Moderator+</small></p>
+<div class="command-cnt white-shadow">
+    <div class="command-name center-text">!ping</div>
+    <div class="command-body center-text">
+        smossbot responds with <b>&nbsp;Pong!&nbsp;</b> to let you know it's active and listening.
     </div>
+    <div class="command-footer center-text">Permission level: Viewer</div>
 </div>
 
-<div class="card text-bg-dark mb-3">
-    <h5 class="card-header"><b>!variable &lt;variablename&gt; &lt;value&gt;</b></h5>
-    <div class="card-body">
-        <h5 class="card-title">Updates various values that tweak how certain parts of smossbot work, so you can fine-tune behaviours.</h5>
-        <table class="table table-dark table-striped">
+<div class="command-cnt white-shadow">
+    <div class="command-name center-text">!songskip</div>
+    <div class="command-body center-text">
+        Manually skips the song currently playing.
+    </div>
+    <div class="command-footer center-text">Permission level: Moderator+</div>
+</div>
+
+<div class="command-cnt white-shadow">
+    <div class="command-name center-text">!variable &lt;variablename&gt; &lt;value&gt;</div>
+    <div class="command-body">
+        Updates various values that tweak how certain parts of smossbot work, so you can fine-tune behaviours.
+        <table class="table">
             <thead>
                 <tr>
-                    <th scope="col"><u>variablename</u></th>
-                    <th scope="col"><u>value</u></th>
-                    <th scope="col"><u>Purpose</u></th>
+                    <th scope="col">variablename</th>
+                    <th scope="col">value</th>
+                    <th scope="col">Purpose</th>
                 </tr>
             </thead>
             <tbody>
@@ -111,8 +111,8 @@
                 </tr>
             </tbody>
         </table>
-    <p class="card-text"><small>Permission level: Moderator+ OR xzmozxx</small></p>
     </div>
+    <div class="command-footer center-text">Permission level: Moderator+ OR xzmozxx</div>
 </div>
   
 {% endblock %}

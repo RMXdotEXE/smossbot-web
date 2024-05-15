@@ -1,0 +1,211 @@
+<div id="command-function-form-section">
+    <form method="POST" id="command-function-form"> {% csrf_token %}
+        <div class="flex row">
+            <div class="flex col" style="min-width: 500px;">
+                <div id="func-for-command-dd" class="dropdown-container">
+                    <div class="label">
+                        Function:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        {% for func_code, func_code_title in func_code_lookup.items %}
+                            {% if func_code not in binds.commands %}
+                                <div class="dropdown-li-container"><li id="command-bind-create-{{ func_code }}">
+                                    {{ func_code_title }}
+                                </li></div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="flex row">
+                    <div class="input-container">
+                        <input type="text" id="command-name" placeholder=" " required>
+                        <div class="placeholder">
+                            Name (excluding "!")
+                        </div>
+                    </div>
+                    <div class="flex col nogap">
+                        <div class="flex row center">
+                            <label for="command-cooldown-switch" class="center-text">Cooldown & Limits</label>
+                            <label class="switch-container" style="transform: scale(0.70);">
+                                <input type="checkbox" role="switch" id="command-cooldown-switch">
+                                <span class="switch"></span>
+                            </label>
+                        </div>
+                        <small>If enabled, allows you to set various cooldown rules.</small>
+                    </div>
+                </div>
+                <div class="flex col" id="command-cooldown-section" style="display: none;">
+                    <div class="flex row">
+                        <div class="input-container stretch">
+                            <input type="text" id="command-global-cooldown" placeholder=" ">
+                            <div class="placeholder">
+                                Global cooldown (seconds)
+                            </div>
+                        </div>
+                        <div class="input-container stretch">
+                            <input type="text" id="command-user-cooldown" placeholder=" ">
+                            <div class="placeholder">
+                                User cooldown (seconds)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vertical-divider"></div>
+            <div class="flex col">
+                <div class="subheader center-text">
+                    Click to Confirm & Bind
+                </div>
+                <button class="btn" style="--color: green;" id="command-candidate-button" type="submit" disabled>
+                    <span class="btn-left">
+                        <span class="flex-img-cnt">
+                            <i class="bi-braces" style="font-size: 32px;"></i>
+                            <span style="text-align: left;">
+                                &nbsp;
+                                <span id="command-name-candidate">!</span>
+                                <br>
+                                &nbsp;
+                                <small id="command-function-candidate"><i class='bi-gear'></i>&nbsp;</small>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+(function() {
+
+    var funcForCommandDD = new Dropdown($("#func-for-command-dd"), chooseFunctionHandler);
+    
+    // Form vars
+    var authenticationChecks = [];
+
+    $("#command-name").on("keyup", commandCandidateUpdate);
+    $("#command-cooldown-switch").on("change", function()
+    {
+        $("#command-cooldown-section").toggle(this.checked);
+        $("#command-global-cooldown").prop("required", this.checked);
+        $("#command-user-cooldown").prop("required", this.checked);
+    });
+
+    $("#command-function-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+
+        $.ajax
+        ({
+            type: "PUT",
+            url: "{% url 'functions:binds' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                method: funcMethodDD.getParsedID(),
+                function: funcForCommandDD.getParsedID(),
+                commandName: $(this).find("#command-name").val(),
+                hasCooldown: $(this).find("#command-cooldown-switch").prop("checked"),
+                globalCooldown: $(this).find("#command-global-cooldown").val(),
+                userCooldown: $(this).find("#command-user-cooldown").val()
+            },
+            success: loadFunctionUtils,
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log(jqXHR.responseJSON.msg);
+            }
+        });
+    });
+
+    function chooseFunctionHandler()
+    {
+        let gearIcon = "<i class='bi-gear'></i>&nbsp;";
+        let functionName = "";
+        switch (this.getParsedID())
+        {
+            case "songreq":
+                functionName = "Spotify Song Requests";
+                authenticationChecks = ["spotify"];
+                break;
+            case "chatgpt":
+                functionName = "ChatGPT Chat Requests";
+                authenticationChecks = [];
+                break;
+            case "songskip":
+                functionName = "Spotify Song Skips";
+                authenticationChecks = ["spotify"];
+                break;
+            case "ytreq":
+                functionName = "YouTube Requests";
+                authenticationChecks = [];
+                break;
+            case "gptimage":
+                functionName = "ChatGPT Image Requests";
+                authenticationChecks = [];
+                break;
+            case "soundreq":
+                functionName = "Sound Requests";
+                authenticationChecks = [];
+                break;
+        }
+
+        $("#command-function-candidate").html(gearIcon + functionName);
+
+        modifyCandidateButton();
+        modifyAuthButtons();
+        return;
+    }
+
+    function modifyCandidateButton()
+    {
+        let allow = true;
+
+        if (authenticationChecks.indexOf("spotify") > -1)
+        {
+            allow = spotifyAuthed;
+        }
+
+        $("#command-candidate-button").prop("disabled", 
+            !(
+                !!funcForCommandDD.getParsedID() && 
+                $("#command-name").val() && 
+                allow
+            )
+        );
+    }
+
+    function modifyAuthButtons()
+    {
+        if (authenticationChecks.indexOf("spotify") > -1)
+        {
+            spotifyAuthed ? $("#spotifyAuthButton").hide() : $("#spotifyAuthButton").show();
+        }
+        else
+        {
+            $("#spotifyAuthButton").hide();
+        }
+    }
+
+    function commandCandidateUpdate(event)
+    {
+        $("#command-name-candidate").html("!" + $("#command-name").val());
+        modifyCandidateButton();
+    }
+
+    /* ===================================================================
+     * VALIDATIONS
+     * ================================================================ */
+    // TODO: Show these validations below input box instead of vanilla browser popup on submit.
+    // TODO: Also make it lock submit buttons?
+    Validators.forceStrLength($("#command-name"), 1, 30);
+    Validators.forceIntInRange($("#command-global-cooldown"), 1);
+    Validators.forceIntInRange($("#command-user-cooldown"), 1);
+})();
+
+</script>

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Functions{% endblock %}
+{% block content %}
+
+
+<div class="info-container">
+    <div class="info-header">
+        Choose which channel point rewards and commands do what on this page!
+    </div>
+    <div class="info-body">
+        Click the <b>Function method</b> dropdown to get started! This controls whether you create either a channel point function
+        or a command function.<br>
+        Next, click the <b>Function</b> dropdown to choose which functionality you want. If you're looking for Spotify Song Requests, it's in there!<br><br>
+        <b>Channel point functions</b>: choose the channel point reward that is tied to it, or let smossbot automatically create one
+        for you. This is encouraged so that automatic refunds are possible if redemptions fail!<br>
+        <b>Command functions</b>: enter a command name and the rest of the details for that command.<br><br>
+        If you want to change the specifics of your already existing function, whether it be which channel point triggers it,
+        the command name, or anything else, or delete the function altogether, just click its button at the bottom.
+    </div>
+</div>
+<div class="page-title">
+    Create/Set Functions
+</div>
+<div id="setter">
+    <div class="flex col center">
+        <div id="func-method-dd" class="dropdown-container">
+            <div class="label">
+                Function method:
+            </div>
+            <div class="placeholder">
+                Select
+            </div>
+            <ul class="dropdown">
+                {% if is_affiliate %}
+                    <div class="dropdown-li-container"><li id="function-method-reward" selected>Channel Points</li></div>
+                    <div class="dropdown-li-container"><li id="function-method-command">Commands</li></div>
+                {% else %}
+                    <div class="dropdown-li-container"><li id="function-method-command" selected>Commands</li></div>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="flex col center">
+            <div id="func-method-body">
+                Channel Points are currently being used to create and set functions.<br><br>
+                Your functions will trigger off channel point redemptions.<br>
+                Choose the function in the Function dropdown, and the channel point reward that triggers it.
+            </div>
+        </div>
+        <div class="horizontal-divider"></div>
+        <div id="function-form-section"></div>
+        <a role="button" class="btn btn-compact center-text" href="{{ spotify_auth_url }}" id="spotifyAuthButton" style="display: none;"><i class="bi-spotify"></i>&nbsp;Sign in with Spotify first!</a>
+    </div>
+</div>
+<br><hr><br>
+<div class="page-title">
+    Binded Functions
+</div>
+<div id="viewer">
+    Getting binded functions...
+</div>
+
+
+<script>
+
+var funcMethodDD = new Dropdown($("#func-method-dd"), loadFunctionSetter);
+var spotifyAuthed = "{{ spotify_authenticated }}" == "True" && "{{ spotify_current }}" == "True";
+
+function loadFunctionSetter()
+{
+    $.ajax({
+        type: "GET",
+        url: "{% url 'functions:binds' %}",
+        headers: {
+            Accept: "text/html"
+        },
+        data: {
+            method: funcMethodDD.getParsedID(),
+            template: "setter",
+        },
+        success: function(data, status, jqXHR)
+        {
+            $("#function-form-section").html(data);
+            toggleMethodHelp();
+        }
+    });
+}
+
+function loadFunctionViewer()
+{
+    $.ajax({
+        type: "GET",
+        url: "{% url 'functions:binds' %}",
+        headers: {
+            Accept: "text/html"
+        },
+        data: {
+            template: "viewer"
+        },
+        success: function(data, status, jqXHR)
+        {
+            $("#viewer").html(data);
+        }
+    });
+}
+
+function loadFunctionUtils()
+{
+    loadFunctionSetter();
+    loadFunctionViewer();
+}
+
+function toggleMethodHelp()
+{
+    switch (funcMethodDD.getParsedID())
+    {
+        case "reward":
+            $("#func-method-body").html("Channel Points are currently being used to create and set functions.<br><br>" +
+                "Your functions will trigger off channel point redemptions.<br>" +
+                "Choose the function in the Function dropdown, and the channel point reward that triggers it.");
+            break;
+        case "command":
+            $("#func-method-body").html("Commands are currently being used to create and set functions.<br><br>" +
+                "Your functions will trigger off commands.<br>" +
+                "Choose the function in the Function dropdown, and fill out the command's details.");
+    }
+}
+
+loadFunctionUtils();
+
+</script>
+
+
+{% endblock %}
