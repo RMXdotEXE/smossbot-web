@@ -411,6 +411,13 @@ def syncRewards(user: TwitchUser, incoming_rewards: list) -> int:
                 user = user
             )
             incoming_reward.save()
+        else:
+            # Update the incoming reward data to DB
+            incoming_reward = known_rewards.filter(reward_id=incoming_reward_id).first()
+            incoming_reward.reward_title = incoming_reward_data['title']
+            incoming_reward.color = incoming_reward_data['background_color']
+            incoming_reward.image = incoming_reward_data['image']['url_1x'] if incoming_reward_data['image'] is not None else incoming_reward_data['default_image']['url_1x']
+            incoming_reward.save()
 
     # 1: Successfully hit DB to delete old rewards/update new ones.
     return 1
