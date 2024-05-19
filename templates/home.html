@@ -11,15 +11,11 @@
     <h2>
         {% if twitch_username %}
         <div class="flex center">
-            <a role="button" class="btn center-text" href="{% url 'dashboard:index' %}" style="width: 250px; height: 250px;">
-                <div class="flex col">
-                    <div class="center-text">Hey {{ twitch_username }}!</div>
-                    <br>
-                    <div>
-                        <b>Head to your dashboard</b>&nbsp;<i class="bi-arrow-right"></i>
-                    </div>
-                </div>
-                
+            <a role="button" class="btn flex col center-text" href="{% url 'dashboard:index' %}" style="width: 250px; height: 250px;">
+                <div>Hey {{ twitch_username }}!</div>
+                <div><b>Head to your dashboard</b></div>
+                <br>
+                <div><i class="bi-arrow-right"></i><i class="bi-arrow-right"></i><i class="bi-arrow-right"></i></div>
             </a>
         </div>
             <br><br>
@@ -32,7 +28,9 @@
             <br><br>
             Through this website, you can set up features such as Spotify song requests, ChatGPT conversations, and YouTube video requests - all from this website in a matter of minutes!
             <br><br>
-            smossbot is currently in closed beta, which means access is limited to users on a whitelist. If you'd like to request access, contact me below!
+            smossbot is currently in open beta, which means the bot is available to use for anybody. However, the bot is incomplete in this state; features and fixes are incrementally being added.
+            <br><br>
+            If there are any questions about how to get things set up, feel free to contact me!
         </p>
     </h2>
 </div>

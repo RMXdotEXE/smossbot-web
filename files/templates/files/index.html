@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn"><div class="btn-text-center">Upload</div></button>
+            <button class="btn center-text">Upload</button>
         </div>
     </form>
     {% else %}
@@ -103,21 +103,21 @@
      * ================================================================ */
     function successful(btn)
     {
-        let original_text = btn.find("div").text();
+        let original_text = btn.text();
 
         btn.css("--color", "green");
         btn.prop("disabled", true);
-        btn.find("div").text("Changes successful!");
+        btn.text("Changes successful!");
         setTimeout(function() { restore(btn, original_text); }, 3000);
     }
 
     function error(btn, errorStr="Changes unsuccessful; check inputs!")
     {
-        let original_text = btn.find("div").text();
+        let original_text = btn.text();
 
         btn.css("--color", "red");
         btn.prop("disabled", true);
-        btn.find("div").text(errorStr);
+        btn.text(errorStr);
         setTimeout(function() { restore(btn, original_text); }, 3000);
     }
 
@@ -125,7 +125,7 @@
     {
         btn.css("--color", "");
         btn.prop("disabled", false);
-        btn.find("div").text(original_text);
+        btn.text(original_text);
     }
 
 

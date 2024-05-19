@@ -45,11 +45,7 @@
             </ul>
         </div>
         <div class="flex col center">
-            <div id="func-method-body">
-                Channel Points are currently being used to create and set functions.<br><br>
-                Your functions will trigger off channel point redemptions.<br>
-                Choose the function in the Function dropdown, and the channel point reward that triggers it.
-            </div>
+            <div class="center-text" id="func-method-body"></div>
         </div>
         <div class="horizontal-divider"></div>
         <div id="function-form-section"></div>
@@ -119,12 +115,12 @@ function toggleMethodHelp()
     switch (funcMethodDD.getParsedID())
     {
         case "reward":
-            $("#func-method-body").html("Channel Points are currently being used to create and set functions.<br><br>" +
+            $("#func-method-body").html("Channel Points are currently being used to create and set functions.<br>" +
                 "Your functions will trigger off channel point redemptions.<br>" +
                 "Choose the function in the Function dropdown, and the channel point reward that triggers it.");
             break;
         case "command":
-            $("#func-method-body").html("Commands are currently being used to create and set functions.<br><br>" +
+            $("#func-method-body").html("Commands are currently being used to create and set functions.<br>" +
                 "Your functions will trigger off commands.<br>" +
                 "Choose the function in the Function dropdown, and fill out the command's details.");
     }

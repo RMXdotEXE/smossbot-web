@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn"><div class="btn-text-center">Save changes: Spotify Song Requests</div></button>
+        <button class="btn center-text">Save changes: Spotify Song Requests</button>
     </div>
 </form>
 <br><hr><br>
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn"><div class="btn-text-center">Save changes: Spotify Song Skips</div></button>
+        <button class="btn center-text">Save changes: Spotify Song Skips</button>
     </div>
 </form>
 <br><hr><br>
@@ -107,7 +107,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn"><div class="btn-text-center">Save changes: ChatGPT Chat Requests</div></button>
+        <button class="btn center-text">Save changes: ChatGPT Chat Requests</button>
     </div>
 </form>
 <br><hr><br>
@@ -139,7 +139,7 @@
                 </label>
             </div>
         </div>
-        <button class="btn"><div class="btn-text-center">Save changes: YouTube Requests</div></button>
+        <button class="btn center-text">Save changes: YouTube Requests</button>
     </div>
 </form>
 <br><hr><br>
@@ -256,21 +256,21 @@
      * ================================================================ */
     function successful(btn)
     {
-        let original_text = btn.find("div").text();
+        let original_text = btn.html();
 
         btn.css("--color", "green");
         btn.prop("disabled", true);
-        btn.find("div").text("Changes successful!");
+        btn.html("Changes successful!");
         setTimeout(function() { restore(btn, original_text); }, 3000);
     }
 
     function error(btn)
     {
-        let original_text = btn.find("div").text();
+        let original_text = btn.html();
 
         btn.css("--color", "red");
         btn.prop("disabled", true);
-        btn.find("div").text("Changes unsuccessful; check inputs!");
+        btn.html("Changes unsuccessful; check inputs!");
         setTimeout(function() { restore(btn, original_text); }, 3000);
     }
 
@@ -278,7 +278,7 @@
     {
         btn.css("--color", "");
         btn.prop("disabled", false);
-        btn.find("div").text(original_text);
+        btn.html(original_text);
     }
 
 

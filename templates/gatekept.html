@@ -7,7 +7,7 @@
 {% block title %}Gatekept{% endblock %}
 
 {% block content %}
-<div class="flex col center     info-container">
+<div class="flex col center info-container">
     <div class="info-header">
         Sorry {{ twitch_username }}, I really don't want you here...
     </div>
@@ -15,10 +15,8 @@
         Just kidding; only a select few people have access to smossbot, sorry!
         For now, wait for updates, check back at a later date, or message me to see about getting access.<br><br>
         Had access before? You probably changed your username or something about it, so DM me to get it fixed.<br><br>
-        <a class="btn btn-compact" href="{% url 'logout' %}" role="button">
-            <div class="btn-text-center">
-                Log Out&nbsp;&nbsp;<i class="bi-box-arrow-in-right"></i>
-            </div>
+        <a class="btn btn-compact center-text" href="{% url 'logout' %}" role="button">
+            Log Out&nbsp;&nbsp;<i class="bi-box-arrow-in-right"></i>
         </a>
     </div>
 </div>

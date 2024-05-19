@@ -18,15 +18,15 @@
                                 File tag
                             </div>
                         </div>
-                        <button class="btn" id="file-edit-{{ file.id }}" data-file-id="{{ file.id }}" ><div class="btn-text-center">Update File Tag</div></button>
+                        <button class="btn center-text" id="file-edit-{{ file.id }}" data-file-id="{{ file.id }}" >Update File Tag</button>
                     </div>
                 </td>
                 <td>
                     <div class="flex row center">
-                        <a role="button" class="btn btn-flex" style="flex: 1;" href="{{ file.file.url }}">
-                            <div class="btn-text-center">Open File&nbsp;<i class="bi-box-arrow-in-up-right"></i></div>
+                        <a role="button" class="btn center-text" style="flex: 1;" href="{{ file.file.url }}">
+                            Open File&nbsp;<i class="bi-box-arrow-in-up-right"></i>
                         </a>
-                        <button class="btn btn-flex" id="file-delete-{{ file.id }}" data-file-id="{{ file.id }}" style="--color: red;"><div class="btn-text-center">Delete File</div></button>
+                        <button class="btn center-text" id="file-delete-{{ file.id }}" data-file-id="{{ file.id }}" style="--color: red;">Delete File</button>
                     </div>
                 </td>
             </tr>

@@ -13,7 +13,7 @@
 </div>
 
 {% if custom_rewards == -1 %}
-    <div class="">
+    <div>
         <b>Sorry {{ twitch_username }}, but you can't set things up at the moment.</b><br><br>
         Right now, functions are only supported via channel point redemptions, and this means you need to <br>
         be at least an affiliate to use smossbot, since affiliates get access to channel point rewards. <br>
@@ -23,50 +23,50 @@
     <div id="session-controller">
         Loading session controller...
     </div>
-    <div class="flex center">
-        <a role="button" class="btn" href="{% url 'functions:index' %}" style="width: 250px; height: 250px;">
-            <div class="btn-text-center">
-                <i class="bi-link-45deg" style="font-size: 64px;"></i><br>
+    <div class="flex col center">
+        <div class="flex center">
+            <a role="button" class="btn flex col center-text" href="{% url 'functions:index' %}" style="width: 250px; height: 250px;">
+                <i class="bi-link-45deg" style="font-size: 64px;"></i>
                 <b>Create/Set Functions</b>
-                <br><br>
                 <small>
-                    Give your channel points functions by choosing which channel point rewards do what!
+                    Give your channel points or commands functions by choosing which ones do what!
                 </small>
-            </div>
-        </a>
-        <a role="button" class="btn" href="{% url 'functions:configure' %}" style="width: 250px; height: 250px;">
-            <div class="btn-text-center">
-                <i class="bi-tools" style="font-size: 64px;"></i><br>
+            </a>
+            <a role="button" class="btn flex col center-text" href="{% url 'functions:configure' %}" style="width: 250px; height: 250px;">
+                <i class="bi-tools" style="font-size: 64px;"></i>
                 <b>Configure Functions</b>
-                <br><br>
                 <small>
                     Fine-tune functions by changing their behaviour to how you'd like.
                 </small>
-            </div>
-        </a>
-        <a role="button" class="btn" href="{% url 'files:index' %}" style="width: 250px; height: 250px;">
-            <div class="btn-text-center">
-                <i class="bi-folder2-open" style="font-size: 64px;"></i><br>
+            </a>
+            <a role="button" class="btn flex col center-text" href="{% url 'files:index' %}" style="width: 250px; height: 250px;">
+                <i class="bi-folder2-open" style="font-size: 64px;"></i>
                 <b>File Manager</b>
-                <br><br>
                 <small>
                     Upload files for your functions that smossbot should use!
                 </small>
-            </div>
-        </a>
-        <button class="btn" id="delete-modal-btn" style="--color: red; width: 250px; height: 250px;">
-            <div class="btn-text-center">
-                <i class="bi-trash3-fill" style="font-size: 64px;"></i><br>
+            </a>
+            <button class="btn flex col center-text" id="delete-modal-btn" style="--color: red; width: 250px; height: 250px;">
+                <i class="bi-trash3-fill" style="font-size: 64px;"></i>
                 <b>Delete All Data</b>
-                <br><br>
                 <small>
                     Delete all information smossbot has stored from you if you no longer wish to be affiliated.
                 </small>
+            </button>
+        </div>
+        <div class="horizontal-divider"></div>
+        <div class="center-text">
+            <div class="form-text mb-1" id="basic-addon4" style="color: white;">
+                This link is for YouTube and Sound requests. Paste this into OBS as a browser source, and make the dimensions<br>
+                1280x720 (width 1280, height 720).
             </div>
+        </div>
+        <button type="button" class="btn btn-compact center-text" id="copy-overlay-link-btn">
+            Copy Overlay Link&nbsp;&nbsp;<i class="bi-clipboard-fill"></i>
         </button>
+
     </div>
 {% endif %}
-
 
 <!-- Delete modal -->
 <div class="flex center">
@@ -103,6 +103,7 @@
 <script>
 
     var deleteModal = new Modal($("#delete-modal"), $("#delete-modal-btn"), $("#delete-modal-btn-close"));
+
 
     function loadSessionController()
     {
@@ -148,21 +149,23 @@
         });
     }
 
-    function copyOverlayLink(btn)
+    $("#copy-overlay-link-btn").on("click", function()
     {
         navigator.clipboard.writeText("{{ overlay_link }}");
 
-        let colorBefore = btn.style.backgroundColor;
-        let innerHTMLBefore = btn.innerHTML;
+        let btn = $(this);
+        let original_text = btn.html();
 
-        btn.style.backgroundColor = "green";
-        btn.innerHTML = "Copied! Paste into OBS. <i class=\"bi-check-lg\"></i>";
-        setTimeout(function()
-        {
-            btn.style.backgroundColor = colorBefore;
-            btn.innerHTML = innerHTMLBefore;
+        btn.css("--color", "green");
+        btn.prop("disabled", true);
+        btn.html("&nbsp;&nbsp;Copied! Paste into OBS.&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>");
+
+        setTimeout(function() {
+            btn.css("--color", "");
+            btn.prop("disabled", false);
+            btn.html(original_text);
         }, 5000);
-    }
+    });
 
     loadSessionController();
 
