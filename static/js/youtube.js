@@ -17,8 +17,8 @@ document.getElementById('player').style = "visibility: hidden;";
 function onYouTubeIframeAPIReady()
 {
     var params = {
-        width: "1280",
-        height: "720",
+        width: ytreqOverlay.width,
+        height: ytreqOverlay.height,
         playerVars: { 'playsinline': 1 },
         events: {
             'onReady': function(event) { console.log("YT player ready!") },
@@ -75,7 +75,7 @@ function addVideoToQueue(youtube_id, incoming_data)
         {
             packet = {
                 'username': username,
-                'spotify_control': "pausemusic"
+                'spotify_control': "pause"
             }
             botSocket.send(JSON.stringify(packet));
         }
@@ -100,7 +100,7 @@ function loadNextVideoOrQuit()
         {
             packet = {
                 'username': username,
-                'spotify_control': "playmusic"
+                'spotify_control': "play"
             }
             botSocket.send(JSON.stringify(packet));
         }

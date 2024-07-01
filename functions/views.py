@@ -61,32 +61,6 @@ def index(request: HttpRequest):
         'active_session': user.active_session,
         'overlay_link': "{}{}{}".format(os.getenv("HOST_URL"), "/overlay/", user.username)
     })
-    user.refresh_from_db()
-
-    try:
-        spotify_authenticated = user.spotifycredentials.code is not None
-        spotify_current = set(os.getenv('SPOTIFY_SCOPE').split(' ')).issubset(set(user.spotifycredentials.scope))
-    except SpotifyCredentials.DoesNotExist:
-        spotify_authenticated = False
-        spotify_current = False
-        spotify_auth_url = "https://accounts.spotify.com/authorize?" + \
-            "client_id=" + os.getenv('SPOTIFY_CLIENT_ID') + \
-            "&response_type=code" + \
-            "&redirect_uri=" + os.getenv('SPOTIFY_REDIRECT_URI') + \
-            "&scope=" + os.getenv('SPOTIFY_SCOPE')
-        ctx.update({
-            'spotify_auth_url': spotify_auth_url
-        })
-
-    fully_authenticated = spotify_authenticated and spotify_current
-    fully_authenticated_outdated = spotify_authenticated and not spotify_current
-
-    ctx.update({
-        'spotify_authenticated': spotify_authenticated,
-        'spotify_current': spotify_current,
-        'fully_authenticated': fully_authenticated,
-        'fully_authenticated_outdated': fully_authenticated_outdated
-    })
 
     return render(request, "functions/index.html", context=ctx)
 
@@ -326,7 +300,7 @@ def createReward(user: TwitchUser, data: QueryDict) -> dict:
         'cost': max(1, int(cost)),
         'prompt': misc.trimStr(description, 200),
         'is_enabled': True,
-        'background_color': color, # TODO: is this always valid?
+        'background_color': color, # TODO-MED: is this always valid?
         'is_user_input_required': misc.strToBool(text_required),
         'should_redemptions_skip_request_queue': False
     }

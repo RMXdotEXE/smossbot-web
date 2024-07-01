@@ -92,6 +92,14 @@ footer {
     &.hor {
         align-items: flex-start;
     }
+
+    > b::before {
+        content: '\a0';
+    }
+
+    > b::after {
+        content: '\a0';
+    }
 }
 
 .vert-center {

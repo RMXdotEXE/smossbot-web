@@ -8,15 +8,66 @@
 
 {% block content %}
 <div class="page-title">
+    smossbot's commands for the plebs
+</div>
+<div class="flex row center">
+    <div class="command-cnt white-shadow" style="flex: 1;">
+        <div class="command-name center-text">!help</div>
+        <div class="command-body center-text">
+            Links you to this page!
+        </div>
+        <div class="command-footer center-text">Permission level: Viewer</div>
+    </div>
+    <div class="command-cnt white-shadow" style="flex: 1;">
+        <div class="command-name center-text">!ping</div>
+        <div class="command-body center-text">
+            smossbot responds with <b>&nbsp;Pong!&nbsp;</b> to let you know it's active and listening.
+        </div>
+        <div class="command-footer center-text">Permission level: Viewer</div>
+    </div>
+    <div class="command-cnt white-shadow" style="flex: 1;">
+        <div class="command-name center-text">!song</div>
+        <div class="command-body center-text">
+            Gets the song that's currently playing, along with the progress of the song.
+        </div>
+        <div class="command-footer center-text">Permission level: Viewer</div>
+    </div>
+</div>
+<hr>
+<div class="page-title">
     smossbot's commands for the MODS
 </div>
-
 <div class="command-cnt white-shadow">
-    <div class="command-name center-text">!ping</div>
-    <div class="command-body center-text">
-        smossbot responds with <b>&nbsp;Pong!&nbsp;</b> to let you know it's active and listening.
+    <div class="command-name center-text">!songreq &lt;action&gt; &lt;query&gt;</div>
+    <div class="command-body">
+        <br>
+        Accesses the Spotify Song Request function, and allows Moderators (by default) to run utilities.
+        <br><br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">action</th>
+                    <th scope="col">query</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">add</th>
+                    <td>Spotify URI, share link, search query, etc.</td>
+                </tr>
+                <tr>
+                    <th scope="row">queue</th>
+                    <td>
+                        <div class="flex col center">
+                            <div>start - Starts the internal queue with a recurring task. It runs every 5 seconds, updating itself with the current queue for incoming song requests each time.</div>
+                            <div>stop - Stops the internal queue, and destroys the recurring task. (pls do this)</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="command-footer center-text">Permission level: Viewer</div>
+    <div class="command-footer center-text">Permission level: Moderator+ (by default)</div>
 </div>
 
 <div class="command-cnt white-shadow">
@@ -30,7 +81,9 @@
 <div class="command-cnt white-shadow">
     <div class="command-name center-text">!variable &lt;variablename&gt; &lt;value&gt;</div>
     <div class="command-body">
+        <br>
         Updates various values that tweak how certain parts of smossbot work, so you can fine-tune behaviours.
+        <br><br>
         <table class="table">
             <thead>
                 <tr>

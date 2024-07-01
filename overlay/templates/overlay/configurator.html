@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block title %}Configure Overlay{% endblock %}
+
+{% block content %}
+
+<div class="page-title">
+    Configure Overlay
+</div>
+
+<div class="flex col">
+    <div class="center-text">
+        <div class="form-text mb-1" id="basic-addon4" style="color: white;">
+            This is your Overlay link. Paste this into OBS as a browser source, and make the dimensions<br>
+            1920x1080 (width 1920, height 1080).
+        </div>
+    </div>
+    <button type="button" class="btn btn-compact center-text" id="copy-overlay-link-btn">
+        Copy Overlay Link&nbsp;&nbsp;<i class="bi-clipboard-fill"></i>
+    </button>
+    <div class="horizontal-divider"></div>
+</div>
+<div class="page-title">
+    Spotify Song Requests
+</div>
+<form id="overlay-songreq-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Enabled</div>
+            <div class="center-text ver" style="flex: 3;">This determines if song request overlays are on.</div>
+            <div style="flex: 1;">
+                <label class="switch-container" style="transform: scale(0.70);">
+                    <input type="checkbox" role="switch" id="overlay-songreq-enabled" {% if songreqoverlay.enabled %} checked {% endif %}>
+                    <span class="switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Constant</div>
+            <div class="center-text ver" style="flex: 3;">If song request overlays are on, this determines if the overlay persists even for non-song requests.</div>
+            <div style="flex: 1;">
+                <label class="switch-container" style="transform: scale(0.70);">
+                    <input type="checkbox" role="switch" id="overlay-songreq-constant" {% if songreqoverlay.constant %} checked {% endif %}>
+                    <span class="switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Background</div>
+            <div class="center-text ver" style="flex: 3;">If song request overlays are on, this determines if a background is shown to increase readability.</div>
+            <div style="flex: 1;">
+                <label class="switch-container" style="transform: scale(0.70);">
+                    <input type="checkbox" role="switch" id="overlay-songreq-background" {% if songreqoverlay.background %} checked {% endif %}>
+                    <span class="switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Vertical Anchor Position</div>
+            <div class="center-text ver" style="flex: 3;">If song request overlays are on, this determines where the overlay is positioned vertically.</div>
+            <div style="flex: 1;">
+                <div id="overlay-songreq-vertical-anchor-pos-dd" class="dropdown-container">
+                    <div class="label">
+                        Position:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        <div class="dropdown-li-container"><li>Top</li></div>
+                        <div class="dropdown-li-container"><li>Bottom</li></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Horizontal Anchor Position</div>
+            <div class="center-text ver" style="flex: 3;">If song request overlays are on, this determines where the overlay is positioned horizontally.</div>
+            <div style="flex: 1;">
+                <div id="overlay-songreq-horizontal-anchor-pos-dd" class="dropdown-container">
+                    <div class="label">
+                        Position:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        <div class="dropdown-li-container"><li>Left</li></div>
+                        <div class="dropdown-li-container"><li>Right</li></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <button class="btn center-text">Save changes: Spotify Song Requests Overlay</button>
+    </div>
+</form>
+<br><hr><br>
+<div class="page-title">
+    YouTube Requests
+</div>
+<form id="overlay-ytreq-form">
+    <div class="flex col">
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Width</div>
+            <div class="center-text ver" style="flex: 3;">Represents the width of the YouTube player itself.</div>
+            <div class="input-container stretch">
+                <input type="text" id="overlay-ytreq-width" placeholder=" " value="{{ ytreqoverlay.width }}" required>
+                <div class="placeholder">
+                    Width
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Height</div>
+            <div class="center-text ver" style="flex: 3;">Represents the height of the YouTube player itself.</div>
+            <div class="input-container stretch">
+                <input type="text" id="overlay-ytreq-height" placeholder=" " value="{{ ytreqoverlay.height }}" required>
+                <div class="placeholder">
+                    Height
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Vertical Anchor Position</div>
+            <div class="center-text ver" style="flex: 3;">This determines where the video is positioned vertically.</div>
+            <div style="flex: 1;">
+                <div id="overlay-ytreq-vertical-anchor-pos-dd" class="dropdown-container">
+                    <div class="label">
+                        Position:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        <div class="dropdown-li-container"><li>Top</li></div>
+                        <div class="dropdown-li-container"><li>Bottom</li></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="flex row center">
+            <div class="subheader center-text ver" style="flex: 1;">Horizontal Anchor Position</div>
+            <div class="center-text ver" style="flex: 3;">This determines where the video is positioned horizontally.</div>
+            <div style="flex: 1;">
+                <div id="overlay-ytreq-horizontal-anchor-pos-dd" class="dropdown-container">
+                    <div class="label">
+                        Position:
+                    </div>
+                    <div class="placeholder">
+                        Select
+                    </div>
+                    <ul class="dropdown">
+                        <div class="dropdown-li-container"><li>Left</li></div>
+                        <div class="dropdown-li-container"><li>Right</li></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <button class="btn center-text">Save changes: YouTube Requests Overlay</button>
+    </div>
+</form>
+
+<script>
+
+    // TODO: do i even need to say something
+    var songreqVerticalAnchorPosDD = new Dropdown($("#overlay-songreq-vertical-anchor-pos-dd"));
+    var songreqHorizontalAnchorPosDD = new Dropdown($("#overlay-songreq-horizontal-anchor-pos-dd"));
+    var ytreqVerticalAnchorPosDD = new Dropdown($("#overlay-ytreq-vertical-anchor-pos-dd"));
+    var ytreqHorizontalAnchorPosDD = new Dropdown($("#overlay-ytreq-horizontal-anchor-pos-dd"));
+
+    songreqVerticalAnchorPosDD.setOption("", capitalize("{{ songreqoverlay.vertical_anchor_pos }}"));
+    songreqHorizontalAnchorPosDD.setOption("", capitalize("{{ songreqoverlay.horizontal_anchor_pos }}"));
+    ytreqVerticalAnchorPosDD.setOption("", capitalize("{{ ytreqoverlay.vertical_anchor_pos }}"));
+    ytreqHorizontalAnchorPosDD.setOption("", capitalize("{{ ytreqoverlay.horizontal_anchor_pos }}"));
+
+    $("#overlay-songreq-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'overlay:configurations' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                overlay_function: "songreq",
+                enabled: $("#overlay-songreq-enabled").prop("checked"),
+                constant: $("#overlay-songreq-constant").prop("checked"),
+                background: $("#overlay-songreq-background").prop("checked"),
+                verticalAnchorPos: songreqVerticalAnchorPosDD.getText(),
+                horizontalAnchorPos: songreqHorizontalAnchorPosDD.getText(),
+            },
+            success: function() { successful($("#overlay-songreq-form").find("button")); },
+            error: function() { error($("#overlay-songreq-form").find("button")); }
+        });
+    });
+
+    $("#overlay-ytreq-form").off().on("submit", function(e)
+    {
+        e.preventDefault();
+        $.ajax
+        ({
+            type: "PATCH",
+            url: "{% url 'overlay:configurations' %}",
+            headers: {
+                Accept: "application/json"
+            },
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                overlay_function: "ytreq",
+                width: $("#overlay-ytreq-width").val(),
+                height: $("#overlay-ytreq-height").val(),
+                verticalAnchorPos: ytreqVerticalAnchorPosDD.getText(),
+                horizontalAnchorPos: ytreqHorizontalAnchorPosDD.getText(),
+            },
+            success: function() { successful($("#overlay-ytreq-form").find("button")); },
+            error: function() { error($("#overlay-ytreq-form").find("button")); }
+        });
+    });
+
+    $("#copy-overlay-link-btn").on("click", function()
+    {
+        navigator.clipboard.writeText("{{ overlay_link }}");
+
+        let btn = $(this);
+        let original_text = btn.html();
+
+        btn.css("--color", "green");
+        btn.prop("disabled", true);
+        btn.html("&nbsp;&nbsp;Copied! Paste into OBS.&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>");
+
+        setTimeout(function() {
+            btn.css("--color", "");
+            btn.prop("disabled", false);
+            btn.html(original_text);
+        }, 5000);
+    });
+
+    /* ===================================================================
+     * BUTTON FEEDBACK FUNCTIONS
+     * ================================================================ */
+    function successful(btn)
+    {
+        let original_text = btn.html();
+
+        btn.css("--color", "green");
+        btn.prop("disabled", true);
+        btn.html("Changes successful!");
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function error(btn)
+    {
+        let original_text = btn.html();
+
+        btn.css("--color", "red");
+        btn.prop("disabled", true);
+        btn.html("Changes unsuccessful; check inputs!");
+        setTimeout(function() { restore(btn, original_text); }, 3000);
+    }
+
+    function restore(btn, original_text)
+    {
+        btn.css("--color", "");
+        btn.prop("disabled", false);
+        btn.html(original_text);
+    }
+
+    /* ===================================================================
+     * VALIDATIONS
+     * ================================================================ */
+    // TODO: Show these validations below input box instead of vanilla browser popup on submit.
+    // TODO: Also make it lock submit buttons?
+    Validators.forceIntInRange($("#overlay-ytreq-width"), 0, 2147483647);
+    Validators.forceIntInRange($("#overlay-ytreq-height"), 0, 2147483647);
+
+</script>
+
+
+{% endblock %}

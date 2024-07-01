@@ -6,6 +6,8 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
+from functions.models import ChannelPointReward, CommandFunction
+from itertools import chain
 from utils import views
 from utils.users import deleteUser
 
@@ -50,10 +52,20 @@ def buildContext(user: TwitchUser) -> dict:
     except TwitchUser.DoesNotExist:
         twitch_authenticated = None
 
+    user_reward_binds = ChannelPointReward.objects.filter(user=user)
+    user_command_binds = CommandFunction.objects.filter(user=user)
+
+    # TODO-LOW: There's gotta be a better way right?
+    songreq_binded = len(user_reward_binds.filter(user=user, binded_to__contains=["songreq"])) + len(user_command_binds.filter(user=user, binded_to__contains=["songreq"])) != 0
+    ytreq_binded = len(user_reward_binds.filter(user=user, binded_to__contains=["ytreq"])) + len(user_command_binds.filter(user=user, binded_to__contains=["ytreq"])) != 0
+    soundreq_binded = len(user_reward_binds.filter(user=user, binded_to__contains=["soundreq"])) + len(user_command_binds.filter(user=user, binded_to__contains=["soundreq"])) != 0
+
     ctx = {
         'active_session': user.active_session,
         'twitch_authenticated': twitch_authenticated,
-        'overlay_link': "{}{}{}".format(os.getenv("HOST_URL"), "/overlay/", user.username)
+        'songreq_binded': songreq_binded,
+        'ytreq_binded': ytreq_binded,
+        'soundreq_binded': soundreq_binded
     }
 
     return ctx

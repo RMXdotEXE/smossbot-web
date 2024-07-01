@@ -49,7 +49,12 @@ function getSound(incoming_data)
 
 function playSound(filepath)
 {
-    console.log("Playing sound: " + filepath);
+    var audio = document.createElement('audio');
+
     audio.src = mediaDir + filepath;
+    document.body.appendChild(audio);
+    console.log("Playing sound: " + filepath);    
     audio.play();
+
+    audio.onended = function() { this.parentNode.removeChild(this); }
 }

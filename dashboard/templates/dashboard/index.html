@@ -46,6 +46,13 @@
                     Upload files for your functions that smossbot should use!
                 </small>
             </a>
+            <a role="button" class="btn flex col center-text" href="{% url 'overlay:configure' %}" style="width: 250px; height: 250px;">
+                <i class="bi-layers" style="font-size: 64px;"></i>
+                <b>Configure Overlay</b>
+                <small>
+                    Get and configure your overlay link for YouTube Requests, Spotify Song Requests, and more!
+                </small>
+            </a>
             <button class="btn flex col center-text" id="delete-modal-btn" style="--color: red; width: 250px; height: 250px;">
                 <i class="bi-trash3-fill" style="font-size: 64px;"></i>
                 <b>Delete All Data</b>
@@ -54,17 +61,30 @@
                 </small>
             </button>
         </div>
-        <div class="horizontal-divider"></div>
-        <div class="center-text">
-            <div class="form-text mb-1" id="basic-addon4" style="color: white;">
-                This link is for YouTube and Sound requests. Paste this into OBS as a browser source, and make the dimensions<br>
-                1280x720 (width 1280, height 720).
+        <a role="button" class="btn btn-compact center-text" href="{{ spotify_auth_url }}" id="spotifyAuthButton" style="display: none;"><i class="bi-spotify"></i>&nbsp;Spotify reauthentication needed!</a>
+    </div>
+    <div class="horizontal-divider"></div>
+    <div class="flex col center">
+        {% if songreq_binded %}
+            <div class="center-text">
+                <b>NOTE:</b> You have the <b>Spotify Song Requests</b> function binded. If you have access to smossbot's internal Spotify queue
+                system, head over to the <b>Configure Overlay</b> section to grab your overlay link to show viewers what requested
+                song is playing, and who requested it.
             </div>
-        </div>
-        <button type="button" class="btn btn-compact center-text" id="copy-overlay-link-btn">
-            Copy Overlay Link&nbsp;&nbsp;<i class="bi-clipboard-fill"></i>
-        </button>
-
+        {% endif %}
+        {% if ytreq_binded %}
+            <div class="center-text">
+                <b>NOTE:</b> You have the <b>YouTube Requests</b> function binded. Head over to the <b>Configure Overlay</b> section to grab your
+                overlay link to actually show the videos on your stream!
+            </div>
+        {% endif %}
+        {% if soundreq_binded %}
+            <div class="center-text">
+                <b>NOTE:</b> You have the <b>Sound Requests</b> function binded. Head over to the <b>File Manager</b> section to upload your sounds
+                that you want, and assign tags to them. Then, head over to the <b>Configure Overlay</b> section to grab your overlay link to
+                have the sounds play on your stream!
+            </div>
+        {% endif %}
     </div>
 {% endif %}
 
@@ -103,7 +123,7 @@
 <script>
 
     var deleteModal = new Modal($("#delete-modal"), $("#delete-modal-btn"), $("#delete-modal-btn-close"));
-
+    var spotifyAuthed = "{{ spotify_authenticated }}" == "True" && "{{ spotify_current }}" == "True";
 
     function loadSessionController()
     {
@@ -149,25 +169,12 @@
         });
     }
 
-    $("#copy-overlay-link-btn").on("click", function()
-    {
-        navigator.clipboard.writeText("{{ overlay_link }}");
-
-        let btn = $(this);
-        let original_text = btn.html();
-
-        btn.css("--color", "green");
-        btn.prop("disabled", true);
-        btn.html("&nbsp;&nbsp;Copied! Paste into OBS.&nbsp;&nbsp;<i class=\"bi-check-lg\"></i>");
-
-        setTimeout(function() {
-            btn.css("--color", "");
-            btn.prop("disabled", false);
-            btn.html(original_text);
-        }, 5000);
-    });
-
     loadSessionController();
+
+    if (!spotifyAuthed)
+    {
+        $("#spotifyAuthButton").show();
+    }
 
 </script>
 

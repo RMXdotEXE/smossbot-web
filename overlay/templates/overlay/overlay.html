@@ -7,9 +7,114 @@
     <head>
         <meta charset="utf-8">
         <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <style>
+            :root {
+                --shadow-width: 10px;
+            }
+
+            .songreq-overlay {
+                display: none;
+                flex: 1;
+                flex-direction: column;
+                color: #ffffff;
+                font-family: Tahoma, sans-serif;
+                padding: 15px;
+                position: absolute;
+            }
+
+            .songreq-overlay.left {
+                text-align: left;
+                left: var(--shadow-width);
+            }
+
+            .songreq-overlay.right {
+                text-align: right;
+                right: var(--shadow-width);
+            }
+
+            .songreq-overlay.top {
+                top: var(--shadow-width);
+            }
+
+            .songreq-overlay.bottom {
+                bottom: var(--shadow-width);
+            }
+
+            .songreq-overlay.background {
+                border-color: black;
+                border-radius: 10px;
+                border-style: solid;
+                border-width: 2px;
+
+                background: linear-gradient(45deg, #6441a5 0%, #444444 33%, #6441a5 67%, #444444 100%);
+                animation: anim 5s linear infinite;
+                background-size: 400% 400%;
+                background-attachment: fixed;
+
+                box-shadow: 0px 0px var(--shadow-width) 5px black;
+            }
+
+            .songreq-overlay > .header {
+                font-size: 32px;
+            }
+
+            .songreq-overlay > .body {
+                font-style: italic;
+            }
+
+            @keyframes anim {
+                0% {
+                    background-position: 100% 0%;
+                }
+                100% {
+                    background-position: 15% 100%;
+                }
+            }
+
+            .ytreq-overlay {
+                position: absolute;
+            }
+
+            .ytreq-overlay.left {
+                left: 0;
+            }
+
+            .ytreq-overlay.right {
+                right: 0;
+            }
+
+            .ytreq-overlay.top {
+                top: 0;
+            }
+
+            .ytreq-overlay.bottom {
+                bottom: 0;
+            }
+        </style>
+        <link rel="stylesheet" href="{% static 'font/bootstrap-icons.css' %}">
     </head>
     <body>
-        <div id="player"></div>
+        {% if songreqoverlay.enabled %}
+            <div class="songreq-overlay
+                {{ songreqoverlay.vertical_anchor_pos }}
+                {{ songreqoverlay.horizontal_anchor_pos }}
+                {% if songreqoverlay.background %} background {% endif %}
+                " id="songreq-overlay">
+                <div class="header" id="songreq-overlay-header">
+                    Example Song - Example Artists Here
+                </div>
+                <div style="margin: 2px 0px;"></div>
+                <div class="body" id="songreq-overlay-body">
+                    Requested by xzmozxx
+                </div>
+            </div>
+        {% endif %}
+        <div class="ytreq-overlay
+            {{ ytreqoverlay.vertical_anchor_pos }}
+            {{ ytreqoverlay.horizontal_anchor_pos }}
+            ">
+            <div id="player"></div>
+        </div>
     </body>
 </html>
 
@@ -21,10 +126,14 @@
      */
 
     const username = "{{ username }}";
-    const botSocket = new WebSocket("{{ url }}", "youtube");
-    const audio = new Audio();
+    const botSocket = new WebSocket("{{ url }}");
     const mediaDir = "{{ MEDIA_URL }}";
+    const ytreqOverlay = {
+        width: "{{ ytreqoverlay.width }}",
+        height: "{{ ytreqoverlay.height }}"
+    };
     const fileAPIURL = "{% url 'api:taggedfile' %}";
+    var clientID = null;
 
     botSocket.onopen = (event) =>
     {
@@ -45,7 +154,7 @@
 
         console.log(incoming_data);
 
-        if (incoming_data.for == "youtube")
+        if (incoming_data.for == "ytreq")
         {
             // YT Vid request packet
             let youtube_url = incoming_data.redemption_data.input;
@@ -60,6 +169,14 @@
             // Sound request
             console.log("Received sound request: " + incoming_data.redemption_data.input);
             getSound(incoming_data);
+        }
+        if (incoming_data.for == "songreq")
+        {
+            // Songreq information packet
+            $("#songreq-overlay").toggle(incoming_data.vars.active);
+            $("#songreq-overlay-header").text(incoming_data.vars.song_name + " - " + incoming_data.vars.song_artists);
+            $("#songreq-overlay-body").text("Requested by " + incoming_data.vars.requester);
+            console.log("Received songreq packet.");
         }
     }
 
