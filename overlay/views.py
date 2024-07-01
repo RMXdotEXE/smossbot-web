@@ -54,16 +54,16 @@ def configurations(request, format=None):
     
     if overlay_function == "songreq":
         enabled = request.data.get("enabled", None)
-        constant = request.data.get("constant", None)
+        # constant = request.data.get("constant", None)
         background = request.data.get("background", None)
         vertical_anchor_pos = request.data.get("verticalAnchorPos", None)
         horizontal_anchor_pos = request.data.get("horizontalAnchorPos", None)
-        if None in [enabled, constant, background, vertical_anchor_pos, horizontal_anchor_pos]:
+        if None in [enabled, background, vertical_anchor_pos, horizontal_anchor_pos]:
             return RESTResponse(status=status.HTTP_400_BAD_REQUEST)
         new_vars = SongReqOverlay(
             user = request.user,
             enabled = misc.strToBool(enabled),
-            constant = misc.strToBool(constant),
+            # constant = misc.strToBool(constant),
             background = misc.strToBool(background),
             vertical_anchor_pos = vertical_anchor_pos.lower(),
             horizontal_anchor_pos = horizontal_anchor_pos.lower(),
